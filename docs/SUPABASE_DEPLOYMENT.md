@@ -37,6 +37,10 @@ This command loads `.env.local`, applies `scripts/migrations/001-postgres.sql`, 
 
 The migration enables Row Level Security on all five tables. The existing Next.js server uses the privileged database-owner connection, and no browser-facing Data API policies are created. This deployment does not require Supabase Auth or Supabase API keys.
 
+### If local PostgreSQL connections time out
+
+Use the browser-based Supabase **SQL Editor → New query**. Paste the entire contents of [SUPABASE_SETUP.sql](SUPABASE_SETUP.sql) and click **Run**. This performs the same schema and reference-data setup without needing a local connection to ports 5432/6543. The final results should show six zones, 2,340 slots and eight events for a fresh project. Keep `DATABASE_URL` configured in Vercel; SQL Editor setup does not connect the deployed app automatically. To regenerate the file after venue-content changes, run `npx tsx scripts/export-supabase-sql.ts`.
+
 Existing local SQLite records are not uploaded by this command. Keep the local file; any real reservations or members there need a separate one-time data import before moving live traffic.
 
 ## 3. Configure Vercel
