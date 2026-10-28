@@ -7,6 +7,7 @@ import { BookingTimeline } from '@/components/booking-timeline';
 import { ConfirmActions } from '@/components/confirm-actions';
 import { Confetti } from '@/components/confetti';
 import { QrReveal } from '@/components/qr-reveal';
+import { WordReveal } from '@/components/word-reveal';
 import { withDb } from '@/lib/bootstrap';
 import { getBooking, listBookings } from '@/lib/db';
 import { isStaticExport } from '@/lib/render-mode';
@@ -71,7 +72,7 @@ export default function ConfirmPage({ params }: PageProps) {
       <div className="wrap max-w-[1000px]">
         <header className="section-head">
           <div className="eyebrow">{cancelled ? 'Cancelled' : 'Confirmed'}</div>
-          <h1>{cancelled ? 'This one is off.' : "You're in."}</h1>
+          <h1>{cancelled ? 'This one is off.' : <WordReveal text="You're in." />}</h1>
           <p className="sub">
             {cancelled
               ? 'The slot went back on the floor. Book another whenever you are ready.'
@@ -81,7 +82,7 @@ export default function ConfirmPage({ params }: PageProps) {
 
         <div className="grid gap-10 lg:grid-cols-[280px_1fr] lg:gap-16">
           <div className="flex flex-col items-start gap-5">
-            <div className="panel panel--elevated p-5 text-fg">
+            <div className="panel bg-white p-5 text-black">
               <QrReveal
                 bits={Array.from(matrix.data)}
                 size={matrix.size}

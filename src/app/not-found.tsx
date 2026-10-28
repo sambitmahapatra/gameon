@@ -41,11 +41,17 @@ function LostOrbit() {
         fill="none"
         stroke="var(--border-strong)"
         strokeWidth="1"
+        strokeDasharray="70 25 20 40"
         transform="rotate(18 110 110)"
       />
       <circle cx="110" cy="110" r="13" fill="var(--accent)" fillOpacity="0.14" />
-      <circle cx="110" cy="110" r="5" fill="var(--accent)" />
+      <circle cx="110" cy="110" r="5" fill="var(--accent)" className="lost-orbit-core" />
       <circle cx="196" cy="54" r="4.5" fill="var(--magenta)" />
+      <circle cx="25" cy="40" r="7" fill="var(--accent)" />
+      <circle cx="170" cy="180" r="6" fill="var(--violet)" />
+      <circle cx="45" cy="190" r="5" fill="var(--amber)" />
+      <circle cx="120" cy="20" r="4" fill="var(--green)" />
+      <circle cx="15" cy="120" r="6" fill="var(--magenta)" />
     </svg>
   );
 }
@@ -58,7 +64,7 @@ export default function NotFound() {
 
         <div>
           <div className="eyebrow">404</div>
-          <h1 className="mt-4">This zone does not exist yet</h1>
+          <h1 className="mt-4">This world doesn&apos;t exist yet.</h1>
           <p className="sub mt-4">
             The page you tried is not on the floor plan. Six zones are, though, and they
             are all a click away.

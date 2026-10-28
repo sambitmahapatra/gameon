@@ -1,7 +1,7 @@
 /** Single source of truth for contact details and outbound links. */
 export const SITE = {
   name: 'GameOn',
-  title: "GameOn — Powai's Premier Gaming Café",
+  title: 'GameOn — Enter another world.',
   description:
     'Six gaming worlds and a café under one roof in Powai, Mumbai. VR arena, flight simulator, racing cockpits, esports stations, console lounge and streaming pods. Reserve a slot in under a minute.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',

@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { ScrollHeading } from '@/components/scroll-heading';
+import { cn } from '@/lib/utils';
 
 type FeatureBlockProps = {
   eyebrow: string;
@@ -27,12 +29,12 @@ export function FeatureBlock({
   imageSide = 'left',
 }: FeatureBlockProps) {
   return (
-    <div className={`feature${imageSide === 'right' ? 'feature--rev' : ''}`}>
+    <div className={cn('feature', imageSide === 'right' && 'feature--rev')}>
       <div className="feature__art">{art}</div>
 
       <div className="feature__text">
         <div className="eyebrow">{eyebrow}</div>
-        <h3>{heading}</h3>
+        <ScrollHeading text={heading} />
         <p>{body}</p>
         <div className="feature__specs">
           {specs.map((spec) => (

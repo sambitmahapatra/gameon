@@ -1,4 +1,5 @@
 import { ZoneArt } from '@/components/zone-art';
+import { BrandPhoto } from '@/components/brand-photo';
 
 /**
  * Four more looks at the same room. Each tile reuses the zone's composition
@@ -27,7 +28,14 @@ export function ZoneGallery({ slug, name }: { slug: string; name: string }) {
             className="absolute inset-0 origin-center"
             style={{ transform: variant.transform }}
           >
-            <ZoneArt slug={slug} uid={`zg-${slug}-${index}`} />
+            <BrandPhoto
+              src={`/images/zones/${slug}.webp`}
+              alt={`${name} zone at GameOn`}
+              width={1920}
+              height={1080}
+              sizes="(min-width: 768px) 25vw, 50vw"
+              fallback={<ZoneArt slug={slug} uid={`zg-${slug}-${index}`} />}
+            />
           </div>
         </div>
       ))}

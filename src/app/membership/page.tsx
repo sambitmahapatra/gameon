@@ -69,7 +69,7 @@ export default function MembershipPage() {
         {/* the four tiers, the same cards as the landing page */}
         <Reveal className="tiers" stagger=".tier">
           {TIERS.map((tier) => (
-            <div key={tier.id} className={`tier${tier.popular ? 'tier--highlight' : ''}`}>
+            <div key={tier.id} className={cn('tier', tier.popular && 'tier--highlight')}>
               {tier.popular ? <div className="tier__badge">Most picked</div> : null}
               <div className="tier__name">{tier.name}</div>
               <div className="tier__price">

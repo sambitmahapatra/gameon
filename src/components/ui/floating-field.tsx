@@ -24,11 +24,7 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
     ref,
   ) => {
     const [focused, setFocused] = React.useState(false);
-    const [filled, setFilled] = React.useState(
-      Boolean(props.defaultValue ?? props.value ?? ''),
-    );
-
-    const lifted = focused || filled;
+    const lifted = focused;
 
     return (
       <div className="flex flex-col gap-1.5">
@@ -48,13 +44,13 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
             </span>
           ) : null}
 
-          <div className="relative flex-1">
+          <div className="floating-control relative flex-1">
             <label
               htmlFor={id}
               className={cn(
-                'pointer-events-none absolute left-3.5 origin-left text-fg-muted transition-all duration-200 ease-out',
+                'pointer-events-none absolute left-3.5 origin-left text-fg-muted transition-all ease-out [transition-duration:180ms]',
                 lifted
-                  ? 'top-1.5 text-[0.6875rem] text-brand'
+                  ? 'top-1.5 text-[12px] text-brand'
                   : 'top-1/2 -translate-y-1/2 text-meta',
               )}
             >
@@ -63,6 +59,7 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
             <input
               id={id}
               ref={ref}
+              placeholder=" "
               className={cn(
                 'h-14 w-full bg-transparent px-3.5 pb-1.5 pt-5 text-body text-fg outline-none placeholder:text-transparent focus-visible:outline-none',
                 prefix ? 'rounded-r-button' : 'rounded-button',
@@ -74,11 +71,9 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
               }}
               onBlur={(event) => {
                 setFocused(false);
-                setFilled(event.target.value.length > 0);
                 onBlur?.(event);
               }}
               onChange={(event) => {
-                setFilled(event.target.value.length > 0);
                 onChange?.(event);
               }}
               {...props}

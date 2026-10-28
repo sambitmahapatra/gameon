@@ -3,7 +3,7 @@ import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from 'next/font/
 
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
-import { PageTransition } from '@/components/page-transition';
+import { ScrollProgress } from '@/components/scroll-progress';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import { SITE } from '@/lib/site';
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
     default: SITE.title,
-    template: `%s — ${SITE.name}`,
+    template: `${SITE.name} — %s`,
   },
   description: SITE.description,
   applicationName: SITE.name,
@@ -55,6 +55,14 @@ export const metadata: Metadata = {
     description: SITE.description,
     url: SITE.url,
     locale: 'en_IN',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'GameOn — Enter another world.',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
@@ -62,7 +70,8 @@ export const metadata: Metadata = {
     description: SITE.description,
   },
   icons: {
-    icon: '/favicon.svg',
+    icon: [{ url: '/favicon.ico' }, { url: '/logo-mark.svg', type: 'image/svg+xml' }],
+    apple: '/apple-touch-icon.png',
   },
 };
 
@@ -89,8 +98,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </a>
 
           <Navbar />
+          <ScrollProgress />
           <main id="main" className="above-grain">
-            <PageTransition>{children}</PageTransition>
+            {children}
           </main>
           <Footer />
           <Toaster />

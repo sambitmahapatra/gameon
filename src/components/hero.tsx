@@ -1,19 +1,20 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { HeroVisual } from '@/components/hero-visual';
 import { Magnetic } from '@/components/magnetic';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { gsap, useGSAP } from '@/lib/gsap';
+import { cn } from '@/lib/utils';
 
 const WORDS = [
-  { text: 'Six', em: false },
-  { text: 'worlds.', em: false },
+  { text: 'GameOn', em: false },
   { text: 'break', em: false },
-  { text: 'One', em: false },
-  { text: 'roof.', em: true },
+  { text: 'Enter', em: true },
+  { text: 'another', em: true },
+  { text: 'world.', em: true },
 ] as const;
 
 /**
@@ -28,6 +29,57 @@ const WORDS = [
 export function Hero({ openSlots }: { openSlots: number }) {
   const scope = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
+
+  useEffect(() => {
+    const hero = scope.current;
+    if (reduced || !hero) return;
+    const visual = hero.querySelector<HTMLElement>('[data-hero-parallax]');
+    const dot = hero.querySelector<HTMLElement>('[data-cursor-dot]');
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    let frame = 0;
+    let x = 0,
+      y = 0,
+      targetX = 0,
+      targetY = 0;
+    let inside = false;
+    const move = (event: PointerEvent) => {
+      const box = hero.getBoundingClientRect();
+      targetX = event.clientX - box.left;
+      targetY = event.clientY - box.top;
+      if (!inside) {
+        x = targetX;
+        y = targetY;
+      }
+      inside = true;
+    };
+    const leave = () => {
+      inside = false;
+    };
+    const tick = () => {
+      const box = hero.getBoundingClientRect();
+      if (visual && box.bottom > 0)
+        visual.style.transform = `translate3d(0, ${Math.min(box.height, Math.max(0, -box.top)) * -0.5}px, 0)`;
+      if (dot && fine) {
+        x += (targetX - x) * 0.15;
+        y += (targetY - y) * 0.15;
+        dot.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+        dot.style.opacity = inside ? '1' : '0';
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    if (fine) {
+      hero.addEventListener('pointermove', move);
+      hero.addEventListener('pointerleave', leave);
+    }
+    frame = requestAnimationFrame(tick);
+    return () => {
+      cancelAnimationFrame(frame);
+      hero.removeEventListener('pointermove', move);
+      hero.removeEventListener('pointerleave', leave);
+      if (visual) visual.style.transform = '';
+      if (dot) dot.style.opacity = '0';
+    };
+  }, [reduced]);
 
   useGSAP(
     () => {
@@ -96,13 +148,14 @@ export function Hero({ openSlots }: { openSlots: number }) {
         timeline.kill();
       };
     },
-    { scope, dependencies: [reduced] },
+    { scope, dependencies: [reduced], revertOnUpdate: true },
   );
 
   return (
     <section ref={scope} className="hero" id="top">
       <div className="hero__mesh" aria-hidden="true" />
       <div className="hero__spotlight" data-hero-spotlight aria-hidden="true" />
+      <div className="hero__cursor" data-cursor-dot aria-hidden="true" />
 
       <div className="wrap hero__inner">
         <div>
@@ -110,13 +163,18 @@ export function Hero({ openSlots }: { openSlots: number }) {
             The flagship opens this quarter
           </div>
 
-          <h1 aria-label="Six worlds. One roof.">
+          <h1 aria-label="GameOn. Enter another world.">
             {WORDS.map((word, index) =>
               word.text === 'break' ? (
                 <br key="break" />
               ) : (
-                <span className="word" data-hero-word key={index} aria-hidden="true">
-                  <span>{word.em ? <em>{word.text}</em> : word.text}</span>{' '}
+                <span
+                  className={cn('word', word.em && 'word--tagline')}
+                  data-hero-word
+                  key={index}
+                  aria-hidden="true"
+                >
+                  <span>{word.em ? <em>{word.text}</em> : word.text}</span>
                 </span>
               ),
             )}
@@ -163,7 +221,9 @@ export function Hero({ openSlots }: { openSlots: number }) {
         </div>
 
         <div className="hero__visual" data-hero-visual>
-          <HeroVisual />
+          <div data-hero-parallax>
+            <HeroVisual />
+          </div>
         </div>
       </div>
     </section>

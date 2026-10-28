@@ -47,6 +47,7 @@ coverage/
 .eslintcache
 .turbo/
 .swc/
+.cache/
 
 # Editors
 .vscode/*

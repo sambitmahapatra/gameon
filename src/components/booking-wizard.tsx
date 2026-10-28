@@ -38,7 +38,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
   const params = useSearchParams();
 
   const preselected = params.get('zone');
-  const [step, setStep] = useState(preselected ? 2 : 1);
+  const [step, setStep] = useState(
+    preselected && zones.some((zone) => zone.id === preselected) ? 2 : 1,
+  );
   const [zoneId, setZoneId] = useState<string | null>(
     preselected && zones.some((zone) => zone.id === preselected) ? preselected : null,
   );
@@ -85,10 +87,10 @@ export function BookingWizard({ zones }: BookingWizardProps) {
   }, []);
 
   useEffect(() => {
-    if (!zoneId || step < 2) return;
+    if (!zoneId) return;
     setSlot(null);
     loadSlots(zoneId, date);
-  }, [zoneId, date, step, loadSlots]);
+  }, [zoneId, date, loadSlots]);
 
   // Today's slots that have already started are not bookable.
   const isToday = toDateKey(date) === toDateKey(new Date());

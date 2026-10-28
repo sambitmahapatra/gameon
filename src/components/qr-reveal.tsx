@@ -15,9 +15,8 @@ type QrRevealProps = {
 };
 
 /**
- * The QR code draws itself in: modules scale up from the centre outwards over
- * ~1.2s (V2 fix 4g). Drawing strokes was the original idea, but the symbol is
- * solid squares, so the modules themselves are the thing to animate.
+ * Module outlines draw in before the solid fill over 1.2 seconds. The four-
+ * module quiet zone and high-contrast host preserve a scannable final symbol.
  *
  * The matrix is rendered server-side, so the code is in the HTML and scans even
  * if the animation never runs.
@@ -36,24 +35,39 @@ export function QrReveal({ bits, size, label, px = 240 }: QrRevealProps) {
       );
       if (!modules.length) return;
 
-      const tween = gsap.from(modules, {
-        scale: 0,
-        opacity: 0,
-        transformOrigin: 'center',
-        duration: 0.5,
-        ease: 'back.out(2)',
-        stagger: { amount: 0.7, from: 'center', grid: [size, size] },
-      });
+      const tween = gsap
+        .timeline()
+        .from(
+          modules,
+          {
+            strokeDasharray: 4,
+            strokeDashoffset: 4,
+            duration: 0.8,
+            stagger: { amount: 0.4 },
+            ease: 'power2.out',
+          },
+          0,
+        )
+        .from(
+          modules,
+          {
+            fillOpacity: 0,
+            duration: 0.35,
+            stagger: { amount: 0.7 },
+            ease: 'power2.out',
+          },
+          0.15,
+        );
 
       return () => tween.kill();
     },
-    { scope, dependencies: [reduced, size] },
+    { scope, dependencies: [reduced, size], revertOnUpdate: true },
   );
 
   return (
     <svg
       ref={scope}
-      viewBox={`0 0 ${size} ${size}`}
+      viewBox={`-4 -4 ${size + 8} ${size + 8}`}
       width={px}
       height={px}
       role="img"
@@ -73,6 +87,8 @@ export function QrReveal({ bits, size, label, px = 240 }: QrRevealProps) {
             width={1}
             height={1}
             fill="currentColor"
+            stroke="currentColor"
+            strokeWidth={0.08}
           />
         );
       })}

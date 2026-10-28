@@ -5,6 +5,7 @@ import { Clock, Gamepad2, Users, Zap } from 'lucide-react';
 
 import { Reveal } from '@/components/motion/reveal';
 import { ZoneArt } from '@/components/zone-art';
+import { BrandPhoto } from '@/components/brand-photo';
 import { ZoneCard } from '@/components/zone-card';
 import { ZoneGallery } from '@/components/zone-gallery';
 import { withDb } from '@/lib/bootstrap';
@@ -93,7 +94,16 @@ export default function ZonePage({ params }: PageProps) {
       {/* full-bleed 2:1 hero in the zone's own art */}
       <div className="wrap pt-8">
         <div className="feature__art !aspect-[2/1]">
-          <ZoneArt slug={zone.id} uid={`zh-${zone.id}`} />
+          <BrandPhoto
+            src={`/images/zones/${zone.id}.webp`}
+            alt={`${zone.name} zone at GameOn`}
+            width={1920}
+            height={1080}
+            sizes="100vw"
+            priority
+            overlay
+            fallback={<ZoneArt slug={zone.id} uid={`zh-${zone.id}`} />}
+          />
         </div>
       </div>
 

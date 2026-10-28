@@ -10,6 +10,7 @@ import { Logo } from '@/components/logo';
 import { Magnetic } from '@/components/magnetic';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { cn } from '@/lib/utils';
 
 const LINKS = [
   { href: '/zones/vr-arena', label: 'Zones', match: '/zones' },
@@ -40,10 +41,10 @@ export function Navbar() {
   useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <nav className={`nav${stuck ? 'is-stuck' : ''}`}>
+    <nav className={cn('nav', stuck && 'is-stuck')}>
       <div className="wrap nav__inner">
         <Link href="/" aria-label="GameOn home">
-          <Logo idPrefix="nav" />
+          <Logo idPrefix="nav" compact />
         </Link>
 
         <div className="nav__links">
@@ -83,11 +84,13 @@ export function Navbar() {
               <SheetTitle className="font-display text-h3">Menu</SheetTitle>
 
               <div className="mt-8 flex flex-col gap-1">
-                {LINKS.map((link) => (
+                {LINKS.map((link, index) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="rounded-button px-3 py-3 text-[1.05rem] font-medium text-fg-muted transition-colors hover:bg-surface hover:text-fg"
+                    className="drawer-link rounded-button px-3 py-3 text-[1.05rem] font-medium text-fg-muted transition-colors hover:bg-surface hover:text-fg"
+                    style={{ animationDelay: `${index * 0.05}s` }}
+                    onClick={() => setOpen(false)}
                   >
                     {link.label}
                   </Link>
@@ -98,7 +101,11 @@ export function Navbar() {
                 Book a session
               </Link>
 
-              <p className="mt-6 text-meta text-fg-dim">Open 10 AM — 10 PM, every day</p>
+              <div className="mt-auto flex flex-col items-start gap-5 pt-6">
+                <LiveCounter className="!flex" />
+                <ThemeToggle />
+                <p className="text-meta text-fg-dim">Open 10 AM — 10 PM, every day</p>
+              </div>
             </SheetContent>
           </Sheet>
         </div>
