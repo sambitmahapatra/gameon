@@ -1,0 +1,17 @@
+/** Single source of truth for contact details and outbound links. */
+export const SITE = {
+  name: 'GameOn',
+  title: "GameOn — Powai's Premier Gaming Café",
+  description:
+    'Six gaming worlds and a café under one roof in Powai, Mumbai. VR arena, flight simulator, racing cockpits, esports stations, console lounge and streaming pods. Reserve a slot in under a minute.',
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  address: 'Hiranandani Gardens, Powai, Mumbai 400076',
+  phone: '+912249607890',
+  phoneDisplay: '+91 22 4960 7890',
+  email: 'play@gameon.cafe',
+  hours: 'Open 10 AM to 10 PM, daily',
+  mapsUrl: 'https://maps.google.com/?q=Hiranandani+Gardens+Powai+Mumbai',
+  whatsappUrl: 'https://wa.me/912249607890',
+  instagramUrl: 'https://instagram.com/gameon.powai',
+  youtubeUrl: 'https://youtube.com/@gameon.powai',
+} as const;

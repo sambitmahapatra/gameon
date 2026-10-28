@@ -1,0 +1,7 @@
+{
+  "extends": ["next/core-web-vitals", "eslint-config-prettier"],
+  "rules": {
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "ignorePatterns": ["out/", ".next/", "node_modules/", "android/"]
+}

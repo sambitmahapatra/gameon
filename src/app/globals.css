@@ -1,0 +1,155 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /*
+   * GameOn palette (spec 3.1) expressed as HSL triples so Tailwind can apply
+   * opacity modifiers. Hex equivalents kept in comments for reference.
+   */
+  :root {
+    --bg-deep: 220 42% 6%; /* #0A0E17 */
+    --bg-surface: 223 37% 13%; /* #141B2D */
+    --bg-elevated: 225 39% 18%; /* #1C2541 */
+    --accent-primary: 187 100% 50%; /* #00E5FF */
+    --accent-warm: 16 100% 60%; /* #FF6B35 */
+    --text-primary: 213 26% 93%; /* #E8ECF1 */
+    --text-muted: 218 14% 60%; /* #8B95A7 */
+    --border-subtle: 221 38% 20%; /* #1F2A44 */
+
+    /* shadcn/ui variable bridge — single dark theme, no light mode in v1 */
+    --background: var(--bg-deep);
+    --foreground: var(--text-primary);
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
+    --popover: var(--bg-elevated);
+    --popover-foreground: var(--text-primary);
+    --primary: var(--accent-primary);
+    --primary-foreground: var(--bg-deep);
+    --secondary: var(--bg-elevated);
+    --secondary-foreground: var(--text-primary);
+    --muted: var(--bg-elevated);
+    --muted-foreground: var(--text-muted);
+    --accent: var(--bg-elevated);
+    --accent-foreground: var(--text-primary);
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 213 26% 93%;
+    --border: var(--border-subtle);
+    --input: var(--border-subtle);
+    --ring: var(--accent-primary);
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-deep text-foreground font-sans text-body antialiased;
+    /* Faint cold wash so the near-black never reads as flat */
+    background-image: radial-gradient(
+        120% 80% at 50% -20%,
+        hsl(var(--accent-primary) / 0.07),
+        transparent 60%
+      ),
+      radial-gradient(90% 60% at 100% 100%, hsl(var(--accent-warm) / 0.04), transparent 65%);
+    background-attachment: fixed;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display font-bold text-balance;
+  }
+
+  /* Visible cyan focus ring everywhere (spec 4.5) */
+  :focus-visible {
+    @apply outline-none ring-2 ring-cyan ring-offset-2 ring-offset-deep;
+  }
+
+  ::selection {
+    background: hsl(var(--accent-primary) / 0.3);
+    color: hsl(var(--text-primary));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-[1440px] px-6 md:px-12 xl:px-24;
+  }
+
+  .eyebrow {
+    @apply font-mono text-meta tracking-tight text-cyan;
+  }
+
+  .hairline {
+    @apply h-px w-full bg-gradient-to-r from-border via-border to-transparent;
+  }
+
+  /* Zone tilt container — the transform itself is applied by GSAP */
+  .tilt-stage {
+    perspective: 1000px;
+    transform-style: preserve-3d;
+  }
+
+  .data {
+    @apply font-mono text-data;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* Hide scrollbar on the mobile snap-scroll rails */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .snap-rail {
+    @apply no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2;
+  }
+
+  .snap-rail > * {
+    @apply snap-start;
+  }
+
+  /* Pre-animation state: GSAP clears these. Kept visible when JS is off. */
+  .gs-reveal {
+    opacity: 1;
+  }
+
+  html.gsap-ready .gs-reveal {
+    opacity: 0;
+  }
+}
