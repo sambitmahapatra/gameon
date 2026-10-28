@@ -177,7 +177,7 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
         </div>
 
         <Button variant="secondary" onClick={exportCsv} className="ml-auto">
-          <Download className="size-4" />
+          <Download aria-hidden="true" className="size-4" />
           Export CSV
         </Button>
       </div>
@@ -276,7 +276,9 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
               onClick={() => pending && cancel(pending)}
               disabled={cancelling}
             >
-              {cancelling ? <Loader2 className="size-4 animate-spin" /> : null}
+              {cancelling ? (
+                <Loader2 aria-hidden="true" className="size-4 animate-spin" />
+              ) : null}
               Cancel booking
             </Button>
           </DialogFooter>

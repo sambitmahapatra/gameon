@@ -150,7 +150,7 @@ export function BookingWizard({ zones }: BookingWizardProps) {
           className="-ml-3 self-start"
           onClick={() => setStep((current) => Math.max(1, current - 1))}
         >
-          <ArrowLeft className="size-4" />
+          <ArrowLeft aria-hidden="true" className="size-4" />
           Back
         </Button>
       ) : null}
@@ -299,7 +299,7 @@ export function BookingWizard({ zones }: BookingWizardProps) {
               <div className="flex items-center justify-between">
                 <Label htmlFor="party">Party size</Label>
                 <span className="inline-flex items-center gap-1.5 font-mono text-data text-foreground">
-                  <Users className="size-3.5 text-muted-foreground" />
+                  <Users aria-hidden="true" className="size-3.5 text-muted-foreground" />
                   {partySize}
                 </span>
               </div>
@@ -387,7 +387,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
 
           <div className="flex flex-wrap items-center gap-4">
             <Button size="lg" onClick={confirm} disabled={submitting}>
-              {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
+              {submitting ? (
+                <Loader2 aria-hidden="true" className="size-4 animate-spin" />
+              ) : null}
               {submitting ? 'Reserving your slot' : 'Confirm Booking'}
             </Button>
             <Button variant="ghost" onClick={() => setStep(3)} disabled={submitting}>

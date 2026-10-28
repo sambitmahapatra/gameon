@@ -151,7 +151,7 @@ export function JoinDialog({
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
               {form.formState.isSubmitting ? (
-                <Loader2 className="size-4 animate-spin" />
+                <Loader2 aria-hidden="true" className="size-4 animate-spin" />
               ) : null}
               Join
             </Button>

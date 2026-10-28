@@ -43,7 +43,9 @@ export function BookingProgress({ step }: { step: number }) {
                     !complete && !active && 'border-border bg-surface',
                   )}
                 >
-                  {complete ? <Check className="size-2 text-cyan-foreground" /> : null}
+                  {complete ? (
+                    <Check aria-hidden="true" className="size-2 text-cyan-foreground" />
+                  ) : null}
                 </span>
 
                 {index < STEP_LABELS.length - 1 ? (

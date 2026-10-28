@@ -127,7 +127,7 @@ export function Hero() {
               key={index}
               data-hero-char
               aria-hidden="true"
-              className="opacity-0"
+              className="gs-hidden"
               style={{ whiteSpace: char === ' ' ? 'pre' : undefined }}
             >
               {char}
@@ -137,16 +137,13 @@ export function Hero() {
 
         <p
           data-hero-rise
-          className="mt-7 max-w-prose translate-y-4 text-body text-muted-foreground opacity-0"
+          className="gs-rise mt-7 max-w-prose text-body text-muted-foreground"
         >
           Six worlds. One roof. Zero compromises. VR free-roam, a real 737 cockpit, motion
           racing rigs, tournament PCs, a console lounge and streaming pods.
         </p>
 
-        <div
-          data-hero-rise
-          className="mt-10 flex translate-y-4 flex-wrap gap-4 opacity-0"
-        >
+        <div data-hero-rise className="gs-rise mt-10 flex flex-wrap gap-4">
           <Button asChild size="lg">
             <Link href="/book">Book a Session</Link>
           </Button>
@@ -155,10 +152,7 @@ export function Hero() {
           </Button>
         </div>
 
-        <dl
-          data-hero-rise
-          className="mt-16 flex translate-y-4 flex-wrap gap-x-10 gap-y-4 opacity-0"
-        >
+        <dl data-hero-rise className="gs-rise mt-16 flex flex-wrap gap-x-10 gap-y-4">
           {[
             ['Zones under one roof', '6'],
             ['Open daily', '10 AM to 10 PM'],
@@ -177,7 +171,7 @@ export function Hero() {
         aria-label="Scroll to zones"
         className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 rounded-full border border-border p-2 text-muted-foreground transition-colors hover:border-cyan/50 hover:text-cyan motion-safe:animate-drift-y md:block"
       >
-        <ChevronDown className="size-4" />
+        <ChevronDown aria-hidden="true" className="size-4" />
       </a>
     </section>
   );

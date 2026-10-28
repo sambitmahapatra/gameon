@@ -49,7 +49,10 @@ export function Pricing() {
               <ul className="flex flex-1 flex-col gap-3">
                 {tier.highlights.map((highlight) => (
                   <li key={highlight} className="flex items-start gap-2.5 text-meta">
-                    <Check className="mt-0.5 size-4 shrink-0 text-cyan" />
+                    <Check
+                      aria-hidden="true"
+                      className="mt-0.5 size-4 shrink-0 text-cyan"
+                    />
                     <span className="text-muted-foreground">{highlight}</span>
                   </li>
                 ))}

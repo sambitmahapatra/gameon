@@ -83,7 +83,7 @@ export function SignatureExperiences({ zones }: { zones: Zone[] }) {
                       className="inline-flex items-center gap-1.5 rounded-button text-meta text-muted-foreground transition-colors hover:text-cyan"
                     >
                       What is inside
-                      <ArrowUpRight className="size-3.5" />
+                      <ArrowUpRight aria-hidden="true" className="size-3.5" />
                     </Link>
                     <span className="font-mono text-data text-muted-foreground">
                       {inr(zone.price_per_hour)}/hour

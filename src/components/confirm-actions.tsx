@@ -82,12 +82,12 @@ export function ConfirmActions({
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap gap-4">
         <Button onClick={addToCalendar} variant="outline" disabled={cancelled}>
-          <CalendarPlus className="size-4" />
+          <CalendarPlus aria-hidden="true" className="size-4" />
           Add to calendar
         </Button>
         <Button asChild variant="secondary">
           <a href={whatsapp}>
-            <MessageCircle className="size-4" />
+            <MessageCircle aria-hidden="true" className="size-4" />
             WhatsApp us
           </a>
         </Button>
@@ -120,7 +120,9 @@ export function ConfirmActions({
                 Keep it
               </Button>
               <Button variant="destructive" onClick={cancelBooking} disabled={cancelling}>
-                {cancelling ? <Loader2 className="size-4 animate-spin" /> : null}
+                {cancelling ? (
+                  <Loader2 aria-hidden="true" className="size-4 animate-spin" />
+                ) : null}
                 Cancel booking
               </Button>
             </DialogFooter>

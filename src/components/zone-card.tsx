@@ -102,7 +102,7 @@ export function ZoneCard({ zone, href, className }: ZoneCardProps) {
               {inr(zone.price_per_hour)}/hour
             </span>
             <span className="inline-flex items-center gap-1.5 text-meta text-muted-foreground">
-              <Users className="size-3.5" />
+              <Users aria-hidden="true" className="size-3.5" />
               up to {zone.capacity}
             </span>
           </div>

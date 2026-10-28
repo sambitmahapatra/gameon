@@ -1,7 +1,7 @@
 import { CalendarDays, Trophy, Users } from 'lucide-react';
 
+import { EventRegisterButton } from '@/components/event-register-button';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import type { GameEvent } from '@/lib/types';
 import { cn, fromDateKey, inr } from '@/lib/utils';
 
@@ -53,7 +53,7 @@ export function EventCard({
 
       <dl className="flex flex-wrap gap-x-6 gap-y-2 text-meta">
         <div className="flex items-center gap-1.5">
-          <CalendarDays className="size-3.5 text-muted-foreground" />
+          <CalendarDays aria-hidden="true" className="size-3.5 text-muted-foreground" />
           <dd className="text-muted-foreground">
             {date.toLocaleDateString('en-IN', {
               weekday: 'short',
@@ -64,12 +64,12 @@ export function EventCard({
         </div>
         {event.prize_pool > 0 ? (
           <div className="flex items-center gap-1.5">
-            <Trophy className="size-3.5 text-ember" />
+            <Trophy aria-hidden="true" className="size-3.5 text-ember" />
             <dd className="font-mono text-foreground">{inr(event.prize_pool)}</dd>
           </div>
         ) : null}
         <div className="flex items-center gap-1.5">
-          <Users className="size-3.5 text-muted-foreground" />
+          <Users aria-hidden="true" className="size-3.5 text-muted-foreground" />
           <dd className="text-muted-foreground">
             {event.registered} of {event.slots} in
           </dd>
@@ -100,15 +100,12 @@ export function EventCard({
       </div>
 
       {past ? null : (
-        <Button variant={left === 0 ? 'secondary' : 'outline'} className="w-full" asChild>
-          <a
-            href={`https://wa.me/912249607890?text=${encodeURIComponent(
-              `I want to register for ${event.title} on ${event.date}`,
-            )}`}
-          >
-            {left === 0 ? 'Join the waitlist' : 'Register'}
-          </a>
-        </Button>
+        <EventRegisterButton
+          eventId={event.id}
+          title={event.title}
+          date={event.date}
+          full={left === 0}
+        />
       )}
     </article>
   );

@@ -33,7 +33,7 @@ function Value({ value }: { value: string }) {
   if (value === 'No' || value === 'None') {
     return (
       <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-        <Minus className="size-3.5" />
+        <Minus aria-hidden="true" className="size-3.5" />
         <span className="sr-only">Not included</span>
       </span>
     );
@@ -41,7 +41,7 @@ function Value({ value }: { value: string }) {
   if (value === 'Yes') {
     return (
       <span className="inline-flex items-center gap-1.5 text-cyan">
-        <Check className="size-4" />
+        <Check aria-hidden="true" className="size-4" />
         <span className="sr-only">Included</span>
       </span>
     );

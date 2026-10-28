@@ -71,14 +71,12 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark">
-      <body
-        className={cn(
-          display.variable,
-          body.variable,
-          mono.variable,
-          'min-h-dvh overflow-x-hidden',
-        )}
-      >
+      {/*
+        No overflow-x-hidden on body: it would make body a scroll container and
+        break the sticky navbar. Sections that bleed past the viewport (the hero
+        and final CTA glows) clip themselves instead.
+      */}
+      <body className={cn(display.variable, body.variable, mono.variable, 'min-h-dvh')}>
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:fixed focus:left-6 focus:top-6 focus:z-50 focus:rounded-button focus:bg-cyan focus:px-4 focus:py-2 focus:font-medium focus:text-cyan-foreground"

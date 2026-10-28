@@ -85,7 +85,7 @@ export function Navbar() {
                 className="lg:hidden"
                 aria-label="Open menu"
               >
-                <Menu className="size-5" />
+                <Menu aria-hidden="true" className="size-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right">

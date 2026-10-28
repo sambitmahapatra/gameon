@@ -34,7 +34,10 @@ const AccordionTrigger = React.forwardRef<
       {...props}
     >
       {children}
-      <Plus className="size-4 shrink-0 text-cyan transition-transform duration-200" />
+      <Plus
+        aria-hidden="true"
+        className="size-4 shrink-0 text-cyan transition-transform duration-200"
+      />
     </AccordionPrimitive.Trigger>
   </AccordionPrimitive.Header>
 ));

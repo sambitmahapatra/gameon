@@ -123,7 +123,7 @@ export default function ZonePage({ params }: PageProps) {
                   key={item}
                   className="flex items-center gap-3 rounded-card border border-border bg-surface px-4 py-3 text-meta"
                 >
-                  <Zap className="size-3.5 shrink-0 text-cyan" />
+                  <Zap aria-hidden="true" className="size-3.5 shrink-0 text-cyan" />
                   <span className="text-muted-foreground">{item}</span>
                 </li>
               ))}
@@ -176,7 +176,7 @@ export default function ZonePage({ params }: PageProps) {
           <h2 className="font-display text-h3">Specs</h2>
           <dl className="flex flex-col gap-5">
             <div className="flex items-start gap-3">
-              <Users className="mt-0.5 size-4 shrink-0 text-cyan" />
+              <Users aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-cyan" />
               <div>
                 <dt className="text-meta text-muted-foreground">Capacity</dt>
                 <dd className="font-mono text-data text-foreground">
@@ -185,7 +185,7 @@ export default function ZonePage({ params }: PageProps) {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Gamepad2 className="mt-0.5 size-4 shrink-0 text-cyan" />
+              <Gamepad2 aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-cyan" />
               <div>
                 <dt className="text-meta text-muted-foreground">Rate</dt>
                 <dd className="font-mono text-data text-foreground">
@@ -194,7 +194,7 @@ export default function ZonePage({ params }: PageProps) {
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Clock className="mt-0.5 size-4 shrink-0 text-cyan" />
+              <Clock aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-cyan" />
               <div>
                 <dt className="text-meta text-muted-foreground">Session lengths</dt>
                 <dd className="text-meta text-foreground">

@@ -149,12 +149,20 @@
     @apply snap-start;
   }
 
-  /* Pre-animation state: GSAP clears these. Kept visible when JS is off. */
-  .gs-reveal {
-    opacity: 1;
-  }
+  /*
+   * Pre-animation state for elements a GSAP timeline fades in. Only hidden
+   * where scripting is available, so with JS off (or if a bundle fails) the
+   * content is simply there instead of invisible forever.
+   */
+  @media (scripting: enabled) {
+    .gs-hidden {
+      opacity: 0;
+    }
 
-  html.gsap-ready .gs-reveal {
-    opacity: 0;
+    /* Same, plus the rise offset the entrance tween animates away. */
+    .gs-rise {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
   }
 }

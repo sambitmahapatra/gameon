@@ -52,21 +52,21 @@ export function Footer() {
                 className="rounded-button border border-border p-2.5 text-muted-foreground transition-colors hover:border-cyan/50 hover:text-cyan"
                 aria-label="Message GameOn on WhatsApp"
               >
-                <MessageCircle className="size-4" />
+                <MessageCircle aria-hidden="true" className="size-4" />
               </a>
               <a
                 href={SITE.instagramUrl}
                 className="rounded-button border border-border p-2.5 text-muted-foreground transition-colors hover:border-cyan/50 hover:text-cyan"
                 aria-label="GameOn on Instagram"
               >
-                <Instagram className="size-4" />
+                <Instagram aria-hidden="true" className="size-4" />
               </a>
               <a
                 href={SITE.youtubeUrl}
                 className="rounded-button border border-border p-2.5 text-muted-foreground transition-colors hover:border-cyan/50 hover:text-cyan"
                 aria-label="GameOn on YouTube"
               >
-                <Youtube className="size-4" />
+                <Youtube aria-hidden="true" className="size-4" />
               </a>
             </div>
           </div>
@@ -86,7 +86,7 @@ export function Footer() {
                         rel="noreferrer"
                         className="inline-flex items-center gap-1.5 text-meta text-muted-foreground transition-colors hover:text-cyan"
                       >
-                        <MapPin className="size-3.5" />
+                        <MapPin aria-hidden="true" className="size-3.5" />
                         {link.label}
                       </a>
                     ) : (

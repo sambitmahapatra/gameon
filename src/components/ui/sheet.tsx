@@ -32,7 +32,7 @@ const SheetContent = React.forwardRef<
     >
       {children}
       <SheetPrimitive.Close className="absolute right-5 top-5 rounded-button p-1 text-muted-foreground transition-colors hover:bg-elevated hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
-        <X className="size-5" />
+        <X aria-hidden="true" className="size-5" />
         <span className="sr-only">Close menu</span>
       </SheetPrimitive.Close>
     </SheetPrimitive.Content>

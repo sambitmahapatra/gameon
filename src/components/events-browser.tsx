@@ -74,6 +74,7 @@ export function EventsBrowser({ events }: { events: GameEvent[] }) {
             aria-expanded={showPast}
           >
             <ChevronDown
+              aria-hidden="true"
               className={cn('size-4 transition-transform', showPast && 'rotate-180')}
             />
             {showPast ? 'Hide past events' : `Past events (${past.length})`}
