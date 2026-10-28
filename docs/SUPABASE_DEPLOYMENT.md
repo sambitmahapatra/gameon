@@ -57,6 +57,8 @@ Leave `NEXT_PUBLIC_API_BASE` unset for this website, since its API is on the sam
 
 Set the framework to Next.js, build command to `npm run build`, and keep the output directory at the framework default. Deploy the updated commit **after** database setup succeeds. Redeploy after changing environment variables; changing them does not update a running deployment.
 
+The three website fonts are bundled in `public/fonts` and loaded with `next/font/local`, so builds do not download fonts from Google. Database reads opt out of prerendering before opening connections, so a production build also does not require a live Supabase connection. Runtime requests still require a reachable, initialized database.
+
 Do not run database setup automatically on every request or build. Normal requests only top up missing future slots once per day per running instance, without overwriting existing records.
 
 ## 4. Verify

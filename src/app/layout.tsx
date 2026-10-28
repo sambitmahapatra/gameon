@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from 'next/font/google';
+import localFont from 'next/font/local';
 
 import { Footer } from '@/components/footer';
 import { Navbar } from '@/components/navbar';
@@ -11,23 +11,26 @@ import { cn } from '@/lib/utils';
 
 import './globals.css';
 
-const display = Bricolage_Grotesque({
-  subsets: ['latin'],
-  weight: ['400', '500', '700', '800'],
+const display = localFont({
+  src: '../../public/fonts/bricolage-grotesque-latin.woff2',
+  weight: '400 800',
+  style: 'normal',
   variable: '--font-display',
   display: 'swap',
 });
 
-const body = Instrument_Sans({
-  subsets: ['latin'],
-  weight: ['400', '500', '600'],
+const body = localFont({
+  src: '../../public/fonts/instrument-sans-latin.woff2',
+  weight: '400 600',
+  style: 'normal',
   variable: '--font-body',
   display: 'swap',
 });
 
-const mono = JetBrains_Mono({
-  subsets: ['latin'],
-  weight: ['400', '500'],
+const mono = localFont({
+  src: '../../public/fonts/jetbrains-mono-latin.woff2',
+  weight: '400 500',
+  style: 'normal',
   variable: '--font-mono',
   display: 'swap',
 });
