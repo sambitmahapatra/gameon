@@ -20,7 +20,7 @@ import { FloatingField } from '@/components/ui/floating-field';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import type { Slot, Zone } from '@/lib/types';
-import { api, inrDigits, prettyTime, toDateKey } from '@/lib/utils';
+import { api, apiBase, inrDigits, prettyTime, toDateKey } from '@/lib/utils';
 import { type DetailsInput, detailsSchema } from '@/lib/validation';
 
 type BookingWizardProps = { zones: Zone[] };
@@ -145,7 +145,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
         return;
       }
 
-      router.push(`/book/confirm/${payload.booking.id}`);
+      const confirmationPath = `/book/confirm/${payload.booking.id}`;
+      if (apiBase) window.location.assign(api(confirmationPath));
+      else router.push(confirmationPath);
     } catch {
       toast.error('We cannot reach the server. Check your connection.');
     } finally {

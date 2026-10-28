@@ -17,22 +17,28 @@ import path from 'node:path';
 const root = process.cwd();
 
 /**
- * Routes that cannot exist in the export: API handlers, and the staff dashboard
- * (it reads searchParams, and a floor tool has no place inside the app anyway).
+ * Server-only routes: API handlers, the staff dashboard and private booking
+ * confirmations. Booking IDs are created at runtime and must never be exported.
  */
 const PARKED = [
-  { live: path.join(root, 'src', 'app', 'api'), aside: path.join(root, '.export-parked-api') },
+  {
+    live: path.join(root, 'src', 'app', 'api'),
+    aside: path.join(root, '.export-parked-api'),
+  },
   {
     live: path.join(root, 'src', 'app', 'admin'),
     aside: path.join(root, '.export-parked-admin'),
+  },
+  {
+    live: path.join(root, 'src', 'app', 'book', 'confirm'),
+    aside: path.join(root, '.export-parked-confirm'),
   },
 ];
 
 for (const entry of PARKED) {
   if (fs.existsSync(entry.aside)) {
     console.error(
-      `Could not move ${error.path} aside: something is holding it open. ` +
-        'Stop the dev server (npm run dev) and run this again.',
+      `Found ${entry.aside} from an interrupted export. Restore it to ${entry.live} before retrying.`,
     );
     process.exit(1);
   }

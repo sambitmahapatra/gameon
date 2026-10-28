@@ -11,9 +11,10 @@ table concludes, and it is why `better-sqlite3` being a native module does not m
 database lives on the server, never inside the APK.
 
 **Bundled export.** Comment out `server.url` and the contents of `./out` ship inside the
-APK. First paint is faster and the shell works offline, but any route generated after the
-export — a new booking's confirmation page — is not in the bundle, so set
-`NEXT_PUBLIC_API_BASE` and expect the confirmation screen to be fetched, not prerendered.
+APK. First paint is faster and the shell works offline. Private confirmation pages are
+excluded from the export, along with API routes and the staff dashboard. Set
+`NEXT_PUBLIC_API_BASE` to the hosted site's origin: after creating a booking, the bundle
+navigates to that site's confirmation page. The hosted WebView mode stays on the live site.
 
 ## Steps
 

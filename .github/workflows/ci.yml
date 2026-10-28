@@ -48,4 +48,6 @@ jobs:
         run: |
           test -d src/app/api || { echo "src/app/api missing after export"; exit 1; }
           test -d src/app/admin || { echo "src/app/admin missing after export"; exit 1; }
+          test -f 'src/app/book/confirm/[id]/page.tsx' || { echo "confirmation route missing after export"; exit 1; }
+          test ! -d out/book/confirm || { echo "private confirmations included in export"; exit 1; }
           test -f out/index.html || { echo "static export produced no index.html"; exit 1; }

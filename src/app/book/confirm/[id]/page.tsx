@@ -9,28 +9,13 @@ import { Confetti } from '@/components/confetti';
 import { QrReveal } from '@/components/qr-reveal';
 import { WordReveal } from '@/components/word-reveal';
 import { withDb } from '@/lib/bootstrap';
-import { getBooking, listBookings } from '@/lib/db';
-import { isStaticExport } from '@/lib/render-mode';
+import { getBooking } from '@/lib/db';
 import { SITE } from '@/lib/site';
 import { fromDateKey, inrDigits, prettyTime } from '@/lib/utils';
 
 export { dynamic } from '@/lib/render-mode';
 
 type PageProps = { params: { id: string } };
-
-/**
- * Only the static export needs these. It can only emit pages for bookings that
- * already exist at build time, which is why the APK points its WebView at the
- * hosted site (see capacitor.config.ts) rather than shipping the export alone.
- */
-export async function generateStaticParams() {
-  if (!isStaticExport) return [];
-  return (
-    await withDb(async () => await listBookings({ status: 'confirmed', limit: 50 }))
-  ).map((booking) => ({
-    id: booking.id,
-  }));
-}
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   return {
