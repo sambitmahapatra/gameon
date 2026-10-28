@@ -104,7 +104,9 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
       const res = await fetch(api(`/api/bookings/${booking.id}`), { method: 'DELETE' });
       if (!res.ok) {
         const payload = (await res.json()) as { error?: string };
-        toast.error(payload.error ?? 'Something broke on our end. Try again in a moment.');
+        toast.error(
+          payload.error ?? 'Something broke on our end. Try again in a moment.',
+        );
         return;
       }
       setRows((current) =>
@@ -218,13 +220,19 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
                   </TableCell>
                   <TableCell className="font-mono">{booking.party_size}</TableCell>
                   <TableCell>
-                    <Badge variant={booking.status === 'confirmed' ? 'success' : 'neutral'}>
+                    <Badge
+                      variant={booking.status === 'confirmed' ? 'success' : 'neutral'}
+                    >
                       {booking.status}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
                     {booking.status === 'confirmed' ? (
-                      <Button variant="ghost" size="sm" onClick={() => setPending(booking)}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setPending(booking)}
+                      >
                         Cancel
                       </Button>
                     ) : (
@@ -256,7 +264,11 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="ghost" onClick={() => setPending(null)} disabled={cancelling}>
+            <Button
+              variant="ghost"
+              onClick={() => setPending(null)}
+              disabled={cancelling}
+            >
               Keep it
             </Button>
             <Button

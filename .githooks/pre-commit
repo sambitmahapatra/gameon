@@ -1,0 +1,15 @@
+#!/bin/sh
+# Opt in with: git config core.hooksPath .githooks
+#
+# Fast checks only — formatting and types. The full build runs in CI.
+set -e
+
+staged=$(git diff --cached --name-only --diff-filter=ACM -- '*.ts' '*.tsx' '*.css')
+
+if [ -n "$staged" ]; then
+  echo "pre-commit: prettier"
+  echo "$staged" | xargs npx prettier --check
+
+  echo "pre-commit: tsc"
+  npx tsc --noEmit
+fi

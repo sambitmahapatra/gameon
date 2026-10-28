@@ -43,8 +43,8 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <Logo />
             <p className="max-w-prose text-meta text-muted-foreground">
-              Six gaming worlds and a café under one roof in Powai. Walk in, or reserve the rig
-              you want before you leave the house.
+              Six gaming worlds and a café under one roof in Powai. Walk in, or reserve
+              the rig you want before you leave the house.
             </p>
             <div className="flex items-center gap-3">
               <a

@@ -20,11 +20,13 @@ export default function GlobalError({
       <p className="eyebrow">Something went wrong</p>
       <h1 className="text-h1">Something broke on our end</h1>
       <p className="max-w-prose text-body text-muted-foreground">
-        Try again in a moment. If it keeps happening, message us on WhatsApp and we will book
-        you in by hand.
+        Try again in a moment. If it keeps happening, message us on WhatsApp and we will
+        book you in by hand.
       </p>
       {error.digest ? (
-        <p className="font-mono text-meta text-muted-foreground">Reference {error.digest}</p>
+        <p className="font-mono text-meta text-muted-foreground">
+          Reference {error.digest}
+        </p>
       ) : null}
       <div className="flex flex-wrap gap-4 pt-2">
         <Button onClick={reset} size="lg">

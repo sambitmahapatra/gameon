@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { withDb } from '@/lib/bootstrap';
 import { getZones } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
+export { dynamic } from '@/lib/render-mode';
 
 export const metadata: Metadata = {
   title: 'Book a session',

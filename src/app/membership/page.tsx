@@ -56,8 +56,8 @@ export default function MembershipPage() {
         <p className="eyebrow">Membership</p>
         <h1 className="text-h1">Members play more</h1>
         <p className="text-body text-muted-foreground">
-          If you are here more than twice a month, a membership already pays for itself. Hours
-          work across every zone, and you keep your rate during tournaments.
+          If you are here more than twice a month, a membership already pays for itself.
+          Hours work across every zone, and you keep your rate during tournaments.
         </p>
         <div className="mt-2 flex flex-wrap gap-4">
           <JoinDialog />
@@ -162,7 +162,10 @@ export default function MembershipPage() {
                       <JoinDialog
                         defaultTier={tier.id as 'bronze' | 'silver' | 'gold'}
                         trigger={
-                          <Button size="sm" variant={tier.popular ? 'default' : 'secondary'}>
+                          <Button
+                            size="sm"
+                            variant={tier.popular ? 'default' : 'secondary'}
+                          >
                             Join {tier.name}
                           </Button>
                         }

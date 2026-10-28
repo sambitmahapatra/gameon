@@ -27,7 +27,13 @@ export function LogoMark({ className }: { className?: string }) {
         strokeLinejoin="round"
         opacity="0.9"
       />
-      <circle cx="16" cy="16" r="14.5" stroke="hsl(var(--border-subtle))" strokeWidth="1" />
+      <circle
+        cx="16"
+        cy="16"
+        r="14.5"
+        stroke="hsl(var(--border-subtle))"
+        strokeWidth="1"
+      />
     </svg>
   );
 }

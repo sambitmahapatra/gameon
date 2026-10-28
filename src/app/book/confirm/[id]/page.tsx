@@ -9,13 +9,28 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { withDb } from '@/lib/bootstrap';
-import { getBooking } from '@/lib/db';
+import { getBooking, listBookings } from '@/lib/db';
+import { isStaticExport } from '@/lib/render-mode';
 import { SITE } from '@/lib/site';
 import { fromDateKey, inr, prettyTime } from '@/lib/utils';
 
-export const dynamic = 'force-dynamic';
+export { dynamic } from '@/lib/render-mode';
 
 type PageProps = { params: { id: string } };
+
+/**
+ * Only the static export needs these. It can only emit pages for bookings that
+ * already exist at build time, which is why the APK points its WebView at the
+ * hosted site (see capacitor.config.ts) rather than shipping the export alone.
+ */
+export function generateStaticParams() {
+  if (!isStaticExport) return [];
+  return withDb(() => listBookings({ status: 'confirmed', limit: 50 })).map(
+    (booking) => ({
+      id: booking.id,
+    }),
+  );
+}
 
 export function generateMetadata({ params }: PageProps): Metadata {
   return {
@@ -72,7 +87,9 @@ export default async function ConfirmPage({ params }: PageProps) {
           />
           <div className="flex flex-col gap-1">
             <span className="text-meta text-muted-foreground">Booking ID</span>
-            <span className="font-mono text-h3 tracking-tight text-cyan">{booking.id}</span>
+            <span className="font-mono text-h3 tracking-tight text-cyan">
+              {booking.id}
+            </span>
           </div>
         </div>
 

@@ -71,9 +71,15 @@ const config: Config = {
       },
       fontSize: {
         // Spec 3.2 type scale
-        hero: ['clamp(2.75rem, 7vw, 4.5rem)', { lineHeight: '1.05', letterSpacing: '-0.03em' }],
+        hero: [
+          'clamp(2.75rem, 7vw, 4.5rem)',
+          { lineHeight: '1.05', letterSpacing: '-0.03em' },
+        ],
         h1: ['clamp(2rem, 4.5vw, 3rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
-        h2: ['clamp(1.625rem, 3vw, 2rem)', { lineHeight: '1.2', letterSpacing: '-0.015em' }],
+        h2: [
+          'clamp(1.625rem, 3vw, 2rem)',
+          { lineHeight: '1.2', letterSpacing: '-0.015em' },
+        ],
         h3: ['1.5rem', { lineHeight: '1.3' }],
         body: ['1rem', { lineHeight: '1.6' }],
         meta: ['0.875rem', { lineHeight: '1.5' }],

@@ -39,7 +39,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        'relative z-50 max-h-72 min-w-[8rem] overflow-hidden rounded-card border border-border bg-elevated text-foreground shadow-panel data-[state=closed]:animate-out data-[state=open]:animate-in data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'relative z-50 max-h-72 min-w-[8rem] overflow-hidden rounded-card border border-border bg-elevated text-foreground shadow-panel data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         position === 'popper' && 'data-[side=bottom]:translate-y-1',
         className,
       )}
@@ -80,11 +80,4 @@ const SelectItem = React.forwardRef<
 ));
 SelectItem.displayName = SelectPrimitive.Item.displayName;
 
-export {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-};
+export { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue };

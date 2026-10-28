@@ -32,7 +32,10 @@ export function SlotPicker({
     () => {
       if (reduced || loading || !scope.current || !slots.length) return;
 
-      const buttons = gsap.utils.toArray<HTMLElement>('[data-slot]:not([disabled])', scope.current);
+      const buttons = gsap.utils.toArray<HTMLElement>(
+        '[data-slot]:not([disabled])',
+        scope.current,
+      );
       if (!buttons.length) return;
 
       gsap.fromTo(

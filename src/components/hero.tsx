@@ -32,7 +32,10 @@ export function Hero() {
 
       const headline = scope.current.querySelector<HTMLElement>('[data-hero-headline]');
       const chars = gsap.utils.toArray<HTMLElement>('[data-hero-char]', scope.current);
-      const particles = gsap.utils.toArray<HTMLElement>('[data-hero-particle]', scope.current);
+      const particles = gsap.utils.toArray<HTMLElement>(
+        '[data-hero-particle]',
+        scope.current,
+      );
       const rest = gsap.utils.toArray<HTMLElement>('[data-hero-rise]', scope.current);
 
       if (reduced) {
@@ -76,7 +79,7 @@ export function Hero() {
       {/* Drifting field behind the content */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.07] bg-grid-faint [background-size:72px_72px]"
+        className="pointer-events-none absolute inset-0 bg-grid-faint opacity-[0.07] [background-size:72px_72px]"
       />
       <div
         aria-hidden="true"
@@ -136,11 +139,14 @@ export function Hero() {
           data-hero-rise
           className="mt-7 max-w-prose translate-y-4 text-body text-muted-foreground opacity-0"
         >
-          Six worlds. One roof. Zero compromises. VR free-roam, a real 737 cockpit,
-          motion racing rigs, tournament PCs, a console lounge and streaming pods.
+          Six worlds. One roof. Zero compromises. VR free-roam, a real 737 cockpit, motion
+          racing rigs, tournament PCs, a console lounge and streaming pods.
         </p>
 
-        <div data-hero-rise className="mt-10 flex translate-y-4 flex-wrap gap-4 opacity-0">
+        <div
+          data-hero-rise
+          className="mt-10 flex translate-y-4 flex-wrap gap-4 opacity-0"
+        >
           <Button asChild size="lg">
             <Link href="/book">Book a Session</Link>
           </Button>

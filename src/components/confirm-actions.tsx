@@ -59,7 +59,9 @@ export function ConfirmActions({
       const res = await fetch(api(`/api/bookings/${id}`), { method: 'DELETE' });
       if (!res.ok) {
         const payload = (await res.json()) as { error?: string };
-        toast.error(payload.error ?? 'Something broke on our end. Try again in a moment.');
+        toast.error(
+          payload.error ?? 'Something broke on our end. Try again in a moment.',
+        );
         return;
       }
       toast.success('Booking cancelled. The slot is back on the floor.');
@@ -94,7 +96,10 @@ export function ConfirmActions({
       {cancelled ? null : (
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild>
-            <Button variant="link" className="h-auto self-start p-0 text-muted-foreground">
+            <Button
+              variant="link"
+              className="h-auto self-start p-0 text-muted-foreground"
+            >
               Cancel this booking
             </Button>
           </DialogTrigger>
@@ -102,12 +107,16 @@ export function ConfirmActions({
             <DialogHeader>
               <DialogTitle>Cancel booking {id}?</DialogTitle>
               <DialogDescription>
-                The slot goes straight back on the floor, so someone else may take it. There
-                is no charge either way.
+                The slot goes straight back on the floor, so someone else may take it.
+                There is no charge either way.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button variant="ghost" onClick={() => setOpen(false)} disabled={cancelling}>
+              <Button
+                variant="ghost"
+                onClick={() => setOpen(false)}
+                disabled={cancelling}
+              >
                 Keep it
               </Button>
               <Button variant="destructive" onClick={cancelBooking} disabled={cancelling}>

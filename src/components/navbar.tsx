@@ -6,7 +6,13 @@ import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 import { LiveCounter } from '@/components/live-counter';
 import { Logo } from '@/components/logo';
 import { cn } from '@/lib/utils';
@@ -73,7 +79,12 @@ export function Navbar() {
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden" aria-label="Open menu">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="lg:hidden"
+                aria-label="Open menu"
+              >
                 <Menu className="size-5" />
               </Button>
             </SheetTrigger>

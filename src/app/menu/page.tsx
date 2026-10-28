@@ -36,8 +36,8 @@ export default function MenuPage() {
         <p className="eyebrow">Café</p>
         <h1 className="text-h1">Fuel between frags</h1>
         <p className="text-body text-muted-foreground">
-          Food reaches every zone, so you do not have to pause a match to eat. Everything is
-          made to order between 10 AM and 9:30 PM.
+          Food reaches every zone, so you do not have to pause a match to eat. Everything
+          is made to order between 10 AM and 9:30 PM.
         </p>
       </header>
 
@@ -53,7 +53,11 @@ export default function MenuPage() {
 
           {MENU_CATEGORIES.map((category) => (
             <TabsContent key={category.id} value={category.id}>
-              <SectionHeading title={category.label} sub={category.note} className="sr-only" />
+              <SectionHeading
+                title={category.label}
+                sub={category.note}
+                className="sr-only"
+              />
               <p className="mb-8 text-meta text-muted-foreground">{category.note}</p>
 
               <ul className="grid gap-x-12 gap-y-7 md:grid-cols-2">
@@ -85,8 +89,8 @@ export default function MenuPage() {
       </div>
 
       <p className="mt-12 rounded-card border border-border bg-surface px-6 py-5 text-meta text-muted-foreground">
-        Order at the counter or from the QR card at your station. Taxes are included; we do not
-        add a service charge.
+        Order at the counter or from the QR card at your station. Taxes are included; we
+        do not add a service charge.
       </p>
     </div>
   );

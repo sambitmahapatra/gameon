@@ -56,7 +56,9 @@ export function JoinDialog({
 
       if (!res.ok) {
         const payload = (await res.json()) as { error?: string };
-        toast.error(payload.error ?? 'Something broke on our end. Try again in a moment.');
+        toast.error(
+          payload.error ?? 'Something broke on our end. Try again in a moment.',
+        );
         return;
       }
 
@@ -70,13 +72,15 @@ export function JoinDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{trigger ?? <Button size="lg">Become a member</Button>}</DialogTrigger>
+      <DialogTrigger asChild>
+        {trigger ?? <Button size="lg">Become a member</Button>}
+      </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Become a member</DialogTitle>
           <DialogDescription>
-            We hold your tier at the counter. Nothing is charged here, and you can switch tier
-            on your first visit.
+            We hold your tier at the counter. Nothing is charged here, and you can switch
+            tier on your first visit.
           </DialogDescription>
         </DialogHeader>
 
@@ -85,7 +89,9 @@ export function JoinDialog({
             <Label htmlFor="member-name">Name</Label>
             <Input id="member-name" autoComplete="name" {...form.register('name')} />
             {form.formState.errors.name ? (
-              <p className="text-meta text-red-300">{form.formState.errors.name.message}</p>
+              <p className="text-meta text-red-300">
+                {form.formState.errors.name.message}
+              </p>
             ) : null}
           </div>
 
@@ -105,7 +111,9 @@ export function JoinDialog({
               />
             </div>
             {form.formState.errors.phone ? (
-              <p className="text-meta text-red-300">{form.formState.errors.phone.message}</p>
+              <p className="text-meta text-red-300">
+                {form.formState.errors.phone.message}
+              </p>
             ) : null}
           </div>
 
@@ -114,7 +122,9 @@ export function JoinDialog({
             <Select
               value={form.watch('tier')}
               onValueChange={(value) =>
-                form.setValue('tier', value as MemberInput['tier'], { shouldValidate: true })
+                form.setValue('tier', value as MemberInput['tier'], {
+                  shouldValidate: true,
+                })
               }
             >
               <SelectTrigger id="member-tier">
@@ -140,7 +150,9 @@ export function JoinDialog({
               Not now
             </Button>
             <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? <Loader2 className="size-4 animate-spin" /> : null}
+              {form.formState.isSubmitting ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : null}
               Join
             </Button>
           </DialogFooter>

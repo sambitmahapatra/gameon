@@ -8,7 +8,7 @@ import { ZonesGrid } from '@/components/sections/zones-grid';
 import { withDb } from '@/lib/bootstrap';
 import { getSiteStats, getZones, listEvents } from '@/lib/db';
 
-export const dynamic = 'force-dynamic';
+export { dynamic } from '@/lib/render-mode';
 
 export default function HomePage() {
   const { zones, stats, events } = withDb(() => ({

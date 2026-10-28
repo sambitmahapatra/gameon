@@ -12,7 +12,8 @@ import type {
   Zone,
 } from './types';
 
-const DB_PATH = process.env.DATABASE_PATH ?? path.join(process.cwd(), 'data', 'gameon.db');
+const DB_PATH =
+  process.env.DATABASE_PATH ?? path.join(process.cwd(), 'data', 'gameon.db');
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS zones (
@@ -96,7 +97,9 @@ export function getDb(): Database.Database {
 /* ------------------------------------------------------------------ zones */
 
 export function getZones(): Zone[] {
-  return getDb().prepare('SELECT * FROM zones ORDER BY price_per_hour DESC').all() as Zone[];
+  return getDb()
+    .prepare('SELECT * FROM zones ORDER BY price_per_hour DESC')
+    .all() as Zone[];
 }
 
 export function getZone(id: string): Zone | undefined {
@@ -189,8 +192,7 @@ const BOOKING_SELECT = `
 
 export function getBooking(id: string): BookingDetail | undefined {
   return getDb().prepare(`${BOOKING_SELECT} WHERE b.id = ?`).get(id) as
-    | BookingDetail
-    | undefined;
+    BookingDetail | undefined;
 }
 
 export type BookingFilter = {
@@ -236,9 +238,9 @@ export function listBookings(filter: BookingFilter = {}): BookingDetail[] {
 export function cancelBooking(id: string): boolean {
   const db = getDb();
   const run = db.transaction((bookingId: string): boolean => {
-    const booking = db.prepare('SELECT slot_id, status FROM bookings WHERE id = ?').get(
-      bookingId,
-    ) as { slot_id: number; status: BookingStatus } | undefined;
+    const booking = db
+      .prepare('SELECT slot_id, status FROM bookings WHERE id = ?')
+      .get(bookingId) as { slot_id: number; status: BookingStatus } | undefined;
 
     if (!booking || booking.status === 'cancelled') return false;
 
@@ -291,7 +293,8 @@ export function getAdminStats(): AdminStats {
     )
     .get() as { total: number; taken: number };
 
-  const members = (db.prepare('SELECT COUNT(*) AS n FROM members').get() as { n: number }).n;
+  const members = (db.prepare('SELECT COUNT(*) AS n FROM members').get() as { n: number })
+    .n;
 
   return {
     todayBookings: today,
@@ -319,7 +322,8 @@ export function getSiteStats(): SiteStats {
       )
       .get() as { n: number }
   ).n;
-  const members = (db.prepare('SELECT COUNT(*) AS n FROM members').get() as { n: number }).n;
+  const members = (db.prepare('SELECT COUNT(*) AS n FROM members').get() as { n: number })
+    .n;
   const free = (
     db
       .prepare(

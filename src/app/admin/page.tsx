@@ -28,9 +28,10 @@ export default function AdminPage({ searchParams }: PageProps) {
         <h1 className="text-h1">Floor dashboard</h1>
         <p className="text-body text-muted-foreground">
           Open this page with the staff key appended, for example{' '}
-          <span className="font-mono text-foreground">/admin?key=…</span>. The key lives in
-          <span className="font-mono text-foreground"> ADMIN_KEY</span>, and the demo default
-          is in <span className="font-mono text-foreground">.env.example</span>.
+          <span className="font-mono text-foreground">/admin?key=…</span>. The key lives
+          in
+          <span className="font-mono text-foreground"> ADMIN_KEY</span>, and the demo
+          default is in <span className="font-mono text-foreground">.env.example</span>.
         </p>
       </div>
     );
@@ -55,8 +56,8 @@ export default function AdminPage({ searchParams }: PageProps) {
         <p className="eyebrow">Staff view</p>
         <h1 className="text-h1">Floor dashboard</h1>
         <p className="max-w-prose text-meta text-muted-foreground">
-          Live from the booking database. Cancelling here frees the slot straight away, so the
-          website can resell it.
+          Live from the booking database. Cancelling here frees the slot straight away, so
+          the website can resell it.
         </p>
       </header>
 

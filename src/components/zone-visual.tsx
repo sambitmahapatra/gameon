@@ -31,7 +31,7 @@ export function ZoneVisual({ accent, src, alt, className, priority }: ZoneVisual
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 opacity-20 bg-grid-faint [background-size:28px_28px]"
+        className="absolute inset-0 bg-grid-faint opacity-20 [background-size:28px_28px]"
       />
       {src ? (
         <Image

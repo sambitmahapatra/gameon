@@ -13,7 +13,7 @@ import { getZone, getZones } from '@/lib/db';
 import { inr } from '@/lib/utils';
 import { zoneImage } from '@/lib/zone-images';
 
-export const dynamic = 'force-dynamic';
+export { dynamic } from '@/lib/render-mode';
 
 type PageProps = { params: { slug: string } };
 
@@ -41,7 +41,12 @@ const SPECS: Record<string, { games: string[]; durations: string[]; kit: string[
   'flight-sim': {
     games: ['MSFS 2024', 'X-Plane 12', 'Guided first circuit'],
     durations: ['45 minutes with briefing', '1 hour', '2 hours'],
-    kit: ['Cockpit replica', 'Yoke and rudder pedals', 'Three curved screens', 'Headset comms'],
+    kit: [
+      'Cockpit replica',
+      'Yoke and rudder pedals',
+      'Three curved screens',
+      'Headset comms',
+    ],
   },
   'racing-cockpit': {
     games: ['Assetto Corsa Competizione', 'F1 25', 'Gran Turismo 7', 'Rally'],
@@ -93,7 +98,7 @@ export default function ZonePage({ params }: PageProps) {
         <div className="flex flex-col gap-6">
           <p className="eyebrow">{zone.tagline}</p>
           <h1 className="text-h1">{zone.name}</h1>
-          <p className="max-w-prose text-body text-muted-foreground text-pretty">
+          <p className="max-w-prose text-pretty text-body text-muted-foreground">
             {zone.description}
           </p>
 
@@ -140,8 +145,8 @@ export default function ZonePage({ params }: PageProps) {
               ))}
             </ul>
             <p className="max-w-prose text-meta text-muted-foreground">
-              Ask at the counter if you want something installed. If it runs on our hardware and
-              we can license it, we will add it before your next visit.
+              Ask at the counter if you want something installed. If it runs on our
+              hardware and we can license it, we will add it before your next visit.
             </p>
           </section>
 
@@ -192,14 +197,16 @@ export default function ZonePage({ params }: PageProps) {
               <Clock className="mt-0.5 size-4 shrink-0 text-cyan" />
               <div>
                 <dt className="text-meta text-muted-foreground">Session lengths</dt>
-                <dd className="text-meta text-foreground">{specs.durations.join(' · ')}</dd>
+                <dd className="text-meta text-foreground">
+                  {specs.durations.join(' · ')}
+                </dd>
               </div>
             </div>
           </dl>
           <Separator />
           <p className="text-meta text-muted-foreground">
-            Members pay from 10% to 30% less, and can hold peak slots two days before everyone
-            else.
+            Members pay from 10% to 30% less, and can hold peak slots two days before
+            everyone else.
           </p>
           <Button asChild variant="secondary">
             <Link href="/membership">See membership</Link>

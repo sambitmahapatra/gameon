@@ -13,7 +13,8 @@ import { zoneImage } from '@/lib/zone-images';
 
 type ZoneCardProps = {
   zone: Zone;
-  href?: string;
+  /** Where the card links. Pass null for a non-interactive panel. */
+  href?: string | null;
   className?: string;
 };
 
@@ -26,7 +27,7 @@ const MAX_TILT_Y = 8;
  * skipped entirely under prefers-reduced-motion.
  */
 export function ZoneCard({ zone, href, className }: ZoneCardProps) {
-  const card = useRef<HTMLAnchorElement>(null);
+  const card = useRef<HTMLAnchorElement | HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const tilt = useRef<{
     x: ReturnType<typeof gsap.quickTo>;
@@ -42,7 +43,7 @@ export function ZoneCard({ zone, href, className }: ZoneCardProps) {
     return tilt.current;
   }
 
-  function onMove(event: React.MouseEvent<HTMLAnchorElement>) {
+  function onMove(event: React.MouseEvent<HTMLElement>) {
     if (reduced || !card.current) return;
     const handles = ensureTilt();
     if (!handles) return;
@@ -62,11 +63,17 @@ export function ZoneCard({ zone, href, className }: ZoneCardProps) {
     handles?.y(0);
   }
 
+  // `href: null` renders a plain panel, for callers that supply their own
+  // control — a link inside a button would be invalid markup.
+  const Frame = href === null ? 'div' : Link;
+  const frameProps =
+    href === null ? {} : ({ href: href ?? `/zones/${zone.id}` } as { href: string });
+
   return (
     <div className="tilt-stage">
-      <Link
-        ref={card}
-        href={href ?? `/zones/${zone.id}`}
+      <Frame
+        {...(frameProps as { href: string })}
+        ref={card as never}
         onMouseMove={onMove}
         onMouseLeave={onLeave}
         style={{ transformStyle: 'preserve-3d' }}
@@ -108,7 +115,7 @@ export function ZoneCard({ zone, href, className }: ZoneCardProps) {
             background: `linear-gradient(90deg, transparent, ${zone.accent_hex ?? '#00E5FF'}, transparent)`,
           }}
         />
-      </Link>
+      </Frame>
     </div>
   );
 }

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Seed the demo database
+        run: npm run db:seed
+
+      - name: Build the website
+        run: npm run build
+
+      - name: Build the static export
+        run: npm run build:static
+
+      - name: Check the API and admin routes were restored
+        run: |
+          test -d src/app/api || { echo "src/app/api missing after export"; exit 1; }
+          test -d src/app/admin || { echo "src/app/admin missing after export"; exit 1; }
+          test -f out/index.html || { echo "static export produced no index.html"; exit 1; }

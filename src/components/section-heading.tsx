@@ -8,14 +8,20 @@ type SectionHeadingProps = {
   id?: string;
 };
 
-export function SectionHeading({ eyebrow, title, sub, className, id }: SectionHeadingProps) {
+export function SectionHeading({
+  eyebrow,
+  title,
+  sub,
+  className,
+  id,
+}: SectionHeadingProps) {
   return (
     <div className={cn('flex max-w-prose flex-col gap-3', className)}>
       {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
       <h2 id={id} className="text-h1">
         {title}
       </h2>
-      {sub ? <p className="text-body text-muted-foreground text-pretty">{sub}</p> : null}
+      {sub ? <p className="text-pretty text-body text-muted-foreground">{sub}</p> : null}
     </div>
   );
 }

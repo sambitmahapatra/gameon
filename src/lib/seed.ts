@@ -294,7 +294,8 @@ function seedMembers() {
  */
 export function ensureSeeded(): void {
   const db = getDb();
-  const zoneCount = (db.prepare('SELECT COUNT(*) AS n FROM zones').get() as { n: number }).n;
+  const zoneCount = (db.prepare('SELECT COUNT(*) AS n FROM zones').get() as { n: number })
+    .n;
   const firstRun = zoneCount === 0;
 
   seedZones();

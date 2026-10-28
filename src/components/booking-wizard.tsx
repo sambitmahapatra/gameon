@@ -120,7 +120,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
       }
 
       if (!res.ok || !payload.booking) {
-        toast.error(payload.error ?? 'Something broke on our end. Try again in a moment.');
+        toast.error(
+          payload.error ?? 'Something broke on our end. Try again in a moment.',
+        );
         return;
       }
 
@@ -174,9 +176,7 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                 className="rounded-card text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-deep"
                 aria-label={`Choose ${candidate.name}`}
               >
-                <div className="pointer-events-none">
-                  <ZoneCard zone={candidate} />
-                </div>
+                <ZoneCard zone={candidate} href={null} />
               </button>
             ))}
           </div>
@@ -191,7 +191,8 @@ export function BookingWizard({ zones }: BookingWizardProps) {
               When works for you?
             </h2>
             <p className="mt-2 text-meta text-muted-foreground">
-              {zone.name} · {inr(zone.price_per_hour)} an hour · up to {zone.capacity} players
+              {zone.name} · {inr(zone.price_per_hour)} an hour · up to {zone.capacity}{' '}
+              players
             </p>
           </div>
 
@@ -234,7 +235,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                 disabled={!slot}
                 onClick={() => setStep(3)}
               >
-                {slot ? `Continue with ${prettyTime(slot.time)}` : 'Pick a time to continue'}
+                {slot
+                  ? `Continue with ${prettyTime(slot.time)}`
+                  : 'Pick a time to continue'}
               </Button>
             </div>
           </div>
@@ -264,7 +267,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
               <Label htmlFor="name">Name</Label>
               <Input id="name" autoComplete="name" {...form.register('name')} />
               {form.formState.errors.name ? (
-                <p className="text-meta text-red-300">{form.formState.errors.name.message}</p>
+                <p className="text-meta text-red-300">
+                  {form.formState.errors.name.message}
+                </p>
               ) : null}
             </div>
 
@@ -284,7 +289,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                 />
               </div>
               {form.formState.errors.phone ? (
-                <p className="text-meta text-red-300">{form.formState.errors.phone.message}</p>
+                <p className="text-meta text-red-300">
+                  {form.formState.errors.phone.message}
+                </p>
               ) : null}
             </div>
 
@@ -320,7 +327,9 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                 {...form.register('email')}
               />
               {form.formState.errors.email ? (
-                <p className="text-meta text-red-300">{form.formState.errors.email.message}</p>
+                <p className="text-meta text-red-300">
+                  {form.formState.errors.email.message}
+                </p>
               ) : null}
             </div>
 

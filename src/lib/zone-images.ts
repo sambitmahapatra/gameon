@@ -11,5 +11,7 @@ import type { Zone } from './types';
 const WITH_ARTWORK = new Set<string>([]);
 
 export function zoneImage(zone: Pick<Zone, 'id' | 'image'>): string | null {
-  return WITH_ARTWORK.has(zone.id) ? (zone.image ?? `/images/zones/${zone.id}.jpg`) : null;
+  return WITH_ARTWORK.has(zone.id)
+    ? (zone.image ?? `/images/zones/${zone.id}.jpg`)
+    : null;
 }

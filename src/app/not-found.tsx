@@ -16,8 +16,8 @@ export default function NotFound() {
       <p className="eyebrow">404</p>
       <h1 className="text-h1">This zone does not exist yet</h1>
       <p className="max-w-prose text-body text-muted-foreground">
-        The page you tried is not on the floor plan. Six zones are, though, and they are all a
-        click away.
+        The page you tried is not on the floor plan. Six zones are, though, and they are
+        all a click away.
       </p>
 
       <div className="flex flex-wrap gap-4 pt-2">

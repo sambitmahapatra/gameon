@@ -54,4 +54,6 @@ export const memberInputSchema = z.object({
 
 export type MemberInput = z.infer<typeof memberInputSchema>;
 
-export const dateKeySchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');
+export const dateKeySchema = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected YYYY-MM-DD');

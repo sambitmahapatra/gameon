@@ -42,7 +42,9 @@ export function Pricing() {
                 <span className="text-meta text-muted-foreground">{tier.cadence}</span>
               </div>
 
-              <p className="text-meta text-muted-foreground text-pretty">{tier.summary}</p>
+              <p className="text-pretty text-meta text-muted-foreground">
+                {tier.summary}
+              </p>
 
               <ul className="flex flex-1 flex-col gap-3">
                 {tier.highlights.map((highlight) => (
@@ -68,8 +70,8 @@ export function Pricing() {
       </Reveal>
 
       <p className="mt-6 max-w-prose text-meta text-muted-foreground">
-        Hours are shared across every zone. Peak evenings cost one and a half hours from your
-        allowance, which is how we keep slots open for everyone.
+        Hours are shared across every zone. Peak evenings cost one and a half hours from
+        your allowance, which is how we keep slots open for everyone.
       </p>
     </section>
   );

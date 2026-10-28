@@ -61,3 +61,6 @@ desktop.ini
 
 # Vercel
 .vercel
+
+# Static export scratch dirs (scripts/build-static.mjs puts them back)
+.export-parked-*

@@ -62,7 +62,7 @@ export function SignatureExperiences({ zones }: { zones: Zone[] }) {
                 <div data-feature-part className="flex flex-col gap-5">
                   <p className="eyebrow">{zone.name}</p>
                   <h3 className="max-w-[22ch] text-h2">{pitch.heading}</h3>
-                  <p className="max-w-prose text-body text-muted-foreground text-pretty">
+                  <p className="max-w-prose text-pretty text-body text-muted-foreground">
                     {pitch.body}
                   </p>
 
