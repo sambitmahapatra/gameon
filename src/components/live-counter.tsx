@@ -13,6 +13,7 @@ import { api, cn } from '@/lib/utils';
  */
 export function LiveCounter({ className }: { className?: string }) {
   const [count, setCount] = useState<{ value: number; previous: number } | null>(null);
+  const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -20,9 +21,13 @@ export function LiveCounter({ className }: { className?: string }) {
     async function poll() {
       try {
         const res = await fetch(api('/api/live-count'), { cache: 'no-store' });
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (!cancelled) setUnavailable(true);
+          return;
+        }
         const data = (await res.json()) as { count?: number; data?: { count: number } };
         const next = data.data?.count ?? data.count;
+        if (!cancelled) setUnavailable(false);
         if (!cancelled && typeof next === 'number')
           setCount((current) =>
             current?.value === next
@@ -30,7 +35,7 @@ export function LiveCounter({ className }: { className?: string }) {
               : { value: next, previous: current?.value ?? next },
           );
       } catch {
-        // Offline or backend asleep: keep showing the last known figure.
+        if (!cancelled) setUnavailable(true);
       }
     }
 
@@ -46,7 +51,9 @@ export function LiveCounter({ className }: { className?: string }) {
     <div className={cn('live-pill', className)}>
       <span className="live-pill__dot" aria-hidden="true" />
       <span>
-        {count === null ? (
+        {unavailable ? (
+          'Live count unavailable'
+        ) : count === null ? (
           'Checking the floor'
         ) : (
           <>

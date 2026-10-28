@@ -7,7 +7,7 @@ import {
   listBookings,
 } from '@/lib/db';
 import { withDb } from '@/lib/bootstrap';
-import { fail, ok } from '@/lib/http';
+import { databaseUnavailable, fail, ok } from '@/lib/http';
 import { bookingInputSchema } from '@/lib/validation';
 import type { BookingStatus } from '@/lib/types';
 
@@ -20,6 +20,8 @@ function adminKeyValid(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+  const unavailable = databaseUnavailable();
+  if (unavailable) return unavailable;
   if (!adminKeyValid(request)) {
     return fail('A valid ?key= is required to list bookings', 401);
   }
@@ -27,22 +29,25 @@ export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const status = params.get('status');
 
-  const bookings = withDb(() =>
-    listBookings({
-      status:
-        status === 'confirmed' || status === 'cancelled'
-          ? (status as BookingStatus)
-          : undefined,
-      zoneId: params.get('zoneId') ?? undefined,
-      from: params.get('from') ?? undefined,
-      to: params.get('to') ?? undefined,
-    }),
+  const bookings = await withDb(
+    async () =>
+      await listBookings({
+        status:
+          status === 'confirmed' || status === 'cancelled'
+            ? (status as BookingStatus)
+            : undefined,
+        zoneId: params.get('zoneId') ?? undefined,
+        from: params.get('from') ?? undefined,
+        to: params.get('to') ?? undefined,
+      }),
   );
 
   return ok({ bookings });
 }
 
 export async function POST(request: NextRequest) {
+  const unavailable = databaseUnavailable();
+  if (unavailable) return unavailable;
   let body: unknown;
   try {
     body = await request.json();
@@ -60,16 +65,16 @@ export async function POST(request: NextRequest) {
   const input = parsed.data;
 
   try {
-    const booking = withDb(() => {
-      if (!getZone(input.zoneId)) throw new Error('NO_ZONE');
+    const booking = await withDb(async () => {
+      const zone = await getZone(input.zoneId);
+      if (!zone) throw new Error('NO_ZONE');
 
-      const slot = getSlot(input.slotId);
+      const slot = await getSlot(input.slotId);
       if (!slot || slot.zone_id !== input.zoneId) throw new Error('NO_SLOT');
 
-      const zone = getZone(input.zoneId)!;
       if (input.partySize > zone.capacity) throw new Error('OVER_CAPACITY');
 
-      return createBooking({
+      return await createBooking({
         zoneId: input.zoneId,
         slotId: input.slotId,
         name: input.name,

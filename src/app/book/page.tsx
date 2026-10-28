@@ -3,7 +3,8 @@ import { Suspense } from 'react';
 
 import { BookingWizard } from '@/components/booking-wizard';
 import { withDb } from '@/lib/bootstrap';
-import { getZones } from '@/lib/db';
+import { databaseConfigured, getZones } from '@/lib/db';
+import { SITE } from '@/lib/site';
 
 export { dynamic } from '@/lib/render-mode';
 
@@ -13,8 +14,24 @@ export const metadata: Metadata = {
     'Reserve a zone at GameOn in four steps: pick a zone, a date, a time, and leave your name.',
 };
 
-export default function BookPage() {
-  const zones = withDb(() => getZones());
+export default async function BookPage() {
+  if (!databaseConfigured())
+    return (
+      <div className="section">
+        <div className="wrap max-w-[760px]">
+          <div className="eyebrow">Reservations</div>
+          <h1 className="mt-4">Let&apos;s get you playing</h1>
+          <p className="sub mt-6">
+            Online reservations will be available soon. Contact us and we will help you
+            book a session.
+          </p>
+          <a href={SITE.whatsappUrl} className="btn btn--primary mt-8">
+            Book on WhatsApp
+          </a>
+        </div>
+      </div>
+    );
+  const zones = await withDb(async () => await getZones());
 
   return (
     <div className="section section--tight">

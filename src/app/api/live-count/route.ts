@@ -1,10 +1,12 @@
 import { getLiveCount } from '@/lib/db';
 import { withDb } from '@/lib/bootstrap';
-import { ok } from '@/lib/http';
+import { databaseUnavailable, ok } from '@/lib/http';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const count = withDb(() => getLiveCount());
+  const unavailable = databaseUnavailable();
+  if (unavailable) return unavailable;
+  const count = await withDb(async () => await getLiveCount());
   return ok({ count });
 }

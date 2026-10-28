@@ -1,15 +1,25 @@
-import { ensureSeeded } from './seed';
+import { databaseConfigured, usesPostgres } from './db';
+import { DatabaseConfigurationError } from './db-errors';
 
-/**
- * Seeds the demo database the first time any server module needs it. Cached on
- * globalThis so Next.js dev reloads do not re-run it on every request.
- */
-const globalForSeed = globalThis as unknown as { gameonSeeded?: boolean };
+const state = globalThis as unknown as {
+  gameonBootstrap?: { day: string; ready: Promise<void> };
+};
 
-export function withDb<T>(fn: () => T): T {
-  if (!globalForSeed.gameonSeeded) {
-    ensureSeeded();
-    globalForSeed.gameonSeeded = true;
+export async function withDb<T>(fn: () => T | Promise<T>): Promise<T> {
+  if (!databaseConfigured()) throw new DatabaseConfigurationError();
+  const day = new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(
+    new Date(),
+  );
+  if (state.gameonBootstrap?.day !== day) {
+    const ready = usesPostgres()
+      ? import('./postgres').then((db) => db.ensureFutureSlots())
+      : import('./seed').then((db) => db.ensureSeeded());
+    const entry = { day, ready };
+    state.gameonBootstrap = entry;
+    void ready.catch(() => {
+      if (state.gameonBootstrap === entry) state.gameonBootstrap = undefined;
+    });
   }
-  return fn();
+  await state.gameonBootstrap!.ready;
+  return await fn();
 }

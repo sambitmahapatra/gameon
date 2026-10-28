@@ -23,16 +23,16 @@ type PageProps = { params: { id: string } };
  * already exist at build time, which is why the APK points its WebView at the
  * hosted site (see capacitor.config.ts) rather than shipping the export alone.
  */
-export function generateStaticParams() {
+export async function generateStaticParams() {
   if (!isStaticExport) return [];
-  return withDb(() => listBookings({ status: 'confirmed', limit: 50 })).map(
-    (booking) => ({
-      id: booking.id,
-    }),
-  );
+  return (
+    await withDb(async () => await listBookings({ status: 'confirmed', limit: 50 }))
+  ).map((booking) => ({
+    id: booking.id,
+  }));
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   return {
     title: `Booking ${params.id}`,
     description: 'Your GameOn reservation, with the QR code for the counter.',
@@ -47,8 +47,8 @@ const BRING = [
   'Socks for the VR arena',
 ];
 
-export default function ConfirmPage({ params }: PageProps) {
-  const booking = withDb(() => getBooking(params.id));
+export default async function ConfirmPage({ params }: PageProps) {
+  const booking = await withDb(async () => await getBooking(params.id));
   if (!booking) notFound();
 
   const cancelled = booking.status === 'cancelled';

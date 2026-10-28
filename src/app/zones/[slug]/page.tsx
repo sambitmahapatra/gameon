@@ -8,8 +8,8 @@ import { ZoneArt } from '@/components/zone-art';
 import { BrandPhoto } from '@/components/brand-photo';
 import { ZoneCard } from '@/components/zone-card';
 import { ZoneGallery } from '@/components/zone-gallery';
-import { withDb } from '@/lib/bootstrap';
-import { getZone, getZones } from '@/lib/db';
+import { getPublicZone, getPublicZones } from '@/lib/public-data';
+import { ZONE_SEED } from '@/lib/data/venue';
 import { inrDigits } from '@/lib/utils';
 
 export { dynamic } from '@/lib/render-mode';
@@ -17,12 +17,12 @@ export { dynamic } from '@/lib/render-mode';
 type PageProps = { params: { slug: string } };
 
 /** Emitted for the static export; the server build renders on demand. */
-export function generateStaticParams() {
-  return withDb(() => getZones()).map((zone) => ({ slug: zone.id }));
+export async function generateStaticParams() {
+  return ZONE_SEED.map((zone) => ({ slug: zone.id }));
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const zone = withDb(() => getZone(params.slug));
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const zone = await getPublicZone(params.slug);
   if (!zone) return { title: 'Zone not found' };
 
   return {
@@ -69,11 +69,9 @@ const SPECS: Record<string, { games: string[]; durations: string[]; kit: string[
   },
 };
 
-export default function ZonePage({ params }: PageProps) {
-  const { zone, others } = withDb(() => ({
-    zone: getZone(params.slug),
-    others: getZones(),
-  }));
+export default async function ZonePage({ params }: PageProps) {
+  const others = await getPublicZones();
+  const zone = others.find((candidate) => candidate.id === params.slug);
 
   if (!zone) notFound();
 

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 
 import { EventsBrowser } from '@/components/events-browser';
-import { withDb } from '@/lib/bootstrap';
-import { listEvents } from '@/lib/db';
+import { getPublicEvents } from '@/lib/public-data';
 
 export { dynamic } from '@/lib/render-mode';
 
@@ -12,8 +11,8 @@ export const metadata: Metadata = {
     'Weekly ladders, monthly cups with real prize pools, and corporate nights at GameOn.',
 };
 
-export default function EventsPage() {
-  const events = withDb(() => listEvents());
+export default async function EventsPage() {
+  const events = await getPublicEvents();
 
   return (
     <div className="section section--tight">

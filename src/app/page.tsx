@@ -5,18 +5,18 @@ import { Pricing } from '@/components/sections/pricing';
 import { SignatureExperiences } from '@/components/sections/signature-experiences';
 import { TournamentsTeaser } from '@/components/sections/tournaments-teaser';
 import { ZonesGrid } from '@/components/sections/zones-grid';
-import { withDb } from '@/lib/bootstrap';
-import { getSiteStats, getZones, listEvents } from '@/lib/db';
+import { databaseConfigured } from '@/lib/db';
+import { getPublicZones, getPublicStats, getPublicEvents } from '@/lib/public-data';
 import { inrDigits } from '@/lib/utils';
 
 export { dynamic } from '@/lib/render-mode';
 
-export default function HomePage() {
-  const { zones, stats, events } = withDb(() => ({
-    zones: getZones(),
-    stats: getSiteStats(),
-    events: listEvents(),
-  }));
+export default async function HomePage() {
+  const [zones, stats, events] = await Promise.all([
+    getPublicZones(),
+    getPublicStats(),
+    getPublicEvents(),
+  ]);
 
   const headline = events[0];
 
@@ -24,7 +24,9 @@ export default function HomePage() {
   // never contradicts the numbers in the sections below it.
   const ticker = [
     { dot: true, text: 'Open 10 AM to 10 PM, every day' },
-    { strong: String(stats.slotsFreeToday), text: ' slots open today' },
+    ...(databaseConfigured()
+      ? [{ strong: String(stats.slotsFreeToday), text: ' slots open today' }]
+      : []),
     ...(headline
       ? [
           {
@@ -33,7 +35,9 @@ export default function HomePage() {
           },
         ]
       : []),
-    { strong: `${stats.members}+`, text: ' members on the floor' },
+    ...(databaseConfigured()
+      ? [{ strong: `${stats.members}+`, text: ' members on the floor' }]
+      : []),
     { dot: true, text: 'Café orders delivered to any zone' },
     { strong: '₹350/hr', text: ' for walk-ins' },
     { dot: true, text: 'Flight Sim: 737 cockpit, instructor beside you' },

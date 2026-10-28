@@ -1,4 +1,14 @@
 import { NextResponse } from 'next/server';
+import { databaseConfigured } from './db';
+
+export function databaseUnavailable() {
+  return databaseConfigured()
+    ? null
+    : fail(
+        'Online services are temporarily unavailable. Please contact GameOn to book.',
+        503,
+      );
+}
 
 /** Demo data is live and mutable: never let a CDN or the router cache it. */
 export const noStore = {

@@ -1,10 +1,12 @@
 import { getZones } from '@/lib/db';
 import { withDb } from '@/lib/bootstrap';
-import { ok } from '@/lib/http';
+import { databaseUnavailable, ok } from '@/lib/http';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const zones = withDb(() => getZones());
+  const unavailable = databaseUnavailable();
+  if (unavailable) return unavailable;
+  const zones = await withDb(async () => await getZones());
   return ok({ zones });
 }

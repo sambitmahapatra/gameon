@@ -30,7 +30,7 @@ function lastWeek() {
  * Demo gate, deliberately simple: a shared key in the query string (spec 4.1).
  * Anything production-facing needs real auth before this page goes public.
  */
-export default function AdminPage({ searchParams }: PageProps) {
+export default async function AdminPage({ searchParams }: PageProps) {
   const expected = process.env.ADMIN_KEY ?? 'gameon-demo';
 
   if (searchParams.key !== expected) {
@@ -50,10 +50,10 @@ export default function AdminPage({ searchParams }: PageProps) {
     );
   }
 
-  const { stats, bookings, zones } = withDb(() => ({
-    stats: getAdminStats(),
-    bookings: listBookings(),
-    zones: getZones(),
+  const { stats, bookings, zones } = await withDb(async () => ({
+    stats: await getAdminStats(),
+    bookings: await listBookings(),
+    zones: await getZones(),
   }));
 
   // Trend lines are derived here rather than in db.ts, which stays untouched.

@@ -28,6 +28,8 @@ The database seeds itself on first request too, so `npm run dev` alone is enough
 
 The staff dashboard is at `/admin?key=gameon-demo` (change `ADMIN_KEY` before deploying).
 
+For Vercel, use Supabase PostgreSQL and follow [the deployment guide](docs/SUPABASE_DEPLOYMENT.md). Set `DATABASE_URL`, run `npm run db:setup` once, then deploy. SQLite remains a local demo option; it is never opened on Vercel. Without a hosted database configured, public pages remain browsable and online booking is unavailable.
+
 ## Scripts
 
 | Script                            | What it does                                        |
