@@ -226,7 +226,7 @@ export function BookingWizard({ zones }: BookingWizardProps) {
               </div>
 
               <div className="grid gap-8 lg:grid-cols-[auto_1fr] lg:gap-12">
-                <div className="rounded-card border border-border bg-surface">
+                <div className="panel">
                   <Calendar
                     mode="single"
                     selected={date}
@@ -365,7 +365,7 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                 </p>
               </div>
 
-              <dl className="max-w-xl divide-y divide-border rounded-card border border-border bg-surface px-6">
+              <dl className="panel max-w-xl divide-y divide-border px-6">
                 {[
                   ['Zone', zone.name],
                   [

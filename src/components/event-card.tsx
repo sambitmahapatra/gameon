@@ -1,9 +1,10 @@
 import { CalendarDays, Trophy, Users } from 'lucide-react';
 
 import { EventRegisterButton } from '@/components/event-register-button';
+import { Price } from '@/components/price';
 import { Badge } from '@/components/ui/badge';
 import type { GameEvent } from '@/lib/types';
-import { cn, fromDateKey, inr } from '@/lib/utils';
+import { cn, fromDateKey } from '@/lib/utils';
 
 const CATEGORY_LABEL: Record<GameEvent['category'], string> = {
   weekly: 'Weekly',
@@ -27,7 +28,7 @@ export function EventCard({
   return (
     <article
       className={cn(
-        'flex flex-col gap-5 rounded-card border border-border bg-surface p-6 transition-colors',
+        'panel flex flex-col gap-5 p-6 transition-colors',
         past ? 'opacity-70' : 'hover:border-cyan/40',
         className,
       )}
@@ -65,7 +66,9 @@ export function EventCard({
         {event.prize_pool > 0 ? (
           <div className="flex items-center gap-1.5">
             <Trophy aria-hidden="true" className="size-3.5 text-ember" />
-            <dd className="font-mono text-foreground">{inr(event.prize_pool)}</dd>
+            <dd className="text-foreground">
+              <Price amount={event.prize_pool} />
+            </dd>
           </div>
         ) : null}
         <div className="flex items-center gap-1.5">

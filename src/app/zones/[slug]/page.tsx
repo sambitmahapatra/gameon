@@ -132,7 +132,7 @@ export default function ZonePage({ params }: PageProps) {
               {specs.kit.map((item) => (
                 <li
                   key={item}
-                  className="flex items-center gap-3 rounded-card border border-border bg-surface px-4 py-3 text-meta"
+                  className="panel flex items-center gap-3 px-4 py-3 text-meta"
                 >
                   <Zap aria-hidden="true" className="size-3.5 shrink-0 text-cyan" />
                   <span className="text-muted-foreground">{item}</span>

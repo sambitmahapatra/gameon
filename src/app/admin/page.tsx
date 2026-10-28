@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
+import type { ReactNode } from 'react';
 
 import { BookingsTable } from '@/components/admin/bookings-table';
+import { Price } from '@/components/price';
 import { withDb } from '@/lib/bootstrap';
 import { getAdminStats, getZones, listBookings } from '@/lib/db';
-import { inr } from '@/lib/utils';
 
 export const dynamic = 'force-dynamic';
 
@@ -43,9 +44,12 @@ export default function AdminPage({ searchParams }: PageProps) {
     zones: getZones(),
   }));
 
-  const cards = [
+  const cards: { label: string; value: ReactNode }[] = [
     { label: 'Bookings today', value: String(stats.todayBookings) },
-    { label: 'Revenue booked this week', value: inr(stats.weekRevenue) },
+    {
+      label: 'Revenue booked this week',
+      value: <Price amount={stats.weekRevenue} />,
+    },
     { label: 'Occupancy, next 7 days', value: `${stats.occupancy7d}%` },
     { label: 'Members on file', value: String(stats.activeMembers) },
   ];
@@ -63,10 +67,7 @@ export default function AdminPage({ searchParams }: PageProps) {
 
       <dl className="mt-12 grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map((card) => (
-          <div
-            key={card.label}
-            className="flex flex-col gap-2 rounded-card border border-border bg-surface p-6"
-          >
+          <div key={card.label} className="panel flex flex-col gap-2 p-6">
             <dd className="font-mono text-h2 font-bold text-cyan">{card.value}</dd>
             <dt className="text-meta text-muted-foreground">{card.label}</dt>
           </div>

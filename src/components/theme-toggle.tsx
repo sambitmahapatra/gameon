@@ -39,7 +39,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       <Sun
         aria-hidden="true"
         className={cn(
-          'duration-[400ms] absolute size-[1.15rem] transition-all ease-out',
+          'absolute size-[1.15rem] transition-all ease-out [transition-duration:400ms]',
           mounted && dark
             ? 'rotate-0 scale-100 opacity-100'
             : 'rotate-180 scale-50 opacity-0',
@@ -48,7 +48,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       <Moon
         aria-hidden="true"
         className={cn(
-          'duration-[400ms] absolute size-[1.15rem] transition-all ease-out',
+          'absolute size-[1.15rem] transition-all ease-out [transition-duration:400ms]',
           mounted && !dark
             ? 'rotate-0 scale-100 opacity-100'
             : '-rotate-180 scale-50 opacity-0',

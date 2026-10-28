@@ -182,7 +182,7 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
         </Button>
       </div>
 
-      <div className="overflow-hidden rounded-card border border-border bg-surface">
+      <div className="panel overflow-hidden">
         <Table>
           <TableHeader>
             <TableRow>

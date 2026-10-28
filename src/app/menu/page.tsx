@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
 
+import { Price } from '@/components/price';
 import { SectionHeading } from '@/components/section-heading';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MENU, MENU_CATEGORIES } from '@/lib/data/menu';
-import { cn, inr } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Café menu',
@@ -77,9 +78,10 @@ export default function MenuPage() {
                         </p>
                       </div>
                     </div>
-                    <span className="shrink-0 font-mono text-data text-foreground">
-                      {inr(item.price)}
-                    </span>
+                    <Price
+                      amount={item.price}
+                      className="shrink-0 text-data text-foreground"
+                    />
                   </li>
                 ))}
               </ul>
@@ -88,7 +90,7 @@ export default function MenuPage() {
         </Tabs>
       </div>
 
-      <p className="mt-12 rounded-card border border-border bg-surface px-6 py-5 text-meta text-muted-foreground">
+      <p className="panel mt-12 px-6 py-5 text-meta text-muted-foreground">
         Order at the counter or from the QR card at your station. Taxes are included; we
         do not add a service charge.
       </p>

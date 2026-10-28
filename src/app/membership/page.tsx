@@ -3,6 +3,7 @@ import { Check, Minus } from 'lucide-react';
 
 import { JoinDialog } from '@/components/join-dialog';
 import { Reveal } from '@/components/motion/reveal';
+import { Price } from '@/components/price';
 import { SectionHeading } from '@/components/section-heading';
 import {
   Accordion,
@@ -21,7 +22,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { COMPARISON, FAQ, TIERS } from '@/lib/data/tiers';
-import { cn, inr } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Membership',
@@ -83,7 +84,7 @@ export default function MembershipPage() {
                 {tier.popular ? <Badge>Most popular</Badge> : null}
               </div>
               <p className="font-mono text-h3 text-foreground">
-                {tier.price === 0 ? 'Free' : inr(tier.price)}
+                {tier.price === 0 ? 'Free' : <Price amount={tier.price} />}
               </p>
               <p className="text-meta text-muted-foreground">{tier.summary}</p>
               <ul className="flex flex-col gap-2">
@@ -117,7 +118,7 @@ export default function MembershipPage() {
           sub="Every tier can book every zone. The difference is price, priority and how much is already paid for."
         />
 
-        <div className="mt-10 overflow-hidden rounded-card border border-border bg-surface">
+        <div className="panel mt-10 overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow>
@@ -132,7 +133,11 @@ export default function MembershipPage() {
                         {tier.name}
                       </span>
                       <span className="font-mono text-meta text-muted-foreground">
-                        {tier.price === 0 ? 'Pay per hour' : `${inr(tier.price)}/month`}
+                        {tier.price === 0 ? (
+                          'Pay per hour'
+                        ) : (
+                          <Price amount={tier.price} suffix="/month" />
+                        )}
                       </span>
                     </span>
                   </TableHead>

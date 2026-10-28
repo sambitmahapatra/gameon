@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
+import { Price } from '@/components/price';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,7 +17,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { FloatingField } from '@/components/ui/floating-field';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -27,7 +28,7 @@ import {
 } from '@/components/ui/select';
 import { TIERS } from '@/lib/data/tiers';
 import { type MemberInput, memberInputSchema } from '@/lib/validation';
-import { api, inr } from '@/lib/utils';
+import { api } from '@/lib/utils';
 
 const PAID_TIERS = TIERS.filter((tier) => tier.price > 0);
 
@@ -85,37 +86,24 @@ export function JoinDialog({
         </DialogHeader>
 
         <form className="flex flex-col gap-5" onSubmit={form.handleSubmit(onSubmit)}>
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="member-name">Name</Label>
-            <Input id="member-name" autoComplete="name" {...form.register('name')} />
-            {form.formState.errors.name ? (
-              <p className="text-meta text-red-300">
-                {form.formState.errors.name.message}
-              </p>
-            ) : null}
-          </div>
+          <FloatingField
+            id="member-name"
+            label="Name"
+            autoComplete="name"
+            error={form.formState.errors.name?.message}
+            {...form.register('name')}
+          />
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="member-phone">Mobile number</Label>
-            <div className="flex items-stretch">
-              <span className="inline-flex items-center rounded-l-button border border-r-0 border-input bg-elevated px-3.5 font-mono text-meta text-muted-foreground">
-                +91
-              </span>
-              <Input
-                id="member-phone"
-                inputMode="numeric"
-                maxLength={10}
-                autoComplete="tel-national"
-                className="rounded-l-none"
-                {...form.register('phone')}
-              />
-            </div>
-            {form.formState.errors.phone ? (
-              <p className="text-meta text-red-300">
-                {form.formState.errors.phone.message}
-              </p>
-            ) : null}
-          </div>
+          <FloatingField
+            id="member-phone"
+            label="Mobile number"
+            prefix="+91"
+            inputMode="numeric"
+            maxLength={10}
+            autoComplete="tel-national"
+            error={form.formState.errors.phone?.message}
+            {...form.register('phone')}
+          />
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="member-tier">Tier</Label>
@@ -133,7 +121,7 @@ export function JoinDialog({
               <SelectContent>
                 {PAID_TIERS.map((tier) => (
                   <SelectItem key={tier.id} value={tier.id}>
-                    {tier.name} — {inr(tier.price)} {tier.cadence}
+                    {tier.name} — <Price amount={tier.price} /> {tier.cadence}
                   </SelectItem>
                 ))}
               </SelectContent>

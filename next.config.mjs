@@ -12,6 +12,9 @@ const isStaticExport = process.env.NEXT_OUTPUT === 'export';
 const nextConfig = {
   reactStrictMode: true,
   output: isStaticExport ? 'export' : undefined,
+  // A build shares .next with a running dev server and corrupts it. Set
+  // NEXT_DIST_DIR to build or start from somewhere else instead.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   images: {
     // The static export has no image optimiser, so URLs pass through as-is.
     unoptimized: isStaticExport,

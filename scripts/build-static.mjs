@@ -31,16 +31,34 @@ const PARKED = [
 for (const entry of PARKED) {
   if (fs.existsSync(entry.aside)) {
     console.error(
-      `Found ${path.basename(entry.aside)} from an interrupted run. Move it back to ${
-        entry.live
-      } before retrying.`,
+      `Could not move ${error.path} aside: something is holding it open. ` +
+        'Stop the dev server (npm run dev) and run this again.',
     );
     process.exit(1);
   }
 }
 
 const moved = PARKED.filter((entry) => fs.existsSync(entry.live));
-for (const entry of moved) fs.renameSync(entry.live, entry.aside);
+const parked = [];
+
+try {
+  for (const entry of moved) {
+    fs.renameSync(entry.live, entry.aside);
+    parked.push(entry);
+  }
+} catch (error) {
+  // Windows refuses to rename a directory a watcher is holding, which in
+  // practice means `npm run dev` is still running.
+  for (const entry of parked.reverse()) fs.renameSync(entry.aside, entry.live);
+  if (error.code === 'EPERM' || error.code === 'EBUSY') {
+    console.error(
+      `Could not move ${error.path} aside: something is holding it open. ` +
+        'Stop the dev server (npm run dev) and run this again.',
+    );
+    process.exit(1);
+  }
+  throw error;
+}
 
 try {
   const result = spawnSync('npx', ['next', 'build'], {

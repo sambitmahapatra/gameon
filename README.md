@@ -99,11 +99,18 @@ deployed site, so the WebView uses the live app and every route works.
 | 3 — Secondary pages      | Done. Events, menu, membership, zone detail.                                                                                                                                      |
 | 4 — Admin and polish     | Done. Dashboard, 404, error boundary, loading states, focus rings, reduced-motion.                                                                                                |
 | 5 — APK                  | Scaffolded, not run. `capacitor.config.ts` and `build:static` are in place; installing Capacitor and generating the signed APK needs Android Studio ([docs/APK.md](docs/APK.md)). |
+| 6 — V2 polish            | Done. Light and dark themes, real photography, depth passes, signature animations.                                                                                                |
 
-Zone and gallery artwork is still placeholder gradients tinted with each zone's accent
-colour. Generate the photos with the prompts in [docs/IMAGE_PROMPTS.md](docs/IMAGE_PROMPTS.md),
-drop them into `public/images/zones/`, then add the zone id to `WITH_ARTWORK` in
-`src/lib/zone-images.ts`.
+Photography comes from Unsplash at build time, mapped per zone in `src/lib/images.ts`.
+To swap in bespoke artwork, generate it with the prompts in
+[docs/IMAGE_PROMPTS.md](docs/IMAGE_PROMPTS.md), drop the files into
+`public/images/zones/`, and add the zone id to `LOCAL_ARTWORK` in that same file — no
+component changes needed.
+
+The site ships dark by default and follows the system preference; the sun/moon button in
+the navbar switches themes and the choice persists. Both themes are first-class, so check
+any new colour against [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#design-tokens) rather
+than hard-coding a hex.
 
 ## Contributing
 
