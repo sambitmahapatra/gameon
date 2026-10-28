@@ -1,0 +1,158 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import QRCode from 'qrcode';
+
+import { BookingTimeline } from '@/components/booking-timeline';
+import { ConfirmActions } from '@/components/confirm-actions';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { withDb } from '@/lib/bootstrap';
+import { getBooking } from '@/lib/db';
+import { SITE } from '@/lib/site';
+import { fromDateKey, inr, prettyTime } from '@/lib/utils';
+
+export const dynamic = 'force-dynamic';
+
+type PageProps = { params: { id: string } };
+
+export function generateMetadata({ params }: PageProps): Metadata {
+  return {
+    title: `Booking ${params.id}`,
+    description: 'Your GameOn reservation, with the QR code for the counter.',
+    robots: { index: false },
+  };
+}
+
+const BRING = [
+  'This QR code, on your phone or printed',
+  'A government ID if you look under 18 — the flight simulator needs 12+',
+  'Your own keyboard or controller, if you prefer it to ours',
+  'Socks for the VR arena',
+];
+
+export default async function ConfirmPage({ params }: PageProps) {
+  const booking = withDb(() => getBooking(params.id));
+  if (!booking) notFound();
+
+  const cancelled = booking.status === 'cancelled';
+  const qr = await QRCode.toString(booking.id, {
+    type: 'svg',
+    margin: 0,
+    width: 240,
+    color: { dark: '#E8ECF1', light: '#0000' },
+  });
+
+  const date = fromDateKey(booking.date);
+
+  return (
+    <div className="shell max-w-4xl py-16">
+      <header className="flex flex-col gap-4">
+        {cancelled ? (
+          <Badge variant="danger">Cancelled</Badge>
+        ) : (
+          <Badge variant="success">Confirmed</Badge>
+        )}
+        <h1 className="text-h1">{cancelled ? 'This one is off' : "You're in"}</h1>
+        <p className="max-w-prose text-body text-muted-foreground">
+          {cancelled
+            ? 'The slot went back on the floor. Book another whenever you are ready.'
+            : "We've reserved your spot. Show this QR at the counter."}
+        </p>
+      </header>
+
+      <div className="mt-12 grid gap-10 lg:grid-cols-[260px_1fr] lg:gap-16">
+        <div className="flex flex-col items-start gap-5">
+          <div
+            className="rounded-card border border-border bg-surface p-5"
+            aria-label={`QR code for booking ${booking.id}`}
+            // qrcode renders a self-contained SVG; no user input reaches it.
+            dangerouslySetInnerHTML={{ __html: qr }}
+          />
+          <div className="flex flex-col gap-1">
+            <span className="text-meta text-muted-foreground">Booking ID</span>
+            <span className="font-mono text-h3 tracking-tight text-cyan">{booking.id}</span>
+          </div>
+        </div>
+
+        <div className="flex flex-col gap-10">
+          <dl className="divide-y divide-border rounded-card border border-border bg-surface px-6">
+            {[
+              ['Zone', booking.zone_name],
+              [
+                'Date',
+                date.toLocaleDateString('en-IN', {
+                  weekday: 'long',
+                  day: 'numeric',
+                  month: 'long',
+                  year: 'numeric',
+                }),
+              ],
+              ['Time', `${prettyTime(booking.time)} for one hour`],
+              ['Party size', `${booking.party_size} players`],
+              ['Name', booking.name],
+              ['Mobile', booking.phone],
+              ['Due at the counter', inr(booking.price_per_hour)],
+            ].map(([label, value]) => (
+              <div key={label} className="flex items-baseline justify-between gap-6 py-4">
+                <dt className="text-meta text-muted-foreground">{label}</dt>
+                <dd className="text-right text-meta text-foreground">{value}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {cancelled ? (
+            <Button asChild className="self-start">
+              <Link href="/book">Book another session</Link>
+            </Button>
+          ) : (
+            <ConfirmActions
+              id={booking.id}
+              zoneName={booking.zone_name}
+              date={booking.date}
+              time={booking.time}
+              partySize={booking.party_size}
+              cancelled={cancelled}
+            />
+          )}
+        </div>
+      </div>
+
+      {cancelled ? null : (
+        <>
+          <Separator className="my-16" />
+
+          <section aria-labelledby="timeline-heading" className="flex flex-col gap-6">
+            <h2 id="timeline-heading" className="text-h2">
+              What happens next
+            </h2>
+            <BookingTimeline active={0} />
+          </section>
+
+          <Separator className="my-16" />
+
+          <section aria-labelledby="bring-heading" className="flex flex-col gap-6">
+            <h2 id="bring-heading" className="text-h2">
+              What to bring
+            </h2>
+            <ul className="flex max-w-prose flex-col gap-3">
+              {BRING.map((item) => (
+                <li key={item} className="flex items-start gap-3 text-meta">
+                  <span
+                    aria-hidden="true"
+                    className="mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-cyan"
+                  />
+                  <span className="text-muted-foreground">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-meta text-muted-foreground">
+              We are at {SITE.address}. Parking is free for the first two hours.
+            </p>
+          </section>
+        </>
+      )}
+    </div>
+  );
+}
