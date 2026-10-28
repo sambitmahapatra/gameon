@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sheet';
 import { LiveCounter } from '@/components/live-counter';
 import { Logo } from '@/components/logo';
+import { ThemeToggle } from '@/components/theme-toggle';
 import { cn } from '@/lib/utils';
 
 const LINKS = [
@@ -31,7 +32,8 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 12);
+    // Past 100px the bar takes on its own surface (V2 fix 4d)
+    const onScroll = () => setScrolled(window.scrollY > 100);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -42,9 +44,9 @@ export function Navbar() {
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 border-b transition-colors duration-300',
+        'sticky top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-500',
         scrolled
-          ? 'border-border bg-deep/80 backdrop-blur-xl'
+          ? 'border-border bg-surface/80 backdrop-blur-[20px]'
           : 'border-transparent bg-transparent',
       )}
     >
@@ -61,18 +63,27 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 className={cn(
-                  'rounded-button text-meta transition-colors',
+                  'group relative rounded-button py-1 text-meta transition-colors',
                   active ? 'text-cyan' : 'text-muted-foreground hover:text-foreground',
                 )}
               >
                 {link.label}
+                {/* Underline grows from the left on hover, and stays for the active link */}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'absolute -bottom-0.5 left-0 h-px w-full origin-left bg-cyan transition-transform duration-300 ease-out',
+                    active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
+                  )}
+                />
               </Link>
             );
           })}
         </div>
 
-        <div className="flex items-center gap-4">
-          <LiveCounter className="hidden xl:inline-flex" />
+        <div className="flex items-center gap-2 sm:gap-3">
+          <LiveCounter className="mr-1 hidden xl:inline-flex" />
+          <ThemeToggle />
           <Button asChild size="sm" className="hidden sm:inline-flex">
             <Link href="/book">Book a Session</Link>
           </Button>

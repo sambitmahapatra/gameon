@@ -5,6 +5,7 @@ import QRCode from 'qrcode';
 
 import { BookingTimeline } from '@/components/booking-timeline';
 import { ConfirmActions } from '@/components/confirm-actions';
+import { QrReveal } from '@/components/qr-reveal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
@@ -47,17 +48,15 @@ const BRING = [
   'Socks for the VR arena',
 ];
 
-export default async function ConfirmPage({ params }: PageProps) {
+export default function ConfirmPage({ params }: PageProps) {
   const booking = withDb(() => getBooking(params.id));
   if (!booking) notFound();
 
   const cancelled = booking.status === 'cancelled';
-  const qr = await QRCode.toString(booking.id, {
-    type: 'svg',
-    margin: 0,
-    width: 240,
-    color: { dark: '#E8ECF1', light: '#0000' },
-  });
+
+  // The matrix, not a rendered SVG string: the client component animates the
+  // modules in, and currentColor keeps the code legible in both themes.
+  const matrix = QRCode.create(booking.id, { errorCorrectionLevel: 'M' }).modules;
 
   const date = fromDateKey(booking.date);
 
@@ -79,12 +78,13 @@ export default async function ConfirmPage({ params }: PageProps) {
 
       <div className="mt-12 grid gap-10 lg:grid-cols-[260px_1fr] lg:gap-16">
         <div className="flex flex-col items-start gap-5">
-          <div
-            className="rounded-card border border-border bg-surface p-5"
-            aria-label={`QR code for booking ${booking.id}`}
-            // qrcode renders a self-contained SVG; no user input reaches it.
-            dangerouslySetInnerHTML={{ __html: qr }}
-          />
+          <div className="panel p-5 text-foreground">
+            <QrReveal
+              bits={Array.from(matrix.data)}
+              size={matrix.size}
+              label={`QR code for booking ${booking.id}`}
+            />
+          </div>
           <div className="flex flex-col gap-1">
             <span className="text-meta text-muted-foreground">Booking ID</span>
             <span className="font-mono text-h3 tracking-tight text-cyan">
@@ -94,7 +94,7 @@ export default async function ConfirmPage({ params }: PageProps) {
         </div>
 
         <div className="flex flex-col gap-10">
-          <dl className="divide-y divide-border rounded-card border border-border bg-surface px-6">
+          <dl className="panel divide-y divide-border px-6">
             {[
               ['Zone', booking.zone_name],
               [

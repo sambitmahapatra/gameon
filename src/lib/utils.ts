@@ -46,3 +46,8 @@ export const apiBase = (process.env.NEXT_PUBLIC_API_BASE ?? '').replace(/\/$/, '
 export function api(path: string) {
   return `${apiBase}${path}`;
 }
+
+/** 1,200 — Indian digit grouping, no currency symbol (the Price component adds it). */
+export function inrDigits(amount: number) {
+  return new Intl.NumberFormat('en-IN', { maximumFractionDigits: 0 }).format(amount);
+}

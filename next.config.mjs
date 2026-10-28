@@ -13,7 +13,16 @@ const nextConfig = {
   reactStrictMode: true,
   output: isStaticExport ? 'export' : undefined,
   images: {
+    // The static export has no image optimiser, so URLs pass through as-is.
     unoptimized: isStaticExport,
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
+      },
+    ],
+    deviceSizes: [375, 640, 768, 1024, 1280, 1536, 1920],
   },
   // better-sqlite3 is a native module: keep it out of the server bundle.
   experimental: {

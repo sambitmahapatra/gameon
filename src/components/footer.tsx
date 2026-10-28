@@ -37,7 +37,17 @@ const COLUMNS = [
 
 export function Footer() {
   return (
-    <footer className="mt-32 border-t border-border bg-surface/40">
+    <footer className="relative mt-32 border-t border-border bg-surface/40">
+      {/* Flowing cyan-to-orange hairline along the top edge (V2 fix 5) */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 -top-px h-[3px] motion-safe:animate-[flow-line_15s_linear_infinite]"
+        style={{
+          backgroundImage:
+            'linear-gradient(90deg, transparent, hsl(var(--accent-primary)), hsl(var(--accent-warm)), hsl(var(--accent-primary)), transparent)',
+          backgroundSize: '200% 100%',
+        }}
+      />
       <div className="shell py-16">
         <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
           <div className="flex flex-col gap-4">

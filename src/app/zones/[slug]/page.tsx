@@ -4,14 +4,14 @@ import { notFound } from 'next/navigation';
 import { Clock, Gamepad2, Users, Zap } from 'lucide-react';
 
 import { Reveal } from '@/components/motion/reveal';
+import { Price } from '@/components/price';
 import { ZoneCard } from '@/components/zone-card';
 import { ZoneVisual } from '@/components/zone-visual';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { withDb } from '@/lib/bootstrap';
 import { getZone, getZones } from '@/lib/db';
-import { inr } from '@/lib/utils';
-import { zoneImage } from '@/lib/zone-images';
+import { signatureImage, zoneImage } from '@/lib/images';
 
 export { dynamic } from '@/lib/render-mode';
 
@@ -79,18 +79,29 @@ export default function ZonePage({ params }: PageProps) {
   if (!zone) notFound();
 
   const specs = SPECS[zone.id] ?? { games: [], durations: [], kit: [] };
-  const image = zoneImage(zone);
+  const hero = signatureImage(zone.id, 2000);
   const siblings = others.filter((candidate) => candidate.id !== zone.id).slice(0, 3);
+
+  // The gallery alternates the two crops so the tiles do not look duplicated.
+  const gallery = [
+    signatureImage(zone.id, 900),
+    zoneImage(zone, 900),
+    signatureImage(zone.id, 900),
+    zoneImage(zone, 900),
+    signatureImage(zone.id, 900),
+    zoneImage(zone, 900),
+  ];
 
   return (
     <article className="pb-16">
       <div className="shell pt-10">
         <ZoneVisual
           accent={zone.accent_hex}
-          src={image}
+          src={hero}
           alt={`${zone.name} at GameOn Powai`}
+          sizes="100vw"
           priority
-          className="aspect-[16/9] rounded-card border border-border md:aspect-[21/9]"
+          className="panel aspect-[16/9] md:aspect-[21/9]"
         />
       </div>
 
@@ -150,20 +161,20 @@ export default function ZonePage({ params }: PageProps) {
             </p>
           </section>
 
-          {/* Gallery: placeholder tiles until the generated artwork lands */}
           <section aria-labelledby="gallery" className="mt-10 flex flex-col gap-5">
             <h2 id="gallery" className="text-h2">
               The room
             </h2>
             <Reveal stagger="[data-gallery-tile]">
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, index) => (
+              <div className="group grid grid-cols-2 gap-4 md:grid-cols-3">
+                {gallery.map((src, index) => (
                   <div key={index} data-gallery-tile>
                     <ZoneVisual
                       accent={zone.accent_hex}
-                      src={image}
+                      src={src}
                       alt={`${zone.name}, view ${index + 1}`}
-                      className="aspect-[4/3] rounded-card border border-border"
+                      sizes="(max-width: 768px) 45vw, 28vw"
+                      className="panel aspect-[4/3]"
                     />
                   </div>
                 ))}
@@ -172,7 +183,7 @@ export default function ZonePage({ params }: PageProps) {
           </section>
         </div>
 
-        <aside className="flex h-fit flex-col gap-6 rounded-card border border-border bg-surface p-6 lg:sticky lg:top-28">
+        <aside className="panel flex h-fit flex-col gap-6 p-6 lg:sticky lg:top-28">
           <h2 className="font-display text-h3">Specs</h2>
           <dl className="flex flex-col gap-5">
             <div className="flex items-start gap-3">
@@ -188,8 +199,8 @@ export default function ZonePage({ params }: PageProps) {
               <Gamepad2 aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-cyan" />
               <div>
                 <dt className="text-meta text-muted-foreground">Rate</dt>
-                <dd className="font-mono text-data text-foreground">
-                  {inr(zone.price_per_hour)} an hour
+                <dd className="text-data text-foreground">
+                  <Price amount={zone.price_per_hour} /> an hour
                 </dd>
               </div>
             </div>
@@ -217,8 +228,8 @@ export default function ZonePage({ params }: PageProps) {
       <section className="shell mt-24">
         <h2 className="text-h2">Other zones</h2>
         <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {siblings.map((sibling) => (
-            <ZoneCard key={sibling.id} zone={sibling} />
+          {siblings.map((sibling, index) => (
+            <ZoneCard key={sibling.id} zone={sibling} index={index} />
           ))}
         </div>
       </section>

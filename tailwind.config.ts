@@ -23,11 +23,11 @@ const config: Config = {
         elevated: 'hsl(var(--bg-elevated))',
         cyan: {
           DEFAULT: 'hsl(var(--accent-primary))',
-          foreground: 'hsl(var(--bg-deep))',
+          foreground: 'hsl(var(--on-accent))',
         },
         ember: {
           DEFAULT: 'hsl(var(--accent-warm))',
-          foreground: 'hsl(var(--bg-deep))',
+          foreground: 'hsl(var(--on-warm))',
         },
         // shadcn/ui bridge
         border: 'hsl(var(--border))',
@@ -128,6 +128,14 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(6px)' },
         },
+        'glow-once': {
+          '0%': { boxShadow: '0 0 0 0 hsl(var(--accent-primary) / 0.45)' },
+          '70%': { boxShadow: '0 0 0 12px hsl(var(--accent-primary) / 0)' },
+          '100%': { boxShadow: '0 0 0 0 hsl(var(--accent-primary) / 0)' },
+        },
+        ripple: {
+          to: { transform: 'scale(4)', opacity: '0' },
+        },
         shimmer: {
           '100%': { transform: 'translateX(100%)' },
         },
@@ -138,6 +146,8 @@ const config: Config = {
         'slot-pulse': 'slot-pulse 1.8s ease-out infinite',
         'drift-y': 'drift-y 2.4s ease-in-out infinite',
         shimmer: 'shimmer 1.6s infinite',
+        'glow-once': 'glow-once 0.7s ease-out 1',
+        ripple: 'ripple 0.6s ease-out forwards',
       },
     },
   },

@@ -2,12 +2,12 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 
 import { Reveal } from '@/components/motion/reveal';
+import { Price } from '@/components/price';
 import { SectionHeading } from '@/components/section-heading';
 import { Button } from '@/components/ui/button';
 import { ZoneVisual } from '@/components/zone-visual';
+import { signatureImage } from '@/lib/images';
 import type { Zone } from '@/lib/types';
-import { inr } from '@/lib/utils';
-import { zoneImage } from '@/lib/zone-images';
 
 const FEATURED = ['vr-arena', 'flight-sim', 'streaming-pod'];
 
@@ -35,65 +35,76 @@ export function SignatureExperiences({ zones }: { zones: Zone[] }) {
   );
 
   return (
-    <section className="shell py-24">
-      <SectionHeading
-        eyebrow="Signature experiences"
-        title="Three rooms you will not find elsewhere in Powai"
-        sub="Every zone is good. These three are the reason people travel across the city for an evening here."
+    <section className="relative overflow-hidden py-24">
+      <div
+        aria-hidden="true"
+        className="mesh-corner-right pointer-events-none absolute inset-0"
       />
 
-      <div className="mt-16 flex flex-col gap-20">
-        {featured.map((zone, index) => {
-          const pitch = PITCH[zone.id];
-          const flipped = index % 2 === 1;
+      <div className="shell relative">
+        <SectionHeading
+          eyebrow="Signature experiences"
+          title="Three rooms you will not find elsewhere in Powai"
+          sub="Every zone is good. These three are the reason people travel across the city for an evening here."
+        />
 
-          return (
-            <Reveal key={zone.id} stagger="[data-feature-part]">
-              <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
-                <div data-feature-part className={flipped ? 'lg:order-2' : undefined}>
-                  <ZoneVisual
-                    accent={zone.accent_hex}
-                    src={zoneImage(zone)}
-                    alt={`${zone.name} at GameOn Powai`}
-                    className="aspect-[16/10] rounded-card border border-border"
-                  />
-                </div>
+        <div className="mt-16 flex flex-col gap-20">
+          {featured.map((zone, index) => {
+            const pitch = PITCH[zone.id];
+            const flipped = index % 2 === 1;
 
-                <div data-feature-part className="flex flex-col gap-5">
-                  <p className="eyebrow">{zone.name}</p>
-                  <h3 className="max-w-[22ch] text-h2">{pitch.heading}</h3>
-                  <p className="max-w-prose text-pretty text-body text-muted-foreground">
-                    {pitch.body}
-                  </p>
+            return (
+              <Reveal key={zone.id} stagger="[data-feature-part]">
+                <div className="group grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
+                  <div data-feature-part className={flipped ? 'lg:order-2' : undefined}>
+                    <ZoneVisual
+                      accent={zone.accent_hex}
+                      src={signatureImage(zone.id, 1600)}
+                      alt={`${zone.name} at GameOn Powai`}
+                      sizes="(max-width: 1024px) 100vw, 46vw"
+                      zoomOnHover
+                      className="panel aspect-[16/10]"
+                    />
+                  </div>
 
-                  <ul className="flex flex-wrap gap-x-6 gap-y-2">
-                    {pitch.detail.map((item) => (
-                      <li key={item} className="text-meta text-muted-foreground">
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
+                  <div data-feature-part className="flex flex-col gap-5">
+                    <p className="eyebrow">{zone.name}</p>
+                    <h3 className="max-w-[22ch] text-h2">{pitch.heading}</h3>
+                    <p className="max-w-prose text-pretty text-body text-muted-foreground">
+                      {pitch.body}
+                    </p>
 
-                  <div className="flex flex-wrap items-center gap-5 pt-2">
-                    <Button asChild variant="outline">
-                      <Link href={`/book?zone=${zone.id}`}>Reserve this zone</Link>
-                    </Button>
-                    <Link
-                      href={`/zones/${zone.id}`}
-                      className="inline-flex items-center gap-1.5 rounded-button text-meta text-muted-foreground transition-colors hover:text-cyan"
-                    >
-                      What is inside
-                      <ArrowUpRight aria-hidden="true" className="size-3.5" />
-                    </Link>
-                    <span className="font-mono text-data text-muted-foreground">
-                      {inr(zone.price_per_hour)}/hour
-                    </span>
+                    <ul className="flex flex-wrap gap-x-6 gap-y-2">
+                      {pitch.detail.map((item) => (
+                        <li key={item} className="text-meta text-muted-foreground">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+
+                    <div className="flex flex-wrap items-center gap-5 pt-2">
+                      <Button asChild variant="outline">
+                        <Link href={`/book?zone=${zone.id}`}>Reserve this zone</Link>
+                      </Button>
+                      <Link
+                        href={`/zones/${zone.id}`}
+                        className="inline-flex items-center gap-1.5 rounded-button text-meta text-muted-foreground transition-colors hover:text-cyan"
+                      >
+                        What is inside
+                        <ArrowUpRight aria-hidden="true" className="size-3.5" />
+                      </Link>
+                      <Price
+                        amount={zone.price_per_hour}
+                        suffix="/hour"
+                        className="text-data text-muted-foreground"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Reveal>
-          );
-        })}
+              </Reveal>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

@@ -4,10 +4,34 @@
 
 @layer base {
   /*
-   * GameOn palette (spec 3.1) expressed as HSL triples so Tailwind can apply
-   * opacity modifiers. Hex equivalents kept in comments for reference.
+   * Two themes, same token names. next-themes puts `.dark` on <html>, so
+   * every component reads one variable and never branches on theme.
+   *
+   * Light is designed, not derived: cyan on white reads washed out, so the
+   * primary accent becomes a deep blue and the warm accent a rust orange.
    */
   :root {
+    --bg-deep: 60 20% 98%; /* #FAFAF7 */
+    --bg-surface: 0 0% 100%; /* #FFFFFF */
+    --bg-elevated: 90 13% 95%; /* #F2F4F0 */
+    --accent-primary: 210 100% 40%; /* #0066CC */
+    --accent-warm: 14 83% 46%; /* #D84315 */
+    --text-primary: 220 42% 6%; /* #0A0E17 */
+    --text-muted: 220 14% 41%; /* #5A6478 */
+    --border-subtle: 75 11% 90%; /* #E6E8E3 */
+    --grain-overlay: 0.015;
+    --image-wash: 28 60% 50%; /* warm overlay that ties photos together */
+    --image-wash-opacity: 0.1;
+    --card-shadow: 0 1px 2px rgb(10 14 23 / 0.04), 0 12px 32px -16px rgb(10 14 23 / 0.16);
+    --card-highlight: rgb(255 255 255 / 0.9);
+    /* Text that sits on a filled accent button */
+    --on-accent: 0 0% 100%;
+    --on-warm: 0 0% 100%;
+    /* Cursor spotlight is softer on a light surface */
+    --spotlight-strength: 0.04;
+  }
+
+  .dark {
     --bg-deep: 220 42% 6%; /* #0A0E17 */
     --bg-surface: 223 37% 13%; /* #141B2D */
     --bg-elevated: 225 39% 18%; /* #1C2541 */
@@ -16,16 +40,27 @@
     --text-primary: 213 26% 93%; /* #E8ECF1 */
     --text-muted: 218 14% 60%; /* #8B95A7 */
     --border-subtle: 221 38% 20%; /* #1F2A44 */
+    --grain-overlay: 0.025;
+    --image-wash: 220 42% 6%;
+    --image-wash-opacity: 0.15;
+    --card-shadow: 0 24px 60px -30px rgb(0 0 0 / 0.8);
+    --card-highlight: hsl(var(--accent-primary) / 0.28);
+    --on-accent: var(--bg-deep);
+    --on-warm: var(--bg-deep);
+    --spotlight-strength: 0.08;
+  }
 
-    /* shadcn/ui variable bridge — single dark theme, no light mode in v1 */
+  :root,
+  .dark {
+    /* shadcn/ui variable bridge */
     --background: var(--bg-deep);
     --foreground: var(--text-primary);
     --card: var(--bg-surface);
     --card-foreground: var(--text-primary);
-    --popover: var(--bg-elevated);
+    --popover: var(--bg-surface);
     --popover-foreground: var(--text-primary);
     --primary: var(--accent-primary);
-    --primary-foreground: var(--bg-deep);
+    --primary-foreground: var(--on-accent);
     --secondary: var(--bg-elevated);
     --secondary-foreground: var(--text-primary);
     --muted: var(--bg-elevated);
@@ -33,7 +68,7 @@
     --accent: var(--bg-elevated);
     --accent-foreground: var(--text-primary);
     --destructive: 0 72% 51%;
-    --destructive-foreground: 213 26% 93%;
+    --destructive-foreground: 0 0% 100%;
     --border: var(--border-subtle);
     --input: var(--border-subtle);
     --ring: var(--accent-primary);
@@ -47,23 +82,19 @@
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   body {
     @apply bg-deep font-sans text-body text-foreground antialiased;
-    /* Faint cold wash so the near-black never reads as flat */
-    background-image:
-      radial-gradient(
-        120% 80% at 50% -20%,
-        hsl(var(--accent-primary) / 0.07),
-        transparent 60%
-      ),
-      radial-gradient(
-        90% 60% at 100% 100%,
-        hsl(var(--accent-warm) / 0.04),
-        transparent 65%
-      );
-    background-attachment: fixed;
+    /* Theme swaps should settle, not snap */
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease;
   }
 
   h1,
@@ -73,13 +104,13 @@
     @apply text-balance font-display font-bold;
   }
 
-  /* Visible cyan focus ring everywhere (spec 4.5) */
+  /* Visible focus ring everywhere (spec 4.5) */
   :focus-visible {
     @apply outline-none ring-2 ring-cyan ring-offset-2 ring-offset-deep;
   }
 
   ::selection {
-    background: hsl(var(--accent-primary) / 0.3);
+    background: hsl(var(--accent-primary) / 0.25);
     color: hsl(var(--text-primary));
   }
 
@@ -103,8 +134,17 @@
     @apply mx-auto w-full max-w-[1440px] px-6 md:px-12 xl:px-24;
   }
 
+  /*
+   * Eyebrow label with the 32px rule to its left (V2 fix 5). The rule is a
+   * pseudo-element so the label stays a single text node for screen readers.
+   */
   .eyebrow {
-    @apply font-mono text-meta tracking-tight text-cyan;
+    @apply inline-flex items-center gap-3 font-mono text-meta tracking-tight text-cyan;
+  }
+
+  .eyebrow::before {
+    content: '';
+    @apply h-px w-8 shrink-0 bg-cyan;
   }
 
   .hairline {
@@ -119,6 +159,21 @@
 
   .data {
     @apply font-mono text-data;
+  }
+
+  /*
+   * Card surface: a hairline highlight along the top edge, the way glass
+   * catches light. Border in dark, shadow in light.
+   */
+  .panel {
+    @apply relative rounded-card border border-border bg-surface;
+    box-shadow: var(--card-shadow);
+  }
+
+  .panel::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-card;
+    background: linear-gradient(90deg, transparent, var(--card-highlight), transparent);
   }
 }
 
@@ -150,7 +205,7 @@
   }
 
   /*
-   * Pre-animation state for elements a GSAP timeline fades in. Only hidden
+   * Pre-animation state for elements a GSAP timeline reveals. Only applied
    * where scripting is available, so with JS off (or if a bundle fails) the
    * content is simply there instead of invisible forever.
    */
@@ -159,10 +214,116 @@
       opacity: 0;
     }
 
-    /* Same, plus the rise offset the entrance tween animates away. */
     .gs-rise {
       opacity: 0;
       transform: translateY(1rem);
     }
+
+    /* Word masked bottom-up by the hero headline reveal */
+    .gs-word {
+      clip-path: inset(100% 0 0 0);
+    }
+  }
+
+  /* Mesh layers: GPU-only properties so the loop stays cheap */
+  .mesh-hero {
+    background:
+      radial-gradient(
+        ellipse 60% 50% at 20% 30%,
+        hsl(var(--accent-primary) / 0.15),
+        transparent 50%
+      ),
+      radial-gradient(
+        ellipse 55% 45% at 80% 70%,
+        hsl(var(--accent-warm) / 0.1),
+        transparent 50%
+      );
+    animation: mesh-drift 20s ease-in-out infinite alternate;
+  }
+
+  .mesh-corner-left,
+  .mesh-corner-right {
+    background: radial-gradient(
+      ellipse 50% 40% at var(--mesh-x) 0%,
+      hsl(var(--accent-primary) / 0.12),
+      transparent 60%
+    );
+    filter: blur(40px);
+  }
+
+  .mesh-corner-left {
+    --mesh-x: 12%;
+  }
+
+  .mesh-corner-right {
+    --mesh-x: 88%;
+  }
+
+  .mesh-conic {
+    background: conic-gradient(
+      from 0deg,
+      hsl(var(--accent-primary) / 0.22),
+      hsl(265 85% 60% / 0.18),
+      hsl(var(--accent-warm) / 0.22),
+      hsl(var(--accent-primary) / 0.22)
+    );
+    animation: mesh-spin 30s linear infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mesh-hero,
+    .mesh-conic {
+      animation: none;
+    }
+  }
+
+  /* Diagonal sheen that sweeps a button on hover */
+  .shine::after {
+    content: '';
+    @apply pointer-events-none absolute inset-0 -translate-x-full;
+    background: linear-gradient(
+      100deg,
+      transparent 20%,
+      rgb(255 255 255 / 0.18) 50%,
+      transparent 80%
+    );
+    transition: transform 0.6s ease;
+  }
+
+  .shine:hover::after {
+    @apply translate-x-full;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .shine::after {
+      display: none;
+    }
+  }
+}
+
+@keyframes mesh-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2%, -1.5%, 0) scale(1.06);
+  }
+  100% {
+    transform: translate3d(-2%, 1.5%, 0) scale(1.02);
+  }
+}
+
+@keyframes mesh-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flow-line {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
   }
 }

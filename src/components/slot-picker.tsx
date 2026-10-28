@@ -53,6 +53,23 @@ export function SlotPicker({
     { scope, dependencies: [reduced, loading, slots] },
   );
 
+  /** Cyan ripple from the click point (V2 fix 4g). */
+  function ripple(event: React.MouseEvent<HTMLButtonElement>) {
+    if (reduced) return;
+
+    const button = event.currentTarget;
+    const box = button.getBoundingClientRect();
+    const dot = document.createElement('span');
+
+    dot.className =
+      'pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan/40 motion-safe:animate-ripple';
+    dot.style.left = `${event.clientX - box.left}px`;
+    dot.style.top = `${event.clientY - box.top}px`;
+
+    button.append(dot);
+    window.setTimeout(() => dot.remove(), 650);
+  }
+
   if (loading) {
     return (
       <div className="grid grid-cols-4 gap-2.5 lg:grid-cols-6">
@@ -92,9 +109,12 @@ export function SlotPicker({
             data-slot
             disabled={disabled}
             aria-pressed={selected}
-            onClick={() => onSelect(slot)}
+            onClick={(event) => {
+              ripple(event);
+              onSelect(slot);
+            }}
             className={cn(
-              'h-11 rounded-button border font-mono text-meta transition-colors duration-200',
+              'relative h-11 overflow-hidden rounded-button border font-mono text-meta transition-colors duration-200',
               'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-deep',
               selected
                 ? 'border-cyan bg-cyan font-semibold text-cyan-foreground'
