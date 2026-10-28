@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { Pool, type PoolClient } from 'pg';
 import { DatabaseConfigurationError, SlotUnavailableError } from './db-errors';
+import { postgresConfig } from './postgres-config';
 import type { AdminStats, BookingFilter, CreateBookingInput, SiteStats } from './sqlite';
 import type { BookingDetail, GameEvent, Member, Slot, Zone } from './types';
 
@@ -8,13 +9,7 @@ const state = globalThis as unknown as { gameonPostgres?: Pool };
 export function getPool(): Pool {
   if (!process.env.DATABASE_URL) throw new DatabaseConfigurationError();
   if (!state.gameonPostgres) {
-    state.gameonPostgres = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      max: 3,
-      connectionTimeoutMillis: 10_000,
-      idleTimeoutMillis: 20_000,
-      allowExitOnIdle: true,
-    });
+    state.gameonPostgres = new Pool(postgresConfig(process.env.DATABASE_URL));
     // An idle connection failure must not take down the server process.
     state.gameonPostgres.on('error', () =>
       console.error('[GameOn DB] Idle PostgreSQL connection closed'),

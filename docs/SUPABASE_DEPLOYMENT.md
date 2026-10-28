@@ -12,7 +12,7 @@ The frontend and Next.js API stay together on Vercel. Supabase hosts the Postgre
 2. Choose a strong database password and a region near the Vercel function region.
 3. Open **Connect**, select the **Transaction pooler** connection method, and copy the PostgreSQL URI (port **6543**).
 4. Replace its password placeholder with your database password. Percent-encode special characters in the password component. Use the database password, not an anon/publishable key or service-role API key.
-5. Enable TLS in the URI, for example by appending `?sslmode=verify-full`. If a query string already exists, append `&sslmode=verify-full` instead. For certificate configuration, follow the [Supabase connection documentation](https://supabase.com/docs/guides/database/connecting-to-postgres).
+5. Enable TLS in the URI, for example by appending `?sslmode=verify-full`. If a query string already exists, append `&sslmode=verify-full` instead. GameOn bundles Supabase's public root CA and explicitly configures `pg` to verify both the certificate chain and hostname for known Supabase database hosts. The driver removes URI SSL options internally so they cannot override the CA settings. You can keep the original URI unchanged in Vercel. For certificate configuration, follow the [Supabase connection documentation](https://supabase.com/docs/guides/database/connecting-to-postgres).
 
 Keep the URI private. Never put it in a `NEXT_PUBLIC_*` variable, GitHub source, screenshots or chat.
 
@@ -85,6 +85,6 @@ npm run build
 - **`relation "zones" does not exist`:** run `npm run db:setup` against the same database used by Vercel.
 - **Password authentication failed:** check the database password and pooler username from Supabase's Connect panel. Encode special characters in the password.
 - **Connection timeout:** check that the project is active and the transaction-pooler host/port are correct. The direct IPv6 endpoint is not interchangeable with the IPv4 pooler endpoint.
-- **TLS/certificate error:** follow Supabase's SSL/certificate instructions; do not disable certificate verification as a workaround.
+- **`SELF_SIGNED_CERT_IN_CHAIN`:** deploy the latest code, which bundles the official public `Supabase Root 2021 CA` and keeps certificate/hostname verification enabled. No additional Vercel variable is needed for standard Supabase database hosts. For a provider CA rotation or custom database host, set `DATABASE_SSL_CA` to the trusted PEM certificate obtained from that provider (`\n` escapes are supported), then redeploy. The bundled root's source and SHA-256 fingerprint are recorded in `src/lib/supabase-ca.ts`. Do not disable certificate verification as a workaround.
 
 References: [Supabase connections](https://supabase.com/docs/guides/database/connecting-to-postgres), [node-postgres transactions](https://node-postgres.com/features/transactions).

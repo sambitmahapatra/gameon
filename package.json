@@ -18,6 +18,7 @@
     "db:seed": "tsx scripts/seed.ts",
     "db:setup": "tsx scripts/setup-postgres.ts",
     "test:postgres": "tsx scripts/test-postgres.ts",
+    "test:postgres:tls": "tsx scripts/test-postgres-tls.ts",
     "db:reset": "node -e \"require('fs').rmSync('./data/gameon.db',{force:true})\" && npm run db:seed",
     "verify": "npm run lint && npm run typecheck && npm run build"
   },
