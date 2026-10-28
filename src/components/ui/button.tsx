@@ -10,18 +10,18 @@ import { cn } from '@/lib/utils';
  * since there is no surface for a sheen to travel across.
  */
 const buttonVariants = cva(
-  'relative inline-flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-button font-medium transition-[background-color,border-color,color,transform,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-deep disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
+  'relative inline-flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap rounded-button font-medium transition-[background-color,border-color,color,transform,box-shadow] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
         default:
-          'shine bg-cyan font-semibold text-cyan-foreground hover:bg-cyan/90 hover:shadow-glow motion-safe:hover:animate-glow-once active:translate-y-px',
-        warm: 'shine bg-ember font-semibold text-ember-foreground hover:bg-ember/90 hover:shadow-glow-warm active:translate-y-px',
+          'shine bg-brand font-semibold text-brand-foreground hover:bg-brand/90 hover:shadow-glow active:translate-y-px',
+        warm: 'shine bg-amber font-semibold text-brand-foreground hover:bg-amber/90 hover:shadow-glow active:translate-y-px',
         outline:
-          'shine border border-cyan/50 text-cyan hover:border-cyan hover:bg-cyan/10 active:translate-y-px',
+          'shine border border-brand/50 text-brand hover:border-brand hover:bg-brand/10 active:translate-y-px',
         secondary: 'shine bg-elevated text-foreground hover:bg-elevated/70',
         ghost: 'text-muted-foreground hover:bg-elevated hover:text-foreground',
-        link: 'overflow-visible text-cyan underline-offset-4 hover:underline',
+        link: 'overflow-visible text-brand underline-offset-4 hover:underline',
         destructive:
           'shine bg-destructive text-destructive-foreground hover:bg-destructive/90',
       },

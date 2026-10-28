@@ -5,15 +5,13 @@ import QRCode from 'qrcode';
 
 import { BookingTimeline } from '@/components/booking-timeline';
 import { ConfirmActions } from '@/components/confirm-actions';
+import { Confetti } from '@/components/confetti';
 import { QrReveal } from '@/components/qr-reveal';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
 import { withDb } from '@/lib/bootstrap';
 import { getBooking, listBookings } from '@/lib/db';
 import { isStaticExport } from '@/lib/render-mode';
 import { SITE } from '@/lib/site';
-import { fromDateKey, inr, prettyTime } from '@/lib/utils';
+import { fromDateKey, inrDigits, prettyTime } from '@/lib/utils';
 
 export { dynamic } from '@/lib/render-mode';
 
@@ -59,117 +57,116 @@ export default function ConfirmPage({ params }: PageProps) {
   const matrix = QRCode.create(booking.id, { errorCorrectionLevel: 'M' }).modules;
 
   const date = fromDateKey(booking.date);
+  const longDate = date.toLocaleDateString('en-IN', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
 
   return (
-    <div className="shell max-w-4xl py-16">
-      <header className="flex flex-col gap-4">
-        {cancelled ? (
-          <Badge variant="danger">Cancelled</Badge>
-        ) : (
-          <Badge variant="success">Confirmed</Badge>
-        )}
-        <h1 className="text-h1">{cancelled ? 'This one is off' : "You're in"}</h1>
-        <p className="max-w-prose text-body text-muted-foreground">
-          {cancelled
-            ? 'The slot went back on the floor. Book another whenever you are ready.'
-            : "We've reserved your spot. Show this QR at the counter."}
-        </p>
-      </header>
+    <div className="section section--tight">
+      {cancelled ? null : <Confetti />}
 
-      <div className="mt-12 grid gap-10 lg:grid-cols-[260px_1fr] lg:gap-16">
-        <div className="flex flex-col items-start gap-5">
-          <div className="panel p-5 text-foreground">
-            <QrReveal
-              bits={Array.from(matrix.data)}
-              size={matrix.size}
-              label={`QR code for booking ${booking.id}`}
-            />
+      <div className="wrap max-w-[1000px]">
+        <header className="section-head">
+          <div className="eyebrow">{cancelled ? 'Cancelled' : 'Confirmed'}</div>
+          <h1>{cancelled ? 'This one is off.' : "You're in."}</h1>
+          <p className="sub">
+            {cancelled
+              ? 'The slot went back on the floor. Book another whenever you are ready.'
+              : 'We have reserved your rig. Show this code at the counter and the staff will walk you over.'}
+          </p>
+        </header>
+
+        <div className="grid gap-10 lg:grid-cols-[280px_1fr] lg:gap-16">
+          <div className="flex flex-col items-start gap-5">
+            <div className="panel panel--elevated p-5 text-fg">
+              <QrReveal
+                bits={Array.from(matrix.data)}
+                size={matrix.size}
+                label={`QR code for booking ${booking.id}`}
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <span className="mono text-fg-dim">Booking ID</span>
+              <span className="font-mono text-[1.6rem] font-medium tracking-tight text-brand">
+                {booking.id}
+              </span>
+            </div>
           </div>
-          <div className="flex flex-col gap-1">
-            <span className="text-meta text-muted-foreground">Booking ID</span>
-            <span className="font-mono text-h3 tracking-tight text-cyan">
-              {booking.id}
-            </span>
-          </div>
-        </div>
 
-        <div className="flex flex-col gap-10">
-          <dl className="panel divide-y divide-border px-6">
-            {[
-              ['Zone', booking.zone_name],
-              [
-                'Date',
-                date.toLocaleDateString('en-IN', {
-                  weekday: 'long',
-                  day: 'numeric',
-                  month: 'long',
-                  year: 'numeric',
-                }),
-              ],
-              ['Time', `${prettyTime(booking.time)} for one hour`],
-              ['Party size', `${booking.party_size} players`],
-              ['Name', booking.name],
-              ['Mobile', booking.phone],
-              ['Due at the counter', inr(booking.price_per_hour)],
-            ].map(([label, value]) => (
-              <div key={label} className="flex items-baseline justify-between gap-6 py-4">
-                <dt className="text-meta text-muted-foreground">{label}</dt>
-                <dd className="text-right text-meta text-foreground">{value}</dd>
-              </div>
-            ))}
-          </dl>
-
-          {cancelled ? (
-            <Button asChild className="self-start">
-              <Link href="/book">Book another session</Link>
-            </Button>
-          ) : (
-            <ConfirmActions
-              id={booking.id}
-              zoneName={booking.zone_name}
-              date={booking.date}
-              time={booking.time}
-              partySize={booking.party_size}
-              cancelled={cancelled}
-            />
-          )}
-        </div>
-      </div>
-
-      {cancelled ? null : (
-        <>
-          <Separator className="my-16" />
-
-          <section aria-labelledby="timeline-heading" className="flex flex-col gap-6">
-            <h2 id="timeline-heading" className="text-h2">
-              What happens next
-            </h2>
-            <BookingTimeline active={0} />
-          </section>
-
-          <Separator className="my-16" />
-
-          <section aria-labelledby="bring-heading" className="flex flex-col gap-6">
-            <h2 id="bring-heading" className="text-h2">
-              What to bring
-            </h2>
-            <ul className="flex max-w-prose flex-col gap-3">
-              {BRING.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-meta">
-                  <span
-                    aria-hidden="true"
-                    className="mt-[0.45rem] size-1.5 shrink-0 rounded-full bg-cyan"
-                  />
-                  <span className="text-muted-foreground">{item}</span>
-                </li>
+          <div className="flex flex-col gap-10">
+            <dl className="panel px-6 py-2">
+              {[
+                ['Zone', booking.zone_name],
+                ['Date', longDate],
+                ['Time', `${prettyTime(booking.time)} for one hour`],
+                ['Party size', `${booking.party_size} players`],
+                ['Name', booking.name],
+                ['Mobile', booking.phone],
+              ].map(([label, value]) => (
+                <div key={label} className="meta-row">
+                  <dt>{label}</dt>
+                  <dd>{value}</dd>
+                </div>
               ))}
-            </ul>
-            <p className="text-meta text-muted-foreground">
-              We are at {SITE.address}. Parking is free for the first two hours.
-            </p>
-          </section>
-        </>
-      )}
+              <div className="meta-row">
+                <dt>Due at the counter</dt>
+                <dd className="mono">₹{inrDigits(booking.price_per_hour)}</dd>
+              </div>
+            </dl>
+
+            {cancelled ? (
+              <Link href="/book" className="btn btn--primary btn--lg self-start">
+                Book another session
+              </Link>
+            ) : (
+              <ConfirmActions
+                id={booking.id}
+                zoneName={booking.zone_name}
+                date={booking.date}
+                time={booking.time}
+                partySize={booking.party_size}
+                cancelled={cancelled}
+              />
+            )}
+          </div>
+        </div>
+
+        {cancelled ? null : (
+          <>
+            <section
+              aria-labelledby="timeline-heading"
+              className="mt-20 flex flex-col gap-8 border-t border-line pt-16"
+            >
+              <h2 id="timeline-heading">What happens next</h2>
+              <BookingTimeline active={0} />
+            </section>
+
+            <section
+              aria-labelledby="bring-heading"
+              className="mt-20 flex flex-col gap-6 border-t border-line pt-16"
+            >
+              <h2 id="bring-heading">What to bring</h2>
+              <ul className="flex max-w-prose flex-col gap-3">
+                {BRING.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <span
+                      aria-hidden="true"
+                      className="mt-[0.55rem] size-1.5 shrink-0 rounded-full bg-brand"
+                    />
+                    <span className="text-fg-muted">{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="text-meta text-fg-dim">
+                We are at {SITE.address}. Parking is free for the first two hours.
+              </p>
+            </section>
+          </>
+        )}
+      </div>
     </div>
   );
 }

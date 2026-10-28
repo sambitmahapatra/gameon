@@ -2,20 +2,21 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { Moon, Sun } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
 /**
- * Sun in dark mode, moon in light. Both icons are mounted and crossfade while
- * rotating 180°, so the swap reads as one movement rather than a flicker.
+ * Sun in dark mode, moon in light. Both icons stay mounted and crossfade while
+ * rotating, so the swap reads as one movement rather than a flicker.
+ *
+ * The server cannot know the stored preference, so it renders the moon — the
+ * light default on a bare :root. That way the button is never blank, which is
+ * what both icons at opacity 0 would have given us.
  */
 export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // The server has no way to know the stored preference, so render the shell
-  // first and let the icons appear once the theme is resolved.
   useEffect(() => setMounted(true), []);
 
   const dark = resolvedTheme === 'dark';
@@ -29,31 +30,47 @@ export function ThemeToggle({ className }: { className?: string }) {
           ? dark
             ? 'Switch to light theme'
             : 'Switch to dark theme'
-          : 'Switch theme'
+          : 'Toggle theme'
       }
-      className={cn(
-        'relative grid size-10 shrink-0 place-items-center rounded-button text-muted-foreground transition-colors hover:bg-elevated hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-deep',
-        className,
-      )}
+      className={cn('theme-toggle', className)}
     >
-      <Sun
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
         aria-hidden="true"
-        className={cn(
-          'absolute size-[1.15rem] transition-all ease-out [transition-duration:400ms]',
-          mounted && dark
-            ? 'rotate-0 scale-100 opacity-100'
-            : 'rotate-180 scale-50 opacity-0',
-        )}
-      />
-      <Moon
+        style={{
+          opacity: mounted && dark ? 1 : 0,
+          transform:
+            mounted && dark ? 'rotate(0deg) scale(1)' : 'rotate(90deg) scale(0.6)',
+        }}
+      >
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"
+          strokeLinecap="round"
+        />
+      </svg>
+
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.8"
         aria-hidden="true"
-        className={cn(
-          'absolute size-[1.15rem] transition-all ease-out [transition-duration:400ms]',
-          mounted && !dark
-            ? 'rotate-0 scale-100 opacity-100'
-            : '-rotate-180 scale-50 opacity-0',
-        )}
-      />
+        style={{
+          opacity: !mounted || !dark ? 1 : 0,
+          transform:
+            !mounted || !dark ? 'rotate(0deg) scale(1)' : 'rotate(-90deg) scale(0.6)',
+        }}
+      >
+        <path
+          d="M20 14.5A8 8 0 1 1 9.5 4 7 7 0 0 0 20 14.5Z"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </button>
   );
 }

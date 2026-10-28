@@ -1,110 +1,55 @@
-import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
-
+import { FeatureBlock } from '@/components/feature-block';
+import { FlightSimArt, StreamingPodArt, VrArenaArt } from '@/components/feature-art';
 import { Reveal } from '@/components/motion/reveal';
-import { Price } from '@/components/price';
-import { SectionHeading } from '@/components/section-heading';
-import { Button } from '@/components/ui/button';
-import { ZoneVisual } from '@/components/zone-visual';
-import { signatureImage } from '@/lib/images';
-import type { Zone } from '@/lib/types';
 
-const FEATURED = ['vr-arena', 'flight-sim', 'streaming-pod'];
-
-const PITCH: Record<string, { heading: string; body: string; detail: string[] }> = {
-  'vr-arena': {
-    heading: 'Walk around inside the game',
-    body: 'Most VR you have tried kept you standing still. Our arena tracks your whole body across 40 square metres, so you duck behind real cover and climb real ledges while the headset shows you somewhere else entirely.',
-    detail: ['Wireless headsets', 'Up to six players', 'Staff-run setup'],
+const FEATURES = [
+  {
+    eyebrow: 'VR Arena',
+    heading: 'Walk around inside the game.',
+    body: 'Most VR you have tried kept you standing still. Our arena tracks your body across 40 square metres, so you duck behind real cover, climb real ledges, and the headset shows you somewhere else entirely. Six wireless rigs, run by trained staff.',
+    specs: ['Wireless Quest Pro', '6 free-roam players', 'Staff-run session'],
+    cta: { href: '/book?zone=vr-arena', label: 'Reserve the arena' },
+    art: <VrArenaArt />,
+    imageSide: 'left' as const,
   },
-  'flight-sim': {
-    heading: 'Hand-fly an approach into Mumbai',
-    body: 'A cockpit replica with the switches where they belong, three curved screens, and an instructor beside you for the first circuit. Beginners take off within ten minutes. Pilots come back for the crosswind landings.',
-    detail: ['Full cockpit', 'Briefing included', 'Logbook on request'],
+  {
+    eyebrow: 'Flight Simulator',
+    heading: 'Hand-fly a 737 into a city at dusk.',
+    body: 'A full cockpit replica with the switches where they belong, three curved screens, and an instructor beside you for the first circuit. Beginners take off within ten minutes. Pilots come back for the crosswind landings.',
+    specs: ['Full cockpit', 'Briefing included', 'Logbook on request'],
+    cta: { href: '/book?zone=flight-sim', label: 'Reserve the sim' },
+    art: <FlightSimArt />,
+    imageSide: 'right' as const,
   },
-  'streaming-pod': {
-    heading: 'Go live without buying a studio',
-    body: 'A sound-treated booth with the camera, mic and lighting already dialled in, and OBS scenes ready to go. Sign in to your own accounts, stream, then take the local recording home.',
-    detail: ['Broadcast audio', 'Two cameras', 'Files to take away'],
+  {
+    eyebrow: 'Streaming Pod',
+    heading: 'Go live without buying a studio.',
+    body: 'A sound-treated booth with the camera, mic and lighting already dialled in, and OBS scenes ready to go. Sign in to your own accounts, stream, then take the local recording home on your drive.',
+    specs: ['Shure SM7B', 'Elgato lights', 'OBS preset'],
+    cta: { href: '/book?zone=streaming-pod', label: 'Reserve the pod' },
+    art: <StreamingPodArt />,
+    imageSide: 'left' as const,
   },
-};
+];
 
-export function SignatureExperiences({ zones }: { zones: Zone[] }) {
-  const featured = FEATURED.map((id) => zones.find((zone) => zone.id === id)).filter(
-    (zone): zone is Zone => Boolean(zone),
-  );
-
+export function SignatureExperiences() {
   return (
-    <section className="relative overflow-hidden py-24">
-      <div
-        aria-hidden="true"
-        className="mesh-corner-right pointer-events-none absolute inset-0"
-      />
+    <section className="section section--elevated" id="experiences">
+      <div className="wrap">
+        <Reveal className="section-head">
+          <div className="eyebrow">Signature experiences</div>
+          <h2>Three rooms you will not find in a mall arcade</h2>
+          <p className="sub">
+            Every zone is good. These three are the reason people take an evening off and
+            travel across the city to come here.
+          </p>
+        </Reveal>
 
-      <div className="shell relative">
-        <SectionHeading
-          eyebrow="Signature experiences"
-          title="Three rooms you will not find elsewhere in Powai"
-          sub="Every zone is good. These three are the reason people travel across the city for an evening here."
-        />
-
-        <div className="mt-16 flex flex-col gap-20">
-          {featured.map((zone, index) => {
-            const pitch = PITCH[zone.id];
-            const flipped = index % 2 === 1;
-
-            return (
-              <Reveal key={zone.id} stagger="[data-feature-part]">
-                <div className="group grid items-center gap-8 lg:grid-cols-2 lg:gap-16">
-                  <div data-feature-part className={flipped ? 'lg:order-2' : undefined}>
-                    <ZoneVisual
-                      accent={zone.accent_hex}
-                      src={signatureImage(zone.id, 1600)}
-                      alt={`${zone.name} at GameOn Powai`}
-                      sizes="(max-width: 1024px) 100vw, 46vw"
-                      zoomOnHover
-                      className="panel aspect-[16/10]"
-                    />
-                  </div>
-
-                  <div data-feature-part className="flex flex-col gap-5">
-                    <p className="eyebrow">{zone.name}</p>
-                    <h3 className="max-w-[22ch] text-h2">{pitch.heading}</h3>
-                    <p className="max-w-prose text-pretty text-body text-muted-foreground">
-                      {pitch.body}
-                    </p>
-
-                    <ul className="flex flex-wrap gap-x-6 gap-y-2">
-                      {pitch.detail.map((item) => (
-                        <li key={item} className="text-meta text-muted-foreground">
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-
-                    <div className="flex flex-wrap items-center gap-5 pt-2">
-                      <Button asChild variant="outline">
-                        <Link href={`/book?zone=${zone.id}`}>Reserve this zone</Link>
-                      </Button>
-                      <Link
-                        href={`/zones/${zone.id}`}
-                        className="inline-flex items-center gap-1.5 rounded-button text-meta text-muted-foreground transition-colors hover:text-cyan"
-                      >
-                        What is inside
-                        <ArrowUpRight aria-hidden="true" className="size-3.5" />
-                      </Link>
-                      <Price
-                        amount={zone.price_per_hour}
-                        suffix="/hour"
-                        className="text-data text-muted-foreground"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Reveal>
-            );
-          })}
-        </div>
+        {FEATURES.map((feature) => (
+          <Reveal key={feature.eyebrow} className="feature-row">
+            <FeatureBlock {...feature} />
+          </Reveal>
+        ))}
       </div>
     </section>
   );

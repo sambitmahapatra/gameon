@@ -5,37 +5,42 @@ import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
 import { SITE } from '@/lib/site';
-import { api } from '@/lib/utils';
+import { api, cn } from '@/lib/utils';
 
 type EventRegisterButtonProps = {
   eventId: string;
   title: string;
   date: string;
   full: boolean;
+  className?: string;
 };
 
+/**
+ * Registers against POST /api/events, which is the authority on whether a
+ * place is left — a 409 means someone took the last one while this page was
+ * open, so the row is refreshed rather than trusted.
+ */
 export function EventRegisterButton({
   eventId,
   title,
   date,
   full,
+  className,
 }: EventRegisterButtonProps) {
   const router = useRouter();
   const [pending, setPending] = useState(false);
 
   if (full) {
     return (
-      <Button variant="secondary" className="w-full" asChild>
-        <a
-          href={`${SITE.whatsappUrl}?text=${encodeURIComponent(
-            `Add me to the waitlist for ${title} on ${date}`,
-          )}`}
-        >
-          Join the waitlist
-        </a>
-      </Button>
+      <a
+        className={cn('event__btn', className)}
+        href={`${SITE.whatsappUrl}?text=${encodeURIComponent(
+          `Add me to the waitlist for ${title} on ${date}`,
+        )}`}
+      >
+        Join the waitlist
+      </a>
     );
   }
 
@@ -69,9 +74,16 @@ export function EventRegisterButton({
   }
 
   return (
-    <Button variant="outline" className="w-full" onClick={register} disabled={pending}>
-      {pending ? <Loader2 aria-hidden="true" className="size-4 animate-spin" /> : null}
+    <button
+      type="button"
+      className={cn('event__btn', className)}
+      onClick={register}
+      disabled={pending}
+    >
+      {pending ? (
+        <Loader2 aria-hidden="true" className="mr-2 inline size-4 animate-spin" />
+      ) : null}
       Register
-    </Button>
+    </button>
   );
 }

@@ -49,12 +49,12 @@ export function BookingTimeline({ active = 0 }: { active?: number }) {
         <span
           data-timeline-fill
           aria-hidden="true"
-          className="absolute inset-0 origin-left bg-gradient-to-r from-cyan to-cyan/20"
+          className="absolute inset-0 origin-left bg-gradient-to-r from-brand to-brand/20"
         />
         <span
           data-timeline-dot
           aria-hidden="true"
-          className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan shadow-glow"
+          className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand shadow-glow"
         />
       </div>
 
@@ -64,7 +64,7 @@ export function BookingTimeline({ active = 0 }: { active?: number }) {
             <span
               className={cn(
                 'text-meta',
-                index <= active ? 'text-cyan' : 'text-muted-foreground',
+                index <= active ? 'text-brand' : 'text-muted-foreground',
               )}
             >
               {stage.label}

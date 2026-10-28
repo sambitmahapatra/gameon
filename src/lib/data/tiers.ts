@@ -1,61 +1,78 @@
 export type TierId = 'walk-in' | 'bronze' | 'silver' | 'gold';
 
+/** A bullet with an optional bolded lead fragment, as the reference sets them. */
+export type TierPerk = { strong?: string; text: string };
+
 export type Tier = {
   id: TierId;
   name: string;
   price: number;
+  /** Rendered small after the figure: '/hour', '/month'. */
   cadence: string;
   summary: string;
   popular?: boolean;
-  highlights: string[];
+  cta: string;
+  highlights: TierPerk[];
 };
 
 export const TIERS: Tier[] = [
   {
     id: 'walk-in',
     name: 'Walk-in',
-    price: 0,
-    cadence: 'pay per hour',
-    summary: 'Turn up, play, leave. No commitment, standard hourly rates.',
+    price: 350,
+    cadence: '/hour',
+    summary: 'Just show up. Any zone, if a slot is open.',
+    cta: 'Reserve a slot',
     highlights: [
-      'Any zone at list price',
-      'Book up to 7 days ahead',
-      'Café menu at list price',
+      { text: 'Hourly rate on every zone' },
+      { text: 'Café and lounge access' },
+      { text: 'Tournament entry on the day' },
+      { text: 'Peripherals and headsets' },
     ],
   },
   {
     id: 'bronze',
     name: 'Bronze',
     price: 999,
-    cadence: 'per month',
-    summary: 'For the once-a-week player who wants a better rate.',
-    highlights: ['8 hours included', '10% off extra hours', 'Book 14 days ahead'],
+    cadence: '/month',
+    summary: 'For the weekend player who hates waiting.',
+    cta: 'Become a Bronze member',
+    highlights: [
+      { strong: '8 hours', text: 'included each month' },
+      { text: '10% off extra hours' },
+      { text: '14-day booking window' },
+      { text: '2 guest passes a month' },
+    ],
   },
   {
     id: 'silver',
     name: 'Silver',
     price: 2499,
-    cadence: 'per month',
-    summary: 'The regular plan: enough hours for two sessions a week.',
+    cadence: '/month',
+    summary: 'Our sweet spot. The membership that pays for itself twice.',
     popular: true,
+    cta: 'Become a Silver member',
     highlights: [
-      '24 hours included',
-      '20% off extra hours and café',
-      'Two free tournament entries',
-      'Priority booking 30 days ahead',
+      { strong: '24 hours', text: 'included each month' },
+      { text: '20% off extra hours' },
+      { text: '30-day booking window' },
+      { text: 'Free entry to monthly cup' },
+      { text: 'Birthday hour on us' },
     ],
   },
   {
     id: 'gold',
     name: 'Gold',
     price: 4999,
-    cadence: 'per month',
-    summary: 'Unlimited off-peak play, with the lounge and concierge included.',
+    cadence: '/month',
+    summary: 'You basically live here. We will know your order.',
+    cta: 'Become a Gold member',
     highlights: [
-      '60 hours included',
-      '30% off everything else',
-      'All tournaments included',
-      'Lounge access and two guest passes',
+      { strong: '60 hours', text: 'included each month' },
+      { text: '30% off extra hours' },
+      { text: 'Priority booking, any day' },
+      { text: 'All tournaments, all free' },
+      { text: 'Private lounge access' },
     ],
   },
 ];
@@ -65,7 +82,7 @@ export type ComparisonRow = {
   values: Record<TierId, string>;
 };
 
-/** 10 rows, in the order the spec lists them (3.3). */
+/** 12 rows, in the order V3 §4.6 lists them. */
 export const COMPARISON: ComparisonRow[] = [
   {
     feature: 'Hours included each month',
@@ -106,6 +123,14 @@ export const COMPARISON: ComparisonRow[] = [
   {
     feature: 'Concierge and exclusive events',
     values: { 'walk-in': 'No', bronze: 'No', silver: 'Events only', gold: 'Both' },
+  },
+  {
+    feature: 'Priority support',
+    values: { 'walk-in': 'Counter', bronze: 'WhatsApp', silver: 'WhatsApp', gold: 'Direct line' },
+  },
+  {
+    feature: 'Member merch',
+    values: { 'walk-in': 'No', bronze: 'Sticker set', silver: 'Tee', gold: 'Tee and hoodie' },
   },
 ];
 

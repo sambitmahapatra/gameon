@@ -37,10 +37,10 @@ function Calendar({
         row: 'mt-1.5 flex w-full',
         cell: 'relative p-0 text-center',
         day: cn(
-          'inline-flex size-9 items-center justify-center rounded-button font-mono text-meta transition-colors hover:bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan',
+          'inline-flex size-9 items-center justify-center rounded-button font-mono text-meta transition-colors hover:bg-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand',
         ),
-        day_selected: 'bg-cyan font-semibold text-cyan-foreground hover:bg-cyan',
-        day_today: 'border border-cyan/40 text-cyan',
+        day_selected: 'bg-brand font-semibold text-brand-foreground hover:bg-brand',
+        day_today: 'border border-brand/40 text-brand',
         day_outside: 'text-muted-foreground/40',
         day_disabled: 'text-muted-foreground/30 line-through hover:bg-transparent',
         day_hidden: 'invisible',

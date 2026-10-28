@@ -4,14 +4,12 @@ import { notFound } from 'next/navigation';
 import { Clock, Gamepad2, Users, Zap } from 'lucide-react';
 
 import { Reveal } from '@/components/motion/reveal';
-import { Price } from '@/components/price';
+import { ZoneArt } from '@/components/zone-art';
 import { ZoneCard } from '@/components/zone-card';
-import { ZoneVisual } from '@/components/zone-visual';
-import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import { ZoneGallery } from '@/components/zone-gallery';
 import { withDb } from '@/lib/bootstrap';
 import { getZone, getZones } from '@/lib/db';
-import { signatureImage, zoneImage } from '@/lib/images';
+import { inrDigits } from '@/lib/utils';
 
 export { dynamic } from '@/lib/render-mode';
 
@@ -79,158 +77,127 @@ export default function ZonePage({ params }: PageProps) {
   if (!zone) notFound();
 
   const specs = SPECS[zone.id] ?? { games: [], durations: [], kit: [] };
-  const hero = signatureImage(zone.id, 2000);
-  const siblings = others.filter((candidate) => candidate.id !== zone.id).slice(0, 3);
+  const siblings = others.filter((candidate) => candidate.id !== zone.id);
 
-  // The gallery alternates the two crops so the tiles do not look duplicated.
-  const gallery = [
-    signatureImage(zone.id, 900),
-    zoneImage(zone, 900),
-    signatureImage(zone.id, 900),
-    zoneImage(zone, 900),
-    signatureImage(zone.id, 900),
-    zoneImage(zone, 900),
-  ];
+  // The seed copy is one dense block; split it in two so "The room" reads as
+  // prose rather than a wall.
+  const sentences = zone.description.split(/(?<=\.)\s+/);
+  const half = Math.ceil(sentences.length / 2);
+  const paragraphs = [
+    sentences.slice(0, half).join(' '),
+    sentences.slice(half).join(' '),
+  ].filter(Boolean);
 
   return (
-    <article className="pb-16">
-      <div className="shell pt-10">
-        <ZoneVisual
-          accent={zone.accent_hex}
-          src={hero}
-          alt={`${zone.name} at GameOn Powai`}
-          sizes="100vw"
-          priority
-          className="panel aspect-[16/9] md:aspect-[21/9]"
-        />
+    <article>
+      {/* full-bleed 2:1 hero in the zone's own art */}
+      <div className="wrap pt-8">
+        <div className="feature__art !aspect-[2/1]">
+          <ZoneArt slug={zone.id} uid={`zh-${zone.id}`} />
+        </div>
       </div>
 
-      <div className="shell mt-12 grid gap-12 lg:grid-cols-[1fr_320px] lg:gap-20">
+      <div className="wrap mt-14 grid gap-14 lg:grid-cols-[1fr_320px] lg:gap-20">
         <div className="flex flex-col gap-6">
-          <p className="eyebrow">{zone.tagline}</p>
-          <h1 className="text-h1">{zone.name}</h1>
-          <p className="max-w-prose text-pretty text-body text-muted-foreground">
-            {zone.description}
-          </p>
+          <div className="eyebrow">{zone.tagline}</div>
+          <h1>{zone.name}</h1>
 
-          <div className="flex flex-wrap gap-4 pt-2">
-            <Button asChild size="lg">
-              <Link href={`/book?zone=${zone.id}`}>Reserve this zone</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline">
-              <Link href="/menu">See the café menu</Link>
-            </Button>
-          </div>
-
-          <Separator className="my-6" />
-
-          <section aria-labelledby="whats-inside" className="flex flex-col gap-6">
-            <h2 id="whats-inside" className="text-h2">
-              What is inside
+          <section aria-labelledby="the-room" className="flex flex-col gap-4">
+            <h2 id="the-room" className="sr-only">
+              The room
             </h2>
-            <ul className="grid gap-3 sm:grid-cols-2">
-              {specs.kit.map((item) => (
-                <li
-                  key={item}
-                  className="panel flex items-center gap-3 px-4 py-3 text-meta"
-                >
-                  <Zap aria-hidden="true" className="size-3.5 shrink-0 text-cyan" />
-                  <span className="text-muted-foreground">{item}</span>
-                </li>
-              ))}
-            </ul>
+            {paragraphs.map((paragraph) => (
+              <p key={paragraph.slice(0, 24)} className="sub">
+                {paragraph}
+              </p>
+            ))}
           </section>
 
-          <section aria-labelledby="whats-on" className="mt-6 flex flex-col gap-5">
-            <h2 id="whats-on" className="text-h2">
-              What you can play
-            </h2>
-            <ul className="flex flex-wrap gap-2">
+          <div className="mt-2 flex flex-wrap gap-3">
+            <Link href={`/book?zone=${zone.id}`} className="btn btn--primary btn--lg">
+              Reserve this zone
+            </Link>
+            <Link href="/membership" className="btn btn--ghost btn--lg">
+              See membership rates
+            </Link>
+          </div>
+
+          <section aria-labelledby="whats-on" className="mt-10 flex flex-col gap-5">
+            <h2 id="whats-on">What is on</h2>
+            <Reveal className="flex flex-wrap gap-2.5" stagger=".chip">
               {specs.games.map((game) => (
-                <li
-                  key={game}
-                  className="rounded-full border border-border px-3.5 py-1.5 text-meta text-muted-foreground"
-                >
+                <span key={game} className="chip">
                   {game}
-                </li>
+                </span>
               ))}
-            </ul>
-            <p className="max-w-prose text-meta text-muted-foreground">
+            </Reveal>
+            <p className="max-w-prose text-meta text-fg-muted">
               Ask at the counter if you want something installed. If it runs on our
               hardware and we can license it, we will add it before your next visit.
             </p>
           </section>
 
           <section aria-labelledby="gallery" className="mt-10 flex flex-col gap-5">
-            <h2 id="gallery" className="text-h2">
-              The room
-            </h2>
-            <Reveal stagger="[data-gallery-tile]">
-              <div className="group grid grid-cols-2 gap-4 md:grid-cols-3">
-                {gallery.map((src, index) => (
-                  <div key={index} data-gallery-tile>
-                    <ZoneVisual
-                      accent={zone.accent_hex}
-                      src={src}
-                      alt={`${zone.name}, view ${index + 1}`}
-                      sizes="(max-width: 768px) 45vw, 28vw"
-                      className="panel aspect-[4/3]"
-                    />
-                  </div>
-                ))}
-              </div>
-            </Reveal>
+            <h2 id="gallery">The room</h2>
+            <ZoneGallery slug={zone.id} name={zone.name} />
           </section>
         </div>
 
-        <aside className="panel flex h-fit flex-col gap-6 p-6 lg:sticky lg:top-28">
+        <aside className="panel h-fit p-6 lg:sticky lg:top-28">
           <h2 className="font-display text-h3">Specs</h2>
-          <dl className="flex flex-col gap-5">
+          <dl className="mt-5 flex flex-col gap-5">
             <div className="flex items-start gap-3">
-              <Users aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-cyan" />
+              <Users aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand" />
               <div>
-                <dt className="text-meta text-muted-foreground">Capacity</dt>
-                <dd className="font-mono text-data text-foreground">
-                  up to {zone.capacity} players
+                <dt className="text-meta text-fg-muted">Capacity</dt>
+                <dd className="mono text-fg">up to {zone.capacity} players</dd>
+              </div>
+            </div>
+            <div className="flex items-start gap-3">
+              <Gamepad2
+                aria-hidden="true"
+                className="mt-0.5 size-4 shrink-0 text-brand"
+              />
+              <div>
+                <dt className="text-meta text-fg-muted">Rate</dt>
+                <dd className="mono text-fg">
+                  ₹{inrDigits(zone.price_per_hour)} an hour
                 </dd>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Gamepad2 aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-cyan" />
+              <Clock aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand" />
               <div>
-                <dt className="text-meta text-muted-foreground">Rate</dt>
-                <dd className="text-data text-foreground">
-                  <Price amount={zone.price_per_hour} /> an hour
-                </dd>
+                <dt className="text-meta text-fg-muted">Session lengths</dt>
+                <dd className="mono text-fg">{specs.durations.join(' · ')}</dd>
               </div>
             </div>
             <div className="flex items-start gap-3">
-              <Clock aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-cyan" />
+              <Zap aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-brand" />
               <div>
-                <dt className="text-meta text-muted-foreground">Session lengths</dt>
-                <dd className="text-meta text-foreground">
-                  {specs.durations.join(' · ')}
-                </dd>
+                <dt className="text-meta text-fg-muted">What is included</dt>
+                <dd className="text-meta text-fg">{specs.kit.join(', ')}</dd>
               </div>
             </div>
           </dl>
-          <Separator />
-          <p className="text-meta text-muted-foreground">
-            Members pay from 10% to 30% less, and can hold peak slots two days before
-            everyone else.
-          </p>
-          <Button asChild variant="secondary">
-            <Link href="/membership">See membership</Link>
-          </Button>
         </aside>
       </div>
 
-      <section className="shell mt-24">
-        <h2 className="text-h2">Other zones</h2>
-        <div className="mt-8 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {siblings.map((sibling, index) => (
-            <ZoneCard key={sibling.id} zone={sibling} index={index} />
-          ))}
+      <section aria-labelledby="other-zones" className="section">
+        <div className="wrap">
+          <h2 id="other-zones" className="mb-8">
+            The other five
+          </h2>
+          <div className="zones-grid">
+            {siblings.map((sibling) => (
+              <ZoneCard
+                key={sibling.id}
+                zone={sibling}
+                uid={`zs-${sibling.id}`}
+                href={`/zones/${sibling.id}`}
+              />
+            ))}
+          </div>
         </div>
       </section>
     </article>

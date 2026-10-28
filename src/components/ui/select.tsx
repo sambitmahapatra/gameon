@@ -17,7 +17,7 @@ const SelectTrigger = React.forwardRef<
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      'flex h-11 w-full items-center justify-between gap-2 rounded-button border border-input bg-deep/60 px-3.5 text-meta text-foreground transition-colors hover:border-cyan/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-deep disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate',
+      'flex h-11 w-full items-center justify-between gap-2 rounded-button border border-input bg-elevated px-3.5 text-meta text-foreground transition-colors hover:border-brand/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-bg disabled:cursor-not-allowed disabled:opacity-50 [&>span]:truncate',
       className,
     )}
     {...props}
@@ -39,7 +39,7 @@ const SelectContent = React.forwardRef<
       ref={ref}
       position={position}
       className={cn(
-        'relative z-50 max-h-72 min-w-[8rem] overflow-hidden rounded-card border border-border bg-elevated text-foreground shadow-panel data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+        'relative z-50 max-h-72 min-w-[8rem] overflow-hidden rounded-card border border-border bg-elevated text-foreground shadow-card-hover data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
         position === 'popper' && 'data-[side=bottom]:translate-y-1',
         className,
       )}
@@ -65,14 +65,14 @@ const SelectItem = React.forwardRef<
   <SelectPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex w-full cursor-default select-none items-center gap-2 rounded-[6px] py-2 pl-8 pr-3 text-meta outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-surface data-[highlighted]:text-cyan data-[disabled]:opacity-50',
+      'relative flex w-full cursor-default select-none items-center gap-2 rounded-[6px] py-2 pl-8 pr-3 text-meta outline-none data-[disabled]:pointer-events-none data-[highlighted]:bg-surface data-[highlighted]:text-brand data-[disabled]:opacity-50',
       className,
     )}
     {...props}
   >
     <span className="absolute left-2.5 flex size-3.5 items-center justify-center">
       <SelectPrimitive.ItemIndicator>
-        <Check aria-hidden="true" className="size-3.5 text-cyan" />
+        <Check aria-hidden="true" className="size-3.5 text-brand" />
       </SelectPrimitive.ItemIndicator>
     </span>
     <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>

@@ -1,115 +1,123 @@
 import type { Config } from 'tailwindcss';
 
+/**
+ * Colours resolve to the V3 tokens in src/app/globals.css. Each token is a
+ * space-separated RGB channel triple, so `/opacity` modifiers keep working
+ * (`bg-brand/20`). `brand` is the design's accent — cyan in dark, blue in
+ * light — while shadcn's own `accent` stays a quiet surface, since its
+ * primitives use it for hover and highlight states.
+ */
 const config: Config = {
-  darkMode: ['class'],
+  // next-themes writes data-theme; the reference design keys dark off it
+  darkMode: ['selector', ':root[data-theme="dark"]'],
   content: ['./src/**/*.{ts,tsx}'],
   theme: {
-    container: {
-      center: true,
-      padding: {
-        DEFAULT: '1.5rem',
-        md: '3rem',
-        xl: '6rem',
-      },
-      screens: {
-        '2xl': '1440px',
-      },
-    },
     extend: {
       colors: {
-        // GameOn tokens (spec 3.1)
-        deep: 'hsl(var(--bg-deep))',
-        surface: 'hsl(var(--bg-surface))',
-        elevated: 'hsl(var(--bg-elevated))',
-        cyan: {
-          DEFAULT: 'hsl(var(--accent-primary))',
-          foreground: 'hsl(var(--on-accent))',
+        // GameOn V3 palette
+        bg: 'rgb(var(--bg-rgb) / <alpha-value>)',
+        elevated: 'rgb(var(--bg-elevated-rgb) / <alpha-value>)',
+        surface: {
+          DEFAULT: 'rgb(var(--surface-rgb) / <alpha-value>)',
+          2: 'rgb(var(--surface-2-rgb) / <alpha-value>)',
         },
-        ember: {
-          DEFAULT: 'hsl(var(--accent-warm))',
-          foreground: 'hsl(var(--on-warm))',
+        fg: {
+          DEFAULT: 'rgb(var(--fg-rgb) / <alpha-value>)',
+          muted: 'rgb(var(--fg-muted-rgb) / <alpha-value>)',
+          dim: 'rgb(var(--fg-dim-rgb) / <alpha-value>)',
         },
+        line: {
+          DEFAULT: 'rgb(var(--border-rgb) / <alpha-value>)',
+          strong: 'rgb(var(--border-strong-rgb) / <alpha-value>)',
+        },
+        brand: {
+          DEFAULT: 'rgb(var(--accent-rgb) / <alpha-value>)',
+          foreground: 'rgb(var(--bg-rgb) / <alpha-value>)',
+        },
+        magenta: 'rgb(var(--magenta-rgb) / <alpha-value>)',
+        amber: 'rgb(var(--amber-rgb) / <alpha-value>)',
+        violet: 'rgb(var(--violet-rgb) / <alpha-value>)',
+        green: 'rgb(var(--green-rgb) / <alpha-value>)',
+
         // shadcn/ui bridge
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        border: 'rgb(var(--border-rgb) / <alpha-value>)',
+        input: 'rgb(var(--input) / <alpha-value>)',
+        ring: 'rgb(var(--ring) / <alpha-value>)',
+        background: 'rgb(var(--background) / <alpha-value>)',
+        foreground: 'rgb(var(--foreground) / <alpha-value>)',
         primary: {
-          DEFAULT: 'hsl(var(--primary))',
-          foreground: 'hsl(var(--primary-foreground))',
+          DEFAULT: 'rgb(var(--primary) / <alpha-value>)',
+          foreground: 'rgb(var(--primary-foreground) / <alpha-value>)',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: 'rgb(var(--secondary) / <alpha-value>)',
+          foreground: 'rgb(var(--foreground) / <alpha-value>)',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: 'rgb(var(--muted) / <alpha-value>)',
+          foreground: 'rgb(var(--muted-foreground) / <alpha-value>)',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: 'rgb(var(--ui-accent) / <alpha-value>)',
+          foreground: 'rgb(var(--foreground) / <alpha-value>)',
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: 'rgb(var(--destructive) / <alpha-value>)',
+          foreground: 'rgb(var(--destructive-foreground) / <alpha-value>)',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: 'rgb(var(--card-bg) / <alpha-value>)',
+          foreground: 'rgb(var(--foreground) / <alpha-value>)',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'rgb(var(--popover-bg) / <alpha-value>)',
+          foreground: 'rgb(var(--foreground) / <alpha-value>)',
         },
       },
       fontFamily: {
-        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'system-ui', 'serif'],
         sans: ['var(--font-body)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       fontSize: {
-        // Spec 3.2 type scale
+        // V3 scale (globals.css styles h1–h4 directly; these are for spans)
         hero: [
-          'clamp(2.75rem, 7vw, 4.5rem)',
-          { lineHeight: '1.05', letterSpacing: '-0.03em' },
+          'clamp(2.5rem, 7vw, 5.5rem)',
+          { lineHeight: '0.98', letterSpacing: '-0.035em' },
         ],
-        h1: ['clamp(2rem, 4.5vw, 3rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+        h1: [
+          'clamp(2.5rem, 7vw, 5.5rem)',
+          { lineHeight: '0.98', letterSpacing: '-0.035em' },
+        ],
         h2: [
-          'clamp(1.625rem, 3vw, 2rem)',
-          { lineHeight: '1.2', letterSpacing: '-0.015em' },
+          'clamp(2rem, 4.5vw, 3.5rem)',
+          { lineHeight: '1.02', letterSpacing: '-0.025em' },
         ],
-        h3: ['1.5rem', { lineHeight: '1.3' }],
-        body: ['1rem', { lineHeight: '1.6' }],
-        meta: ['0.875rem', { lineHeight: '1.5' }],
-        data: ['0.9375rem', { lineHeight: '1.4' }],
+        h3: [
+          'clamp(1.25rem, 2vw, 1.5rem)',
+          { lineHeight: '1.15', letterSpacing: '-0.025em' },
+        ],
+        body: ['1rem', { lineHeight: '1.55' }],
+        meta: ['0.9rem', { lineHeight: '1.5' }],
+        data: ['0.86rem', { lineHeight: '1.45' }],
+        micro: ['11px', { lineHeight: '1.4', letterSpacing: '0.05em' }],
       },
       borderRadius: {
-        // Spec 3.3 — deliberately not uniform
-        button: '8px',
-        card: '12px',
-        modal: '24px',
+        button: '10px',
+        card: '18px',
+        modal: '20px',
         lg: 'var(--radius)',
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
-      spacing: {
-        18: '4.5rem',
-        13: '3.25rem',
-      },
       maxWidth: {
         prose: '68ch',
+        shell: '1360px',
       },
       boxShadow: {
-        glow: '0 0 0 1px hsl(var(--accent-primary) / 0.4), 0 8px 40px -12px hsl(var(--accent-primary) / 0.45)',
-        'glow-warm':
-          '0 0 0 1px hsl(var(--accent-warm) / 0.4), 0 8px 40px -12px hsl(var(--accent-warm) / 0.4)',
-        panel: '0 24px 60px -30px rgb(0 0 0 / 0.8)',
-      },
-      backgroundImage: {
-        'grid-faint':
-          'linear-gradient(to right, hsl(var(--border-subtle)) 1px, transparent 1px), linear-gradient(to bottom, hsl(var(--border-subtle)) 1px, transparent 1px)',
+        card: 'var(--card-shadow)',
+        'card-hover': 'var(--card-shadow-hover)',
+        glow: '0 0 0 4px var(--accent-glow), 0 12px 24px -8px var(--accent-glow)',
       },
       keyframes: {
         'accordion-down': {
@@ -120,33 +128,18 @@ const config: Config = {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' },
         },
-        'slot-pulse': {
-          '0%, 100%': { boxShadow: '0 0 0 0 hsl(var(--accent-primary) / 0.5)' },
-          '50%': { boxShadow: '0 0 0 6px hsl(var(--accent-primary) / 0)' },
-        },
-        'drift-y': {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(6px)' },
-        },
-        'glow-once': {
-          '0%': { boxShadow: '0 0 0 0 hsl(var(--accent-primary) / 0.45)' },
-          '70%': { boxShadow: '0 0 0 12px hsl(var(--accent-primary) / 0)' },
-          '100%': { boxShadow: '0 0 0 0 hsl(var(--accent-primary) / 0)' },
+        'pulse-dot': {
+          '0%': { transform: 'scale(1)', opacity: '0.8' },
+          '70%, 100%': { transform: 'scale(3.5)', opacity: '0' },
         },
         ripple: {
           to: { transform: 'scale(4)', opacity: '0' },
-        },
-        shimmer: {
-          '100%': { transform: 'translateX(100%)' },
         },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'slot-pulse': 'slot-pulse 1.8s ease-out infinite',
-        'drift-y': 'drift-y 2.4s ease-in-out infinite',
-        shimmer: 'shimmer 1.6s infinite',
-        'glow-once': 'glow-once 0.7s ease-out 1',
+        'pulse-dot': 'pulse-dot 2.4s cubic-bezier(0, 0.4, 0.6, 1) infinite',
         ripple: 'ripple 0.6s ease-out forwards',
       },
     },

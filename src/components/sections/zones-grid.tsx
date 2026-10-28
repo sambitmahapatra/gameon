@@ -1,49 +1,43 @@
-import { SectionHeading } from '@/components/section-heading';
-import { Spotlight } from '@/components/spotlight';
+import { Reveal } from '@/components/motion/reveal';
 import { ZoneCard } from '@/components/zone-card';
 import type { Zone } from '@/lib/types';
 
-/**
- * Snap-scroll rail on mobile, three columns from lg up. The cards animate
- * themselves in, so there is no Reveal wrapper here — two layers of opacity
- * control would fight each other.
- */
+/** Reference order: VR, Flight, Racing, Esports, Console, Streaming. */
+const ORDER = [
+  'vr-arena',
+  'flight-sim',
+  'racing-cockpit',
+  'esports-station',
+  'console-lounge',
+  'streaming-pod',
+];
+
+function ordered(zones: Zone[]) {
+  return [...zones].sort((a, b) => {
+    const ai = ORDER.indexOf(a.id);
+    const bi = ORDER.indexOf(b.id);
+    return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+  });
+}
+
 export function ZonesGrid({ zones }: { zones: Zone[] }) {
   return (
-    <section id="zones" className="relative scroll-mt-24 overflow-hidden py-24">
-      <div
-        aria-hidden="true"
-        className="mesh-corner-left pointer-events-none absolute inset-0"
-      />
-      <Spotlight />
+    <section className="section" id="zones">
+      <div className="wrap">
+        <Reveal className="section-head">
+          <div className="eyebrow">Six zones</div>
+          <h2>Choose your world</h2>
+          <p className="sub">
+            From VR dogfights to F1 racing, every zone is a complete experience with its
+            own rig, its own room and its own rate.
+          </p>
+        </Reveal>
 
-      <div className="shell relative">
-        <SectionHeading
-          eyebrow="Six zones"
-          title="Choose your world"
-          sub="From VR dogfights to F1 racing, every zone is a complete experience with its own rig, its own room and its own rate."
-        />
-
-        <div className="mt-12">
-          <div className="snap-rail md:hidden">
-            {zones.map((zone, index) => (
-              <div key={zone.id} className="w-[86vw] shrink-0">
-                <ZoneCard zone={zone} href={`/book?zone=${zone.id}`} index={index} />
-              </div>
-            ))}
-          </div>
-
-          <div className="hidden gap-5 md:grid md:grid-cols-2 lg:grid-cols-3">
-            {zones.map((zone, index) => (
-              <ZoneCard
-                key={zone.id}
-                zone={zone}
-                href={`/book?zone=${zone.id}`}
-                index={index}
-              />
-            ))}
-          </div>
-        </div>
+        <Reveal className="zones-grid" stagger=".zone">
+          {ordered(zones).map((zone) => (
+            <ZoneCard key={zone.id} zone={zone} href={`/zones/${zone.id}`} />
+          ))}
+        </Reveal>
       </div>
     </section>
   );

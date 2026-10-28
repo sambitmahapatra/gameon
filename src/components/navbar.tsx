@@ -5,128 +5,104 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Menu } from 'lucide-react';
 
-import { Button } from '@/components/ui/button';
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 import { LiveCounter } from '@/components/live-counter';
 import { Logo } from '@/components/logo';
+import { Magnetic } from '@/components/magnetic';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 
 const LINKS = [
   { href: '/zones/vr-arena', label: 'Zones', match: '/zones' },
-  { href: '/book', label: 'Book', match: '/book' },
-  { href: '/events', label: 'Events', match: '/events' },
-  { href: '/menu', label: 'Menu', match: '/menu' },
+  { href: '/#experiences', label: 'Experiences', match: '#experiences' },
   { href: '/membership', label: 'Membership', match: '/membership' },
+  { href: '/events', label: 'Tournaments', match: '/events' },
+  { href: '/menu', label: 'Café', match: '/menu' },
 ];
 
+/**
+ * Sticky nav that picks up a bottom border once the page has scrolled past
+ * 20px, matching the reference's `.is-stuck` state. The blur and translucent
+ * background are always on, so the bar never flashes opaque.
+ */
 export function Navbar() {
   const pathname = usePathname();
-  const [scrolled, setScrolled] = useState(false);
+  const [stuck, setStuck] = useState(false);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    // Past 100px the bar takes on its own surface (V2 fix 4d)
-    const onScroll = () => setScrolled(window.scrollY > 100);
+    const onScroll = () => setStuck(window.scrollY > 20);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // A route change closes the drawer; otherwise it stays open over the new page.
   useEffect(() => setOpen(false), [pathname]);
 
   return (
-    <header
-      className={cn(
-        'sticky top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-500',
-        scrolled
-          ? 'border-border bg-surface/80 backdrop-blur-[20px]'
-          : 'border-transparent bg-transparent',
-      )}
-    >
-      <nav className="shell flex h-18 items-center justify-between gap-6 py-4">
-        <Link href="/" aria-label="GameOn home" className="rounded-button">
-          <Logo />
+    <nav className={`nav${stuck ? 'is-stuck' : ''}`}>
+      <div className="wrap nav__inner">
+        <Link href="/" aria-label="GameOn home">
+          <Logo idPrefix="nav" />
         </Link>
 
-        <div className="hidden items-center gap-8 lg:flex">
-          {LINKS.map((link) => {
-            const active = pathname.startsWith(link.match);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                  'group relative rounded-button py-1 text-meta transition-colors',
-                  active ? 'text-cyan' : 'text-muted-foreground hover:text-foreground',
-                )}
-              >
-                {link.label}
-                {/* Underline grows from the left on hover, and stays for the active link */}
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    'absolute -bottom-0.5 left-0 h-px w-full origin-left bg-cyan transition-transform duration-300 ease-out',
-                    active ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100',
-                  )}
-                />
-              </Link>
-            );
-          })}
+        <div className="nav__links">
+          {LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="nav__link"
+              data-active={link.match.startsWith('/') && pathname.startsWith(link.match)}
+            >
+              {link.label}
+            </Link>
+          ))}
         </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <LiveCounter className="mr-1 hidden xl:inline-flex" />
+        <div className="nav__right">
+          <LiveCounter />
           <ThemeToggle />
-          <Button asChild size="sm" className="hidden sm:inline-flex">
-            <Link href="/book">Book a Session</Link>
-          </Button>
+
+          <Magnetic className="hidden sm:inline-flex">
+            <Link href="/book" className="btn btn--primary">
+              Book a session
+            </Link>
+          </Magnetic>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="lg:hidden"
+              <button
+                type="button"
+                className="theme-toggle min-[900px]:hidden"
                 aria-label="Open menu"
               >
-                <Menu aria-hidden="true" className="size-5" />
-              </Button>
+                <Menu aria-hidden="true" className="size-[18px]" />
+              </button>
             </SheetTrigger>
-            <SheetContent side="right">
-              <SheetTitle>
-                <Logo />
-              </SheetTitle>
-              <div className="flex flex-col gap-1">
+            <SheetContent side="right" className="w-[300px] border-line bg-bg">
+              <SheetTitle className="font-display text-h3">Menu</SheetTitle>
+
+              <div className="mt-8 flex flex-col gap-1">
                 {LINKS.map((link) => (
-                  <SheetClose asChild key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="rounded-button px-3 py-3 font-display text-h3 text-foreground transition-colors hover:text-cyan"
-                    >
-                      {link.label}
-                    </Link>
-                  </SheetClose>
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="rounded-button px-3 py-3 text-[1.05rem] font-medium text-fg-muted transition-colors hover:bg-surface hover:text-fg"
+                  >
+                    {link.label}
+                  </Link>
                 ))}
               </div>
-              <div className="mt-auto flex flex-col gap-4">
-                <LiveCounter />
-                <SheetClose asChild>
-                  <Button asChild size="lg">
-                    <Link href="/book">Book a Session</Link>
-                  </Button>
-                </SheetClose>
-              </div>
+
+              <Link href="/book" className="btn btn--primary btn--lg mt-8 w-full">
+                Book a session
+              </Link>
+
+              <p className="mt-6 text-meta text-fg-dim">Open 10 AM — 10 PM, every day</p>
             </SheetContent>
           </Sheet>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
   );
 }

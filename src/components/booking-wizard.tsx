@@ -13,23 +13,26 @@ import { ArrowLeft, Loader2, Users } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { BookingProgress } from '@/components/booking-progress';
-import { Price } from '@/components/price';
 import { SlotPicker } from '@/components/slot-picker';
 import { ZoneCard } from '@/components/zone-card';
-import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { FloatingField } from '@/components/ui/floating-field';
 import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import type { Slot, Zone } from '@/lib/types';
-import { api, cn, inr, prettyTime, toDateKey } from '@/lib/utils';
+import { api, inrDigits, prettyTime, toDateKey } from '@/lib/utils';
 import { type DetailsInput, detailsSchema } from '@/lib/validation';
 
 type BookingWizardProps = { zones: Zone[] };
 
 const LAST_DAY_OFFSET = 29; // the seed covers 30 days from today
 
+/**
+ * Four steps: zone → date and time → details → review. The logic and the API
+ * calls are unchanged from the working build; only the surface is the V3
+ * design. The server is still the authority on availability — a 409 on
+ * confirm sends the user back to step 2 with fresh slots.
+ */
 export function BookingWizard({ zones }: BookingWizardProps) {
   const router = useRouter();
   const params = useSearchParams();
@@ -153,26 +156,31 @@ export function BookingWizard({ zones }: BookingWizardProps) {
     if (valid) go(4);
   }
 
+  const longDate = date.toLocaleDateString('en-IN', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });
+
   return (
     <div className="flex flex-col gap-10">
       <BookingProgress step={step} />
 
       {step > 1 ? (
-        <Button
-          variant="ghost"
-          size="sm"
-          className="-ml-3 self-start"
+        <button
+          type="button"
           onClick={() => go(Math.max(1, step - 1))}
+          className="-ml-1 inline-flex items-center gap-2 self-start text-meta text-fg-muted transition-colors hover:text-fg"
         >
           <ArrowLeft aria-hidden="true" className="size-4" />
           Back
-        </Button>
+        </button>
       ) : null}
 
       {/*
-        One step on screen at a time, sliding in from the side it came from
-        (V2 fix 4e). mode="wait" lets the outgoing step finish first, so the
-        two never overlap mid-scroll.
+        One step on screen at a time, sliding in from the side it came from.
+        mode="wait" lets the outgoing step finish first, so the two never
+        overlap mid-scroll.
       */}
       <AnimatePresence mode="wait" initial={false} custom={direction}>
         <motion.div
@@ -185,27 +193,28 @@ export function BookingWizard({ zones }: BookingWizardProps) {
         >
           {/* Step 1 — zone */}
           {step === 1 ? (
-            <section aria-labelledby="step-zone" className="flex flex-col gap-6">
+            <section aria-labelledby="step-zone" className="flex flex-col gap-8">
               <div>
-                <h2 id="step-zone" className="text-h2">
+                <div className="eyebrow">Step one</div>
+                <h2 id="step-zone" className="mt-4 text-h2">
                   Which world tonight?
                 </h2>
-                <p className="mt-2 max-w-prose text-meta text-muted-foreground">
+                <p className="sub mt-3">
                   Pick a zone and we will show you what is still open over the next 30
                   days.
                 </p>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                {zones.map((candidate, index) => (
+              <div className="zones-grid">
+                {zones.map((candidate) => (
                   <button
                     key={candidate.id}
                     type="button"
                     onClick={() => chooseZone(candidate.id)}
-                    className="rounded-card text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-deep"
+                    className="rounded-card text-left"
                     aria-label={`Choose ${candidate.name}`}
                   >
-                    <ZoneCard zone={candidate} href={null} index={index} />
+                    <ZoneCard zone={candidate} href={null} uid={`bw-${candidate.id}`} />
                   </button>
                 ))}
               </div>
@@ -214,19 +223,20 @@ export function BookingWizard({ zones }: BookingWizardProps) {
 
           {/* Step 2 — date and time */}
           {step === 2 && zone ? (
-            <section aria-labelledby="step-time" className="flex flex-col gap-6">
+            <section aria-labelledby="step-time" className="flex flex-col gap-8">
               <div>
-                <h2 id="step-time" className="text-h2">
+                <div className="eyebrow">Step two</div>
+                <h2 id="step-time" className="mt-4 text-h2">
                   When works for you?
                 </h2>
-                <p className="mt-2 text-meta text-muted-foreground">
-                  {zone.name} · <Price amount={zone.price_per_hour} /> an hour · up to{' '}
+                <p className="mono mt-3 text-fg-muted">
+                  {zone.name} · ₹{inrDigits(zone.price_per_hour)}/hour · up to{' '}
                   {zone.capacity} players
                 </p>
               </div>
 
               <div className="grid gap-8 lg:grid-cols-[auto_1fr] lg:gap-12">
-                <div className="panel">
+                <div className="panel panel--elevated h-fit p-2">
                   <Calendar
                     mode="single"
                     selected={date}
@@ -239,14 +249,8 @@ export function BookingWizard({ zones }: BookingWizardProps) {
 
                 <div className="flex flex-col gap-4">
                   <div className="flex items-baseline justify-between gap-4">
-                    <h3 className="font-display text-h3">
-                      {date.toLocaleDateString('en-IN', {
-                        weekday: 'long',
-                        day: 'numeric',
-                        month: 'long',
-                      })}
-                    </h3>
-                    <span className="text-meta text-muted-foreground">
+                    <h3>{longDate}</h3>
+                    <span className="mono text-fg-muted">
                       {slots.filter((item) => item.booked === 0).length} open
                     </span>
                   </div>
@@ -259,15 +263,16 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                     onSelect={setSlot}
                   />
 
-                  <Button
-                    className="mt-2 self-start"
+                  <button
+                    type="button"
+                    className="btn btn--primary btn--lg mt-2 self-start"
                     disabled={!slot}
                     onClick={() => go(3)}
                   >
                     {slot
                       ? `Continue with ${prettyTime(slot.time)}`
                       : 'Pick a time to continue'}
-                  </Button>
+                  </button>
                 </div>
               </div>
             </section>
@@ -275,12 +280,13 @@ export function BookingWizard({ zones }: BookingWizardProps) {
 
           {/* Step 3 — details */}
           {step === 3 && zone && slot ? (
-            <section aria-labelledby="step-details" className="flex flex-col gap-6">
+            <section aria-labelledby="step-details" className="flex flex-col gap-8">
               <div>
-                <h2 id="step-details" className="text-h2">
+                <div className="eyebrow">Step three</div>
+                <h2 id="step-details" className="mt-4 text-h2">
                   Who is the booking for?
                 </h2>
-                <p className="mt-2 text-meta text-muted-foreground">
+                <p className="sub mt-3">
                   We send the booking ID by SMS so the counter can find you quickly.
                 </p>
               </div>
@@ -314,11 +320,8 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="party">Party size</Label>
-                    <span className="inline-flex items-center gap-1.5 font-mono text-data text-foreground">
-                      <Users
-                        aria-hidden="true"
-                        className="size-3.5 text-muted-foreground"
-                      />
+                    <span className="mono inline-flex items-center gap-1.5 text-fg">
+                      <Users aria-hidden="true" className="size-3.5 text-fg-muted" />
                       {partySize}
                     </span>
                   </div>
@@ -331,7 +334,7 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                     onValueChange={([next]) => form.setValue('partySize', next ?? 1)}
                     aria-label="Party size"
                   />
-                  <p className="text-meta text-muted-foreground">
+                  <p className="text-meta text-fg-muted">
                     {zone.name} holds up to {zone.capacity}.
                   </p>
                 </div>
@@ -346,72 +349,73 @@ export function BookingWizard({ zones }: BookingWizardProps) {
                   {...form.register('email')}
                 />
 
-                <Button type="submit" className="self-start">
+                <button type="submit" className="btn btn--primary btn--lg self-start">
                   Review booking
-                </Button>
+                </button>
               </form>
             </section>
           ) : null}
 
           {/* Step 4 — review */}
           {step === 4 && zone && slot ? (
-            <section aria-labelledby="step-confirm" className="flex flex-col gap-6">
+            <section aria-labelledby="step-confirm" className="flex flex-col gap-8">
               <div>
-                <h2 id="step-confirm" className="text-h2">
+                <div className="eyebrow">Last look</div>
+                <h2 id="step-confirm" className="mt-4 text-h2">
                   Check this over
                 </h2>
-                <p className="mt-2 text-meta text-muted-foreground">
+                <p className="sub mt-3">
                   Nothing is charged online. You pay at the counter when you arrive.
                 </p>
               </div>
 
-              <dl className="panel max-w-xl divide-y divide-border px-6">
-                {[
-                  ['Zone', zone.name],
-                  [
-                    'Date',
-                    date.toLocaleDateString('en-IN', {
-                      weekday: 'long',
-                      day: 'numeric',
-                      month: 'long',
-                    }),
-                  ],
-                  ['Time', `${prettyTime(slot.time)} for one hour`],
-                  ['Party size', `${form.getValues('partySize')} players`],
-                  ['Name', form.getValues('name')],
-                  ['Mobile', `+91 ${form.getValues('phone')}`],
-                  ['Due at the counter', inr(zone.price_per_hour)],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="flex items-baseline justify-between gap-6 py-4"
-                  >
-                    <dt className="text-meta text-muted-foreground">{label}</dt>
-                    <dd
-                      className={cn(
-                        'text-right text-meta text-foreground',
-                        (label === 'Due at the counter' || label === 'Time') &&
-                          'font-mono',
-                      )}
-                    >
-                      {value}
-                    </dd>
+              {/* same visual language as a pricing tier */}
+              <div className="tier tier--highlight max-w-xl">
+                <div className="tier__name">{zone.name}</div>
+                <div className="tier__price">
+                  ₹{inrDigits(zone.price_per_hour)}
+                  <small>/hour</small>
+                </div>
+                <dl className="mt-6">
+                  {[
+                    ['Date', longDate],
+                    ['Time', `${prettyTime(slot.time)} for one hour`],
+                    ['Party size', `${form.getValues('partySize')} players`],
+                    ['Name', form.getValues('name')],
+                    ['Mobile', `+91 ${form.getValues('phone')}`],
+                  ].map(([label, value]) => (
+                    <div key={label} className="meta-row">
+                      <dt>{label}</dt>
+                      <dd>{value}</dd>
+                    </div>
+                  ))}
+                  <div className="meta-row">
+                    <dt>Due at the counter</dt>
+                    <dd className="mono">₹{inrDigits(zone.price_per_hour)}</dd>
                   </div>
-                ))}
-              </dl>
-
-              <Separator className="max-w-xl" />
+                </dl>
+              </div>
 
               <div className="flex flex-wrap items-center gap-4">
-                <Button size="lg" onClick={confirm} disabled={submitting}>
+                <button
+                  type="button"
+                  className="btn btn--primary btn--lg"
+                  onClick={confirm}
+                  disabled={submitting}
+                >
                   {submitting ? (
                     <Loader2 aria-hidden="true" className="size-4 animate-spin" />
                   ) : null}
-                  {submitting ? 'Reserving your slot' : 'Confirm Booking'}
-                </Button>
-                <Button variant="ghost" onClick={() => go(3)} disabled={submitting}>
+                  {submitting ? 'Reserving your slot' : 'Confirm booking'}
+                </button>
+                <button
+                  type="button"
+                  className="text-meta text-fg-muted underline-offset-4 transition-colors hover:text-fg hover:underline"
+                  onClick={() => go(3)}
+                  disabled={submitting}
+                >
                   Change details
-                </Button>
+                </button>
               </div>
             </section>
           ) : null}

@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 
-import { Skeleton } from '@/components/ui/skeleton';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import { gsap, useGSAP } from '@/lib/gsap';
 import type { Slot } from '@/lib/types';
@@ -17,7 +16,13 @@ type SlotPickerProps = {
   minTime?: string | null;
 };
 
-/** Spec 7.3 — 4 columns on mobile, 6 on desktop, cyan pulse as slots arrive. */
+/**
+ * 4 columns on mobile, 6 on desktop. Open slots take a brand border on hover,
+ * booked ones are struck through, the selected one is filled.
+ *
+ * The entrance animates *from* a scaled-down state once the slots arrive, so
+ * a failed animation still leaves every slot visible and clickable.
+ */
 export function SlotPicker({
   slots,
   loading,
@@ -38,22 +43,19 @@ export function SlotPicker({
       );
       if (!buttons.length) return;
 
-      gsap.fromTo(
-        buttons,
-        { opacity: 0, scale: 0.94 },
-        {
-          opacity: 1,
-          scale: 1,
-          duration: 0.28,
-          ease: 'power2.out',
-          stagger: { amount: 0.25, from: 'start' },
-        },
-      );
+      const tween = gsap.from(buttons, {
+        opacity: 0,
+        scale: 0.94,
+        duration: 0.28,
+        ease: 'power2.out',
+        stagger: { amount: 0.25 },
+      });
+
+      return () => tween.kill();
     },
     { scope, dependencies: [reduced, loading, slots] },
   );
 
-  /** Cyan ripple from the click point (V2 fix 4g). */
   function ripple(event: React.MouseEvent<HTMLButtonElement>) {
     if (reduced) return;
 
@@ -62,7 +64,7 @@ export function SlotPicker({
     const dot = document.createElement('span');
 
     dot.className =
-      'pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-cyan/40 motion-safe:animate-ripple';
+      'pointer-events-none absolute size-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand/40 motion-safe:animate-ripple';
     dot.style.left = `${event.clientX - box.left}px`;
     dot.style.top = `${event.clientY - box.top}px`;
 
@@ -74,7 +76,7 @@ export function SlotPicker({
     return (
       <div className="grid grid-cols-4 gap-2.5 lg:grid-cols-6">
         {Array.from({ length: 12 }).map((_, index) => (
-          <Skeleton key={index} className="h-11" />
+          <div key={index} className="skeleton h-11" />
         ))}
       </div>
     );
@@ -86,9 +88,9 @@ export function SlotPicker({
 
   if (!slots.length || !selectable.length) {
     return (
-      <div className="rounded-card border border-dashed border-border px-5 py-10 text-center">
-        <p className="text-body text-foreground">No slots left today. Try tomorrow.</p>
-        <p className="mt-1.5 text-meta text-muted-foreground">
+      <div className="panel panel--flat px-5 py-10 text-center">
+        <p>No slots left today. Try tomorrow.</p>
+        <p className="mt-1.5 text-meta text-fg-muted">
           Evenings fill up first, so mornings are usually wide open.
         </p>
       </div>
@@ -114,13 +116,12 @@ export function SlotPicker({
               onSelect(slot);
             }}
             className={cn(
-              'relative h-11 overflow-hidden rounded-button border font-mono text-meta transition-colors duration-200',
-              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-deep',
+              'mono relative h-11 overflow-hidden rounded-button border transition-colors duration-200',
               selected
-                ? 'border-cyan bg-cyan font-semibold text-cyan-foreground'
-                : 'border-border bg-elevated text-foreground hover:border-cyan/70',
+                ? 'border-brand bg-brand font-medium text-brand-foreground'
+                : 'border-line bg-elevated text-fg hover:border-brand',
               disabled &&
-                'cursor-not-allowed border-border bg-elevated/40 text-muted-foreground line-through opacity-40 hover:border-border',
+                'cursor-not-allowed border-line bg-surface text-fg-dim line-through opacity-50 hover:border-line',
             )}
           >
             {prettyTime(slot.time)}

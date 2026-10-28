@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { Price } from '@/components/price';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -28,9 +27,10 @@ import {
 } from '@/components/ui/select';
 import { TIERS } from '@/lib/data/tiers';
 import { type MemberInput, memberInputSchema } from '@/lib/validation';
-import { api } from '@/lib/utils';
+import { api, inrDigits } from '@/lib/utils';
 
-const PAID_TIERS = TIERS.filter((tier) => tier.price > 0);
+// Only the monthly tiers are joinable; walk-in is just the hourly rate.
+const PAID_TIERS = TIERS.filter((tier) => tier.id !== 'walk-in');
 
 export function JoinDialog({
   defaultTier = 'silver',
@@ -74,7 +74,11 @@ export function JoinDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        {trigger ?? <Button size="lg">Become a member</Button>}
+        {trigger ?? (
+          <button type="button" className="btn btn--primary btn--lg">
+            Become a member
+          </button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -121,7 +125,8 @@ export function JoinDialog({
               <SelectContent>
                 {PAID_TIERS.map((tier) => (
                   <SelectItem key={tier.id} value={tier.id}>
-                    {tier.name} — <Price amount={tier.price} /> {tier.cadence}
+                    {tier.name} — ₹{inrDigits(tier.price)}
+                    {tier.cadence}
                   </SelectItem>
                 ))}
               </SelectContent>

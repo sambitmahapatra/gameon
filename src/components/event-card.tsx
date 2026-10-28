@@ -1,113 +1,109 @@
-import { CalendarDays, Trophy, Users } from 'lucide-react';
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
 
 import { EventRegisterButton } from '@/components/event-register-button';
-import { Price } from '@/components/price';
-import { Badge } from '@/components/ui/badge';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 import type { GameEvent } from '@/lib/types';
-import { cn, fromDateKey } from '@/lib/utils';
+import { fromDateKey, inrDigits } from '@/lib/utils';
 
 const CATEGORY_LABEL: Record<GameEvent['category'], string> = {
   weekly: 'Weekly',
-  monthly: 'Monthly',
+  monthly: 'Monthly cup',
   corporate: 'Corporate',
 };
 
-export function EventCard({
-  event,
-  past = false,
-  className,
-}: {
-  event: GameEvent;
-  past?: boolean;
-  className?: string;
-}) {
+const CATEGORY_CLASS: Record<GameEvent['category'], string> = {
+  weekly: '',
+  monthly: ' event__tag--magenta',
+  corporate: ' event__tag--violet',
+};
+
+/**
+ * Tournament card. The fill bar grows from nothing to its real width the
+ * first time the card is seen (V3 §5.5); the width itself is the true value,
+ * so if the observer never runs the bar is already correct.
+ */
+export function EventCard({ event, past = false }: { event: GameEvent; past?: boolean }) {
   const date = fromDateKey(event.date);
-  const filled = Math.min(100, Math.round((event.registered / event.slots) * 100));
-  const left = Math.max(0, event.slots - event.registered);
+  const pct = Math.min(100, Math.round((event.registered / event.slots) * 100));
+  const full = event.registered >= event.slots;
+
+  const bar = useRef<HTMLSpanElement>(null);
+  const reduced = useReducedMotion();
+  const [seen, setSeen] = useState(false);
+
+  useEffect(() => {
+    const node = bar.current;
+    if (reduced || !node || seen) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries.some((entry) => entry.isIntersecting)) {
+        setSeen(true);
+        observer.disconnect();
+      }
+    });
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [reduced, seen]);
+
+  const dateLabel = date.toLocaleDateString('en-IN', {
+    day: 'numeric',
+    month: 'long',
+  });
 
   return (
-    <article
-      className={cn(
-        'panel flex flex-col gap-5 p-6 transition-colors',
-        past ? 'opacity-70' : 'hover:border-cyan/40',
-        className,
-      )}
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex flex-col items-center rounded-button border border-border bg-elevated px-3 py-2">
-          <span className="font-mono text-data leading-none text-cyan">
-            {date.getDate().toString().padStart(2, '0')}
-          </span>
-          <span className="mt-1 text-[0.6875rem] text-muted-foreground">
-            {date.toLocaleString('en-IN', { month: 'short' })}
+    <article className={`event${past ? 'event--past' : ''}`}>
+      <div className="event__top">
+        <div className="event__date">
+          <span className="d">{String(date.getDate()).padStart(2, '0')}</span>
+          <span className="m">
+            {date.toLocaleDateString('en-IN', { month: 'short' })}
           </span>
         </div>
-        <Badge variant={event.category === 'corporate' ? 'warm' : 'neutral'}>
+        <span className={`event__tag${CATEGORY_CLASS[event.category]}`}>
           {CATEGORY_LABEL[event.category]}
-        </Badge>
+        </span>
       </div>
 
-      <div>
-        <h3 className="font-display text-h3 leading-tight">{event.title}</h3>
-        <p className="mt-1.5 text-meta text-muted-foreground">{event.game}</p>
+      <h3 className="event__title">{event.title}</h3>
+      <div className="event__game">{event.game}</div>
+
+      <div
+        className="event__fill"
+        role="img"
+        aria-label={`${event.registered} of ${event.slots} places taken`}
+      >
+        <span
+          ref={bar}
+          style={{
+            width: `${pct}%`,
+            transform: reduced || seen ? undefined : 'scaleX(0)',
+            transition: reduced
+              ? undefined
+              : 'transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1)',
+          }}
+        />
       </div>
 
-      <dl className="flex flex-wrap gap-x-6 gap-y-2 text-meta">
-        <div className="flex items-center gap-1.5">
-          <CalendarDays aria-hidden="true" className="size-3.5 text-muted-foreground" />
-          <dd className="text-muted-foreground">
-            {date.toLocaleDateString('en-IN', {
-              weekday: 'short',
-              day: 'numeric',
-              month: 'short',
-            })}
-          </dd>
-        </div>
-        {event.prize_pool > 0 ? (
-          <div className="flex items-center gap-1.5">
-            <Trophy aria-hidden="true" className="size-3.5 text-ember" />
-            <dd className="text-foreground">
-              <Price amount={event.prize_pool} />
-            </dd>
-          </div>
-        ) : null}
-        <div className="flex items-center gap-1.5">
-          <Users aria-hidden="true" className="size-3.5 text-muted-foreground" />
-          <dd className="text-muted-foreground">
-            {event.registered} of {event.slots} in
-          </dd>
-        </div>
-      </dl>
-
-      <div className="flex flex-col gap-2">
-        <div
-          className="h-1 w-full overflow-hidden rounded-full bg-elevated"
-          role="progressbar"
-          aria-valuenow={filled}
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-label={`${event.title} registration`}
-        >
-          <div
-            className={cn('h-full rounded-full', filled > 85 ? 'bg-ember' : 'bg-cyan')}
-            style={{ width: `${filled}%` }}
-          />
-        </div>
-        <p className="text-meta text-muted-foreground">
-          {past
-            ? 'Finished'
-            : left === 0
-              ? 'Waitlist only'
-              : `${left} ${left === 1 ? 'place' : 'places'} left`}
-        </p>
+      <div className="event__meta">
+        <span>₹{inrDigits(event.prize_pool)} pool</span>
+        <span>
+          <b>{event.registered}</b> of {event.slots} in
+        </span>
       </div>
 
-      {past ? null : (
+      {past ? (
+        <span className="event__btn" aria-disabled="true">
+          Finished
+        </span>
+      ) : (
         <EventRegisterButton
           eventId={event.id}
           title={event.title}
-          date={event.date}
-          full={left === 0}
+          date={dateLabel}
+          full={full}
         />
       )}
     </article>

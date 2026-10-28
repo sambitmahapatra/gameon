@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { Download, Loader2 } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Download, Loader2, Search } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Badge } from '@/components/ui/badge';
@@ -58,8 +58,31 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
   const [statusFilter, setStatusFilter] = useState('all');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [query, setQuery] = useState('');
   const [pending, setPending] = useState<BookingDetail | null>(null);
   const [cancelling, setCancelling] = useState(false);
+  const search = useRef<HTMLInputElement>(null);
+
+  // '/' jumps to the search box, the way it does in most dashboards. Ignored
+  // while the caret is already in a field, so typing a slash still works.
+  useEffect(() => {
+    function onKey(event: KeyboardEvent) {
+      if (event.key !== '/' || event.metaKey || event.ctrlKey) return;
+      const active = document.activeElement;
+      if (
+        active instanceof HTMLInputElement ||
+        active instanceof HTMLTextAreaElement ||
+        (active instanceof HTMLElement && active.isContentEditable)
+      ) {
+        return;
+      }
+      event.preventDefault();
+      search.current?.focus();
+    }
+
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   const filtered = useMemo(
     () =>
@@ -68,9 +91,16 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
         if (statusFilter !== 'all' && row.status !== statusFilter) return false;
         if (from && row.date < from) return false;
         if (to && row.date > to) return false;
+        if (query) {
+          const needle = query.toLowerCase();
+          const haystack = [row.id, row.name, row.phone, row.zone_name]
+            .join(' ')
+            .toLowerCase();
+          if (!haystack.includes(needle)) return false;
+        }
         return true;
       }),
-    [rows, zoneFilter, statusFilter, from, to],
+    [rows, zoneFilter, statusFilter, from, to, query],
   );
 
   function exportCsv() {
@@ -126,6 +156,23 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end gap-4">
+        <div className="flex min-w-[220px] flex-1 flex-col gap-2">
+          <Label htmlFor="search">Search</Label>
+          <div className="relative">
+            <Search
+              aria-hidden="true"
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-fg-dim"
+            />
+            <Input
+              ref={search}
+              id="search"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="ID, name, phone or zone — press /"
+              className="pl-9"
+            />
+          </div>
+        </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="from">From</Label>
           <Input
@@ -201,21 +248,21 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
             {filtered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={9} className="py-12 text-center">
-                  <p className="text-body text-foreground">No bookings yet.</p>
-                  <p className="mt-1.5 text-meta text-muted-foreground">
-                    Share the site to start taking reservations.
+                  <p>No bookings match these filters.</p>
+                  <p className="mt-1.5 text-meta text-fg-muted">
+                    Clear the search, or widen the date range.
                   </p>
                 </TableCell>
               </TableRow>
             ) : (
               filtered.map((booking) => (
-                <TableRow key={booking.id}>
-                  <TableCell className="font-mono text-cyan">{booking.id}</TableCell>
+                <TableRow key={booking.id} className="even:bg-surface/50">
+                  <TableCell className="font-mono text-brand">{booking.id}</TableCell>
                   <TableCell>{booking.zone_name}</TableCell>
                   <TableCell className="font-mono">{booking.date}</TableCell>
                   <TableCell className="font-mono">{prettyTime(booking.time)}</TableCell>
                   <TableCell>{booking.name}</TableCell>
-                  <TableCell className="font-mono text-muted-foreground">
+                  <TableCell className="font-mono text-fg-muted">
                     {booking.phone}
                   </TableCell>
                   <TableCell className="font-mono">{booking.party_size}</TableCell>
@@ -236,7 +283,7 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
                         Cancel
                       </Button>
                     ) : (
-                      <span className="text-muted-foreground">—</span>
+                      <span className="text-fg-dim">—</span>
                     )}
                   </TableCell>
                 </TableRow>
@@ -246,7 +293,7 @@ export function BookingsTable({ bookings, zones, adminKey }: BookingsTableProps)
         </Table>
       </div>
 
-      <p className="text-meta text-muted-foreground">
+      <p className="text-meta text-fg-muted">
         Showing {filtered.length} of {rows.length} bookings. Admin key in use:{' '}
         <span className="font-mono">{adminKey.replace(/.(?=.{3})/g, '•')}</span>
       </p>

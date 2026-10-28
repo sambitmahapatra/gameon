@@ -14,12 +14,12 @@ export function Toaster() {
       toastOptions={{
         classNames: {
           toast:
-            'rounded-card border border-border bg-surface font-sans text-meta text-foreground shadow-panel',
+            'rounded-card border border-border bg-surface font-sans text-meta text-foreground shadow-card-hover',
           description: 'text-muted-foreground',
-          actionButton: 'rounded-button bg-cyan font-semibold text-cyan-foreground',
+          actionButton: 'rounded-button bg-brand font-semibold text-brand-foreground',
           cancelButton: 'rounded-button bg-elevated text-muted-foreground',
           error: 'border-destructive/40',
-          success: 'border-cyan/40',
+          success: 'border-brand/40',
         },
       }}
     />

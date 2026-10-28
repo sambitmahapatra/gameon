@@ -9,24 +9,24 @@ export { dynamic } from '@/lib/render-mode';
 export const metadata: Metadata = {
   title: 'Tournaments and events',
   description:
-    'Weekly ladders, monthly cups with real prize pools, and corporate nights at GameOn Powai.',
+    'Weekly ladders, monthly cups with real prize pools, and corporate nights at GameOn.',
 };
 
 export default function EventsPage() {
   const events = withDb(() => listEvents());
 
   return (
-    <div className="shell py-16">
-      <header className="flex max-w-prose flex-col gap-4">
-        <p className="eyebrow">Competitive calendar</p>
-        <h1 className="text-h1">Tournaments and events in Powai</h1>
-        <p className="text-body text-muted-foreground">
-          Register at the counter, on WhatsApp, or here. Entry is free for Gold members
-          and discounted for Silver.
-        </p>
-      </header>
+    <div className="section section--tight">
+      <div className="wrap">
+        <header className="section-head">
+          <div className="eyebrow">Competitive calendar</div>
+          <h1>Something is on almost every night</h1>
+          <p className="sub">
+            Register at the counter, on WhatsApp, or here. Entry is free for Gold members
+            and discounted for Silver.
+          </p>
+        </header>
 
-      <div className="mt-12">
         <EventsBrowser events={events} />
       </div>
     </div>

@@ -1,62 +1,18 @@
 'use client';
 
-import { useRef } from 'react';
 import { Check } from 'lucide-react';
-
-import { useReducedMotion } from '@/hooks/use-reduced-motion';
-import { gsap, useGSAP } from '@/lib/gsap';
-import { cn } from '@/lib/utils';
 
 export const STEP_LABELS = ['Zone', 'Time', 'Details', 'Confirm'] as const;
 
 /**
- * Four dots, a filling line and a label under each (spec 7.4). V2 fix 4e adds
- * the expanding ring on the active dot and eases the line fill rather than
- * letting it run linearly.
+ * Dots joined by lines, one label under each. The active dot carries the
+ * reference's pulsing ring (the same CSS animation as the nav's live dot), and
+ * the connector fills as steps complete — both pure CSS, so there is no
+ * scroll trigger to fail and nothing to leave hidden.
  */
 export function BookingProgress({ step }: { step: number }) {
-  const scope = useRef<HTMLElement>(null);
-  const reduced = useReducedMotion();
-
-  useGSAP(
-    () => {
-      if (reduced || !scope.current) return;
-
-      const fills = gsap.utils.toArray<HTMLElement>(
-        '[data-progress-fill]',
-        scope.current,
-      );
-      gsap.to(fills, {
-        scaleX: (index, target: HTMLElement) =>
-          target.dataset.progressFill === 'done' ? 1 : 0,
-        duration: 0.6,
-        ease: 'power2.inOut',
-        stagger: 0.05,
-      });
-
-      const ring = scope.current.querySelector('[data-progress-ring]');
-      if (!ring) return;
-
-      const pulse = gsap.fromTo(
-        ring,
-        { scale: 1, opacity: 0.6 },
-        {
-          scale: 2.6,
-          opacity: 0,
-          duration: 1.5,
-          ease: 'power2.out',
-          repeat: -1,
-          repeatDelay: 0.15,
-        },
-      );
-
-      return () => pulse.kill();
-    },
-    { scope, dependencies: [reduced, step] },
-  );
-
   return (
-    <nav ref={scope} aria-label="Booking progress" className="w-full">
+    <nav aria-label="Booking progress">
       <ol className="flex items-start">
         {STEP_LABELS.map((label, index) => {
           const position = index + 1;
@@ -66,66 +22,53 @@ export function BookingProgress({ step }: { step: number }) {
           return (
             <li
               key={label}
-              className={cn('flex min-w-0 flex-1 flex-col gap-2', index > 0 && '-ml-1')}
+              className="flex min-w-0 flex-1 flex-col gap-2.5"
               aria-current={active ? 'step' : undefined}
             >
               <div className="flex items-center">
-                {index > 0 ? (
-                  <span aria-hidden="true" className="relative h-px flex-1 bg-border">
-                    <span
-                      data-progress-fill={complete || active ? 'done' : 'pending'}
-                      className={cn(
-                        'absolute inset-0 origin-left bg-cyan',
-                        complete || active ? 'scale-x-100' : 'scale-x-0',
-                      )}
-                    />
-                  </span>
-                ) : (
-                  <span aria-hidden="true" className="flex-1" />
-                )}
+                <span
+                  aria-hidden="true"
+                  className={`h-px flex-1 ${index === 0 ? 'bg-transparent' : complete || active ? 'bg-brand' : 'bg-line'}`}
+                />
 
-                <span className="relative grid size-3 shrink-0 place-items-center">
+                <span className="relative grid size-3.5 shrink-0 place-items-center">
                   {active ? (
                     <span
-                      data-progress-ring
                       aria-hidden="true"
-                      className="absolute size-3 rounded-full bg-cyan"
+                      className="absolute size-3.5 rounded-full bg-brand motion-safe:animate-pulse-dot"
                     />
                   ) : null}
                   <span
-                    className={cn(
-                      'relative flex size-3 items-center justify-center rounded-full border transition-colors duration-300',
-                      complete && 'border-cyan bg-cyan',
-                      active && 'border-cyan bg-cyan',
-                      !complete && !active && 'border-border bg-surface',
-                    )}
+                    className={`relative grid size-3.5 place-items-center rounded-full border transition-colors duration-300 ${
+                      complete || active
+                        ? 'border-brand bg-brand'
+                        : 'border-line-strong bg-surface'
+                    }`}
                   >
                     {complete ? (
-                      <Check aria-hidden="true" className="size-2 text-cyan-foreground" />
+                      <Check
+                        aria-hidden="true"
+                        className="size-2.5 text-brand-foreground"
+                        strokeWidth={3}
+                      />
                     ) : null}
                   </span>
                 </span>
 
-                {index < STEP_LABELS.length - 1 ? (
-                  <span aria-hidden="true" className="relative h-px flex-1 bg-border">
-                    <span
-                      data-progress-fill={complete ? 'done' : 'pending'}
-                      className={cn(
-                        'absolute inset-0 origin-left bg-cyan',
-                        complete ? 'scale-x-100' : 'scale-x-0',
-                      )}
-                    />
-                  </span>
-                ) : (
-                  <span aria-hidden="true" className="flex-1" />
-                )}
+                <span
+                  aria-hidden="true"
+                  className={`h-px flex-1 ${
+                    index === STEP_LABELS.length - 1
+                      ? 'bg-transparent'
+                      : complete
+                        ? 'bg-brand'
+                        : 'bg-line'
+                  }`}
+                />
               </div>
 
               <span
-                className={cn(
-                  'text-center text-meta transition-colors',
-                  active ? 'text-cyan' : 'text-muted-foreground',
-                )}
+                className={`mono text-center ${active ? 'text-brand' : 'text-fg-dim'}`}
               >
                 {label}
               </span>

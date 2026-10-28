@@ -2,23 +2,20 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-import { useReducedMotion } from '@/hooks/use-reduced-motion';
-import { gsap, useGSAP } from '@/lib/gsap';
 import { api, cn } from '@/lib/utils';
 
 /**
- * "Live now 47 players" (spec 3.4.3). Polls every 10s and steps the digits to
- * the new figure; a failed poll keeps the last good number.
+ * The nav's "Live now N players" pill. Polls /api/live-count every 10s and
+ * steps the digits toward the new figure so it ticks rather than jumps; a
+ * failed poll keeps the last good number.
  *
- * The dot is two circles: a solid core and an outer ring that GSAP scales and
- * fades on a loop, so it reads as a heartbeat rather than a blink (V2 fix 5).
+ * The pulsing ring is pure CSS (.live-pill__dot::before), so it costs nothing
+ * and stops under prefers-reduced-motion with the rest of the animations.
  */
 export function LiveCounter({ className }: { className?: string }) {
   const [count, setCount] = useState<number | null>(null);
-  const shown = useRef(0);
   const [display, setDisplay] = useState(0);
-  const scope = useRef<HTMLSpanElement>(null);
-  const reduced = useReducedMotion();
+  const shown = useRef(0);
 
   useEffect(() => {
     let cancelled = false;
@@ -27,8 +24,9 @@ export function LiveCounter({ className }: { className?: string }) {
       try {
         const res = await fetch(api('/api/live-count'), { cache: 'no-store' });
         if (!res.ok) return;
-        const data = (await res.json()) as { count: number };
-        if (!cancelled) setCount(data.count);
+        const data = (await res.json()) as { count?: number; data?: { count: number } };
+        const next = data.data?.count ?? data.count;
+        if (!cancelled && typeof next === 'number') setCount(next);
       } catch {
         // Offline or backend asleep: keep showing the last known figure.
       }
@@ -42,7 +40,6 @@ export function LiveCounter({ className }: { className?: string }) {
     };
   }, []);
 
-  // Step the visible number towards the target so it ticks rather than jumps.
   useEffect(() => {
     if (count === null) return;
 
@@ -59,55 +56,18 @@ export function LiveCounter({ className }: { className?: string }) {
     return () => window.clearInterval(id);
   }, [count]);
 
-  useGSAP(
-    () => {
-      if (reduced || !scope.current) return;
-      const ring = scope.current.querySelector('[data-live-ring]');
-      if (!ring) return;
-
-      const tween = gsap.fromTo(
-        ring,
-        { scale: 1, opacity: 0.7 },
-        {
-          scale: 1.4,
-          opacity: 0,
-          duration: 1.6,
-          ease: 'power2.out',
-          repeat: -1,
-          repeatDelay: 0.2,
-        },
-      );
-
-      return () => tween.kill();
-    },
-    { scope, dependencies: [reduced, count] },
-  );
-
-  if (count === null) {
-    return (
-      <span className={cn('text-meta text-muted-foreground', className)}>
-        Checking the floor
-      </span>
-    );
-  }
-
   return (
-    <span
-      ref={scope}
-      className={cn('inline-flex items-center gap-2 text-meta', className)}
-    >
-      <span className="relative flex size-2 shrink-0 items-center justify-center">
-        <span
-          data-live-ring
-          aria-hidden="true"
-          className="absolute size-2 rounded-full bg-cyan"
-        />
-        <span aria-hidden="true" className="relative size-2 rounded-full bg-cyan" />
+    <div className={cn('live-pill', className)}>
+      <span className="live-pill__dot" aria-hidden="true" />
+      <span>
+        {count === null ? (
+          'Checking the floor'
+        ) : (
+          <>
+            Live now <b>{display}</b> players
+          </>
+        )}
       </span>
-      <span className="text-muted-foreground">
-        Live now <span className="font-mono tabular-nums text-foreground">{display}</span>{' '}
-        players
-      </span>
-    </span>
+    </div>
   );
 }

@@ -1,50 +1,66 @@
 import { cn } from '@/lib/utils';
 
 /**
- * Mark: a cyan ">" and a warm "<" overlapping into a stylised G (spec 8.1).
- * Rendered inline so the hero can animate its paths.
+ * The mark from the approved reference: a rounded square with an abstract
+ * "G|O" inside, stroked with an accent→magenta gradient.
+ *
+ * SVG gradient ids are global to the document, so each instance takes its own
+ * `idPrefix` — two marks on one page with the same id would make the second
+ * one inherit the first's gradient.
  */
-export function LogoMark({ className }: { className?: string }) {
+export function LogoMark({
+  idPrefix = 'mark',
+  className,
+}: {
+  idPrefix?: string;
+  className?: string;
+}) {
+  const gradientId = `lg-${idPrefix}`;
+
   return (
     <svg
       viewBox="0 0 32 32"
       fill="none"
       aria-hidden="true"
-      className={cn('size-8', className)}
+      className={cn('logo__mark', className)}
     >
-      <path
-        d="M9.5 7.5 L18.5 16 L9.5 24.5"
-        stroke="hsl(var(--accent-primary))"
-        strokeWidth="3"
-        strokeLinecap="round"
-        strokeLinejoin="round"
+      <defs>
+        <linearGradient id={gradientId} x1="0" y1="0" x2="32" y2="32">
+          <stop offset="0" stopColor="var(--accent)" />
+          <stop offset="1" stopColor="var(--magenta)" />
+        </linearGradient>
+      </defs>
+      <rect
+        x="2"
+        y="2"
+        width="28"
+        height="28"
+        rx="8"
+        stroke={`url(#${gradientId})`}
+        strokeWidth="2"
       />
       <path
-        d="M22.5 7.5 L13.5 16 L22.5 24.5"
-        stroke="hsl(var(--accent-warm))"
-        strokeWidth="3"
+        d="M 10 22 L 10 14 L 16 14 M 22 22 L 22 10"
+        stroke={`url(#${gradientId})`}
+        strokeWidth="2.4"
         strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.9"
-      />
-      <circle
-        cx="16"
-        cy="16"
-        r="14.5"
-        stroke="hsl(var(--border-subtle))"
-        strokeWidth="1"
+        fill="none"
       />
     </svg>
   );
 }
 
-export function Logo({ className }: { className?: string }) {
+export function Logo({
+  idPrefix = 'mark',
+  className,
+}: {
+  idPrefix?: string;
+  className?: string;
+}) {
   return (
-    <span className={cn('inline-flex items-center gap-2.5', className)}>
-      <LogoMark />
-      <span className="font-display text-[1.375rem] font-bold tracking-[-0.02em] text-foreground">
-        GameOn
-      </span>
+    <span className={cn('logo', className)}>
+      <LogoMark idPrefix={idPrefix} />
+      GameOn
     </span>
   );
 }

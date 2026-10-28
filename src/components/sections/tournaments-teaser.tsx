@@ -2,38 +2,32 @@ import Link from 'next/link';
 
 import { EventCard } from '@/components/event-card';
 import { Reveal } from '@/components/motion/reveal';
-import { SectionHeading } from '@/components/section-heading';
 import type { GameEvent } from '@/lib/types';
 
+/** Three upcoming tournaments, with the calendar link on the right. */
 export function TournamentsTeaser({ events }: { events: GameEvent[] }) {
-  const upcoming = events.slice(0, 3);
-  if (!upcoming.length) return null;
+  if (!events.length) return null;
 
   return (
-    <section className="shell py-24">
-      <div className="flex flex-wrap items-end justify-between gap-6">
-        <SectionHeading
-          eyebrow="Tournaments"
-          title="Something is on almost every night"
-          sub="Weekly ladders for the regulars, monthly cups with real prize pools, and corporate nights when an office takes over the floor."
-        />
-        <Link
-          href="/events"
-          className="rounded-button text-meta text-cyan underline-offset-4 hover:underline"
-        >
-          See all events
-        </Link>
-      </div>
+    <section className="section section--elevated" id="events">
+      <div className="wrap">
+        <Reveal className="events-head">
+          <div>
+            <div className="eyebrow">Tournaments</div>
+            <h2 className="mt-5">Something is on almost every night</h2>
+          </div>
+          <Link href="/events" className="feature__cta">
+            See the full calendar
+            <span aria-hidden="true">→</span>
+          </Link>
+        </Reveal>
 
-      <Reveal stagger="[data-event]" className="mt-12">
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {upcoming.map((event) => (
-            <div key={event.id} data-event>
-              <EventCard event={event} />
-            </div>
+        <Reveal className="events-grid" stagger=".event">
+          {events.slice(0, 3).map((event) => (
+            <EventCard key={event.id} event={event} />
           ))}
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }

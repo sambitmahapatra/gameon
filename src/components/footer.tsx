@@ -1,126 +1,78 @@
 import Link from 'next/link';
-import { Instagram, MapPin, MessageCircle, Youtube } from 'lucide-react';
 
 import { Logo } from '@/components/logo';
-import { Separator } from '@/components/ui/separator';
 import { SITE } from '@/lib/site';
 
-const COLUMNS = [
-  {
-    heading: 'Explore',
-    links: [
-      { label: 'All zones', href: '/zones/vr-arena' },
-      { label: 'Book a session', href: '/book' },
-      { label: 'Tournaments', href: '/events' },
-      { label: 'Café menu', href: '/menu' },
-      { label: 'Membership', href: '/membership' },
-    ],
-  },
-  {
-    heading: 'Visit',
-    links: [
-      { label: 'Open 10 AM to 10 PM, daily', href: '/book' },
-      { label: 'Hiranandani Gardens, Powai', href: SITE.mapsUrl, external: true },
-      { label: SITE.phoneDisplay, href: `tel:${SITE.phone}` },
-      { label: SITE.email, href: `mailto:${SITE.email}` },
-    ],
-  },
-  {
-    heading: 'Legal',
-    links: [
-      { label: 'House rules', href: '/membership#faq' },
-      { label: 'Cancellation policy', href: '/membership#faq' },
-      { label: 'Privacy', href: '/membership#faq' },
-    ],
-  },
+const EXPLORE = [
+  { href: '/zones/vr-arena', label: 'All zones' },
+  { href: '/#experiences', label: 'Signature experiences' },
+  { href: '/membership', label: 'Membership' },
+  { href: '/events', label: 'Tournaments' },
+  { href: '/menu', label: 'Café menu' },
+];
+
+const LEGAL = [
+  { href: '/#house-rules', label: 'House rules' },
+  { href: '/#cancellation', label: 'Cancellation' },
+  { href: '/#privacy', label: 'Privacy' },
+  { href: '/#terms', label: 'Terms' },
 ];
 
 export function Footer() {
   return (
-    <footer className="relative mt-32 border-t border-border bg-surface/40">
-      {/* Flowing cyan-to-orange hairline along the top edge (V2 fix 5) */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-x-0 -top-px h-[3px] motion-safe:animate-[flow-line_15s_linear_infinite]"
-        style={{
-          backgroundImage:
-            'linear-gradient(90deg, transparent, hsl(var(--accent-primary)), hsl(var(--accent-warm)), hsl(var(--accent-primary)), transparent)',
-          backgroundSize: '200% 100%',
-        }}
-      />
-      <div className="shell py-16">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
-          <div className="flex flex-col gap-4">
-            <Logo />
-            <p className="max-w-prose text-meta text-muted-foreground">
-              Six gaming worlds and a café under one roof in Powai. Walk in, or reserve
-              the rig you want before you leave the house.
+    <footer className="site-footer above-grain">
+      <div className="wrap">
+        <div className="footer-grid">
+          <div className="footer-brand">
+            <Link href="/" aria-label="GameOn home">
+              <Logo idPrefix="foot" />
+            </Link>
+            <p>
+              Six gaming worlds and a café under one roof. Walk in, or reserve the rig you
+              want before you leave the house.
             </p>
-            <div className="flex items-center gap-3">
-              <a
-                href={SITE.whatsappUrl}
-                className="rounded-button border border-border p-2.5 text-muted-foreground transition-colors hover:border-cyan/50 hover:text-cyan"
-                aria-label="Message GameOn on WhatsApp"
-              >
-                <MessageCircle aria-hidden="true" className="size-4" />
-              </a>
-              <a
-                href={SITE.instagramUrl}
-                className="rounded-button border border-border p-2.5 text-muted-foreground transition-colors hover:border-cyan/50 hover:text-cyan"
-                aria-label="GameOn on Instagram"
-              >
-                <Instagram aria-hidden="true" className="size-4" />
-              </a>
-              <a
-                href={SITE.youtubeUrl}
-                className="rounded-button border border-border p-2.5 text-muted-foreground transition-colors hover:border-cyan/50 hover:text-cyan"
-                aria-label="GameOn on YouTube"
-              >
-                <Youtube aria-hidden="true" className="size-4" />
-              </a>
-            </div>
           </div>
 
-          {COLUMNS.map((column) => (
-            <div key={column.heading} className="flex flex-col gap-4">
-              <h2 className="font-display text-meta font-medium text-foreground">
-                {column.heading}
-              </h2>
-              <ul className="flex flex-col gap-3">
-                {column.links.map((link) => (
-                  <li key={link.label}>
-                    {'external' in link && link.external ? (
-                      <a
-                        href={link.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 text-meta text-muted-foreground transition-colors hover:text-cyan"
-                      >
-                        <MapPin aria-hidden="true" className="size-3.5" />
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className="text-meta text-muted-foreground transition-colors hover:text-cyan"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="footer-col">
+            <h4>Explore</h4>
+            <ul>
+              {EXPLORE.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="footer-col">
+            <h4>Visit</h4>
+            <ul>
+              <li>Open 10 AM — 10 PM</li>
+              <li>Every day of the year</li>
+              <li>
+                <a href={`tel:${SITE.phone}`}>{SITE.phoneDisplay}</a>
+              </li>
+              <li>
+                <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+              </li>
+            </ul>
+          </div>
+
+          <div className="footer-col">
+            <h4>Legal</h4>
+            <ul>
+              {LEGAL.map((item) => (
+                <li key={item.href}>
+                  <Link href={item.href}>{item.label}</Link>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
 
-        <Separator className="my-10" />
-
-        <div className="flex flex-col gap-3 text-meta text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
-          <p>{SITE.address}</p>
-          <p className="font-mono">
-            © {new Date().getFullYear()} GameOn. Made in Mumbai.
-          </p>
+        <div className="footer-bottom">
+          <span>© {new Date().getFullYear()} GameOn Lounges Pvt. Ltd.</span>
+          <span>Built for people who still read the manual.</span>
         </div>
       </div>
     </footer>

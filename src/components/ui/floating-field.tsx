@@ -34,12 +34,16 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
       <div className="flex flex-col gap-1.5">
         <div
           className={cn(
-            'relative flex items-stretch rounded-button border bg-deep/60 transition-colors',
-            error ? 'border-destructive/60' : focused ? 'border-cyan/60' : 'border-input',
+            'relative flex items-stretch rounded-button border bg-elevated transition-colors',
+            error
+              ? 'border-destructive'
+              : focused
+                ? 'border-brand'
+                : 'border-line-strong',
           )}
         >
           {prefix ? (
-            <span className="flex items-center rounded-l-button border-r border-input bg-elevated px-3.5 font-mono text-meta text-muted-foreground">
+            <span className="mono flex items-center rounded-l-button border-r border-line-strong bg-surface px-3.5 text-fg-muted">
               {prefix}
             </span>
           ) : null}
@@ -48,9 +52,9 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
             <label
               htmlFor={id}
               className={cn(
-                'pointer-events-none absolute left-3.5 origin-left text-muted-foreground transition-all duration-200 ease-out',
+                'pointer-events-none absolute left-3.5 origin-left text-fg-muted transition-all duration-200 ease-out',
                 lifted
-                  ? 'top-1.5 text-[0.6875rem] text-cyan'
+                  ? 'top-1.5 text-[0.6875rem] text-brand'
                   : 'top-1/2 -translate-y-1/2 text-meta',
               )}
             >
@@ -60,7 +64,7 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
               id={id}
               ref={ref}
               className={cn(
-                'h-14 w-full bg-transparent px-3.5 pb-1.5 pt-5 text-body text-foreground outline-none placeholder:text-transparent focus-visible:ring-0',
+                'h-14 w-full bg-transparent px-3.5 pb-1.5 pt-5 text-body text-fg outline-none placeholder:text-transparent focus-visible:outline-none',
                 prefix ? 'rounded-r-button' : 'rounded-button',
                 className,
               )}
@@ -83,9 +87,9 @@ export const FloatingField = React.forwardRef<HTMLInputElement, FloatingFieldPro
         </div>
 
         {error ? (
-          <p className="text-meta text-red-400">{error}</p>
+          <p className="text-meta text-destructive">{error}</p>
         ) : hint ? (
-          <p className="text-meta text-muted-foreground">{hint}</p>
+          <p className="text-meta text-fg-dim">{hint}</p>
         ) : null}
       </div>
     );

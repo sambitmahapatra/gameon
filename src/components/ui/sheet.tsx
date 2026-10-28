@@ -17,11 +17,11 @@ const SheetContent = React.forwardRef<
   }
 >(({ className, children, side = 'right', ...props }, ref) => (
   <SheetPrimitive.Portal>
-    <SheetPrimitive.Overlay className="fixed inset-0 z-50 bg-deep/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
+    <SheetPrimitive.Overlay className="fixed inset-0 z-50 bg-bg/80 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
     <SheetPrimitive.Content
       ref={ref}
       className={cn(
-        'fixed inset-y-0 z-50 flex w-[86vw] max-w-sm flex-col gap-6 border-border bg-surface p-6 shadow-panel transition ease-out data-[state=closed]:duration-200 data-[state=open]:duration-300',
+        'fixed inset-y-0 z-50 flex w-[86vw] max-w-sm flex-col gap-6 border-border bg-surface p-6 shadow-card-hover transition ease-out data-[state=closed]:duration-200 data-[state=open]:duration-300',
         side === 'right'
           ? 'right-0 border-l data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right'
           : 'left-0 border-r data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left',
@@ -31,7 +31,7 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetPrimitive.Close className="absolute right-5 top-5 rounded-button p-1 text-muted-foreground transition-colors hover:bg-elevated hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan">
+      <SheetPrimitive.Close className="absolute right-5 top-5 rounded-button p-1 text-muted-foreground transition-colors hover:bg-elevated hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
         <X aria-hidden="true" className="size-5" />
         <span className="sr-only">Close menu</span>
       </SheetPrimitive.Close>
