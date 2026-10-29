@@ -5,6 +5,7 @@ import { BookingWizard } from '@/components/booking-wizard';
 import { withDb } from '@/lib/bootstrap';
 import { databaseConfigured, getZones } from '@/lib/db';
 import { SITE } from '@/lib/site';
+import { zoneName } from '@/lib/data/club';
 
 export { dynamic } from '@/lib/render-mode';
 
@@ -31,14 +32,17 @@ export default async function BookPage() {
         </div>
       </div>
     );
-  const zones = await withDb(async () => await getZones());
+  const zones = (await withDb(async () => await getZones())).map((zone) => ({
+    ...zone,
+    name: zoneName(zone.id, zone.name),
+  }));
 
   return (
     <div className="section section--tight">
       <div className="wrap max-w-[1000px]">
         <header className="section-head">
           <div className="eyebrow">Reserve a slot</div>
-          <h1>Book a session</h1>
+          <h1>Lock in your playtime.</h1>
           <p className="sub">
             Four steps, about a minute. Hold a rig for an hour; extend at the counter if
             the floor is free.

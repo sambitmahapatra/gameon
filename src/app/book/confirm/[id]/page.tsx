@@ -11,6 +11,7 @@ import { WordReveal } from '@/components/word-reveal';
 import { withDb } from '@/lib/bootstrap';
 import { getBooking } from '@/lib/db';
 import { SITE } from '@/lib/site';
+import { zoneName } from '@/lib/data/club';
 import { fromDateKey, inrDigits, prettyTime } from '@/lib/utils';
 
 export { dynamic } from '@/lib/render-mode';
@@ -85,7 +86,7 @@ export default async function ConfirmPage({ params }: PageProps) {
           <div className="flex flex-col gap-10">
             <dl className="panel px-6 py-2">
               {[
-                ['Zone', booking.zone_name],
+                ['Zone', zoneName(booking.zone_id, booking.zone_name)],
                 ['Date', longDate],
                 ['Time', `${prettyTime(booking.time)} for one hour`],
                 ['Party size', `${booking.party_size} players`],
@@ -110,7 +111,7 @@ export default async function ConfirmPage({ params }: PageProps) {
             ) : (
               <ConfirmActions
                 id={booking.id}
-                zoneName={booking.zone_name}
+                zoneName={zoneName(booking.zone_id, booking.zone_name)}
                 date={booking.date}
                 time={booking.time}
                 partySize={booking.party_size}

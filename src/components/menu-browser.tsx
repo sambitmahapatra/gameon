@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import { BrandPhoto } from '@/components/brand-photo';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -9,7 +10,11 @@ import { MENU, MENU_CATEGORIES } from '@/lib/data/menu';
 import { inrDigits } from '@/lib/utils';
 
 export function MenuBrowser() {
-  const [tab, setTab] = useState('snacks');
+  const params = useSearchParams();
+  const requested = params.get('category');
+  const [tab, setTab] = useState(
+    MENU_CATEGORIES.some((c) => c.id === requested) ? requested! : 'snacks',
+  );
   const reduced = useReducedMotion();
   return (
     <Tabs value={tab} onValueChange={setTab}>
@@ -60,18 +65,20 @@ export function MenuBrowser() {
                 >
                   <div className="menu-item__photo">
                     <BrandPhoto
-                      src={`/images/menu/${item.slug}.webp`}
+                      src={item.image ?? `/images/menu/${item.slug}.webp`}
                       alt={item.name}
                       width={800}
                       height={800}
                       sizes="120px"
                     />
-                    <span
-                      className={`diet-marker ${item.veg ? 'diet-marker--veg' : 'diet-marker--chicken'}`}
-                      role="img"
-                      aria-label={item.veg ? 'Vegetarian' : 'Contains chicken'}
-                      title={item.veg ? 'Vegetarian' : 'Contains chicken'}
-                    />
+                    {item.veg !== null && (
+                      <span
+                        className={`diet-marker ${item.veg ? 'diet-marker--veg' : 'diet-marker--chicken'}`}
+                        role="img"
+                        aria-label={item.veg ? 'Vegetarian' : 'Contains chicken'}
+                        title={item.veg ? 'Vegetarian' : 'Contains chicken'}
+                      />
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="font-display text-[1.05rem] font-medium leading-snug">
@@ -79,7 +86,9 @@ export function MenuBrowser() {
                     </h3>
                     <p className="mt-1.5 text-meta text-fg-muted">{item.description}</p>
                     <span className="mono mt-3 block text-fg">
-                      ₹{inrDigits(item.price)}
+                      {item.price === null
+                        ? 'Ask at the counter'
+                        : `₹${inrDigits(item.price)}`}
                     </span>
                   </div>
                 </motion.li>

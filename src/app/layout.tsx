@@ -10,18 +10,21 @@ import { SITE } from '@/lib/site';
 import { cn } from '@/lib/utils';
 
 import './globals.css';
+import './redesign.css';
 
 const display = localFont({
-  src: '../../public/fonts/bricolage-grotesque-latin.woff2',
-  weight: '400 800',
+  src: [
+    { path: '../../public/fonts/barlow-condensed-800.ttf', weight: '800' },
+    { path: '../../public/fonts/barlow-condensed-900.ttf', weight: '900' },
+  ],
   style: 'normal',
   variable: '--font-display',
   display: 'swap',
 });
 
 const body = localFont({
-  src: '../../public/fonts/instrument-sans-latin.woff2',
-  weight: '400 600',
+  src: '../../public/fonts/dm-sans-variable.ttf',
+  weight: '400 700',
   style: 'normal',
   variable: '--font-body',
   display: 'swap',
@@ -63,7 +66,7 @@ export const metadata: Metadata = {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'GameOn — Enter another world.',
+        alt: 'GameOn — Play Beyond Ordinary',
       },
     ],
   },
@@ -80,8 +83,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FAFAF5' },
-    { media: '(prefers-color-scheme: dark)', color: '#06080F' },
+    { media: '(prefers-color-scheme: light)', color: '#F7F7F0' },
+    { media: '(prefers-color-scheme: dark)', color: '#0B0C10' },
   ],
   colorScheme: 'light dark',
 };

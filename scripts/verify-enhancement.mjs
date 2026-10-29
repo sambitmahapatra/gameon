@@ -25,8 +25,11 @@ for (const path of [
   console.log(`200 ${path}`);
 }
 const home = (await request('/')).text;
-assert.match(home, /tier tier--highlight/);
-assert.match(home, /GameOn\. Enter another world\./);
+assert.match(home, /club-plan--popular/);
+assert.match(home, /Play Beyond Ordinary/);
+assert.match(home, /Book your gaming session/);
+assert.match(home, /Arcade Corner/);
+assert.match(home, /Private Takeover/);
 const missing = await request('/this-world-does-not-exist');
 assert.equal(missing.response.status, 404);
 assert.match(missing.text, /This world doesn/);

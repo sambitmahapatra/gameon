@@ -78,6 +78,7 @@ export function EventRegisterButton({
       type="button"
       className={cn('event__btn', className)}
       onClick={register}
+      aria-label={`Register for ${title}`}
       disabled={pending}
     >
       {pending ? (

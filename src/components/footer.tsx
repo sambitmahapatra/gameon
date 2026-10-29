@@ -1,78 +1,42 @@
 import Link from 'next/link';
-
+import { ArrowUpRight } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { SITE } from '@/lib/site';
-
-const EXPLORE = [
-  { href: '/zones/vr-arena', label: 'All zones' },
-  { href: '/#experiences', label: 'Signature experiences' },
-  { href: '/membership', label: 'Membership' },
-  { href: '/events', label: 'Tournaments' },
-  { href: '/menu', label: 'Café menu' },
-];
-
-const LEGAL = [
-  { href: '/#house-rules', label: 'House rules' },
-  { href: '/#cancellation', label: 'Cancellation' },
-  { href: '/#privacy', label: 'Privacy' },
-  { href: '/#terms', label: 'Terms' },
-];
-
 export function Footer() {
   return (
-    <footer className="site-footer above-grain">
-      <div className="wrap">
-        <div className="footer-grid">
-          <div className="footer-brand">
+    <footer className="club-footer above-grain">
+      <div className="club-wrap">
+        <div className="club-footer__top">
+          <div>
             <Link href="/" aria-label="GameOn home">
-              <Logo idPrefix="foot" />
+              <Logo />
             </Link>
             <p>
-              Six gaming worlds and a café under one roof. Walk in, or reserve the rig you
-              want before you leave the house.
+              A gaming social club built around play, community, great food and
+              experiences worth sharing.
             </p>
           </div>
-
-          <div className="footer-col">
-            <h4>Explore</h4>
-            <ul>
-              {EXPLORE.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href}>{item.label}</Link>
-                </li>
-              ))}
-            </ul>
+          <div className="club-footer__links">
+            <Link href="/#zones">Zones</Link>
+            <Link href="/#experiences">Experiences</Link>
+            <Link href="/menu">Café</Link>
+            <Link href="/membership">Membership</Link>
+            <Link href="/events">Events</Link>
+            <Link href="/book">
+              Book a session <ArrowUpRight size={13} />
+            </Link>
           </div>
-
-          <div className="footer-col">
-            <h4>Visit</h4>
-            <ul>
-              <li>Open 10 AM — 10 PM</li>
-              <li>Every day of the year</li>
-              <li>
-                <a href={`tel:${SITE.phone}`}>{SITE.phoneDisplay}</a>
-              </li>
-              <li>
-                <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
-              </li>
-            </ul>
-          </div>
-
-          <div className="footer-col">
-            <h4>Legal</h4>
-            <ul>
-              {LEGAL.map((item) => (
-                <li key={item.href}>
-                  <Link href={item.href}>{item.label}</Link>
-                </li>
-              ))}
-            </ul>
+          <div className="club-footer__contact">
+            <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+            <a href={SITE.mapsUrl}>
+              Powai, Mumbai <ArrowUpRight size={13} />
+            </a>
+            <span>10 AM – 10 PM · Every day</span>
           </div>
         </div>
-
-        <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} GameOn Lounges Pvt. Ltd.</span>
-          <span>Built for people who still read the manual.</span>
+        <div className="club-footer__bottom">
+          <span>© {new Date().getFullYear()} GameOn. Play beyond ordinary.</span>
+          <span>Your squad. Your rules. Your next great night.</span>
         </div>
       </div>
     </footer>

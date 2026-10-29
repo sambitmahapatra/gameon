@@ -6,6 +6,7 @@ import { useRef } from 'react';
 import { ZoneArt } from '@/components/zone-art';
 import { BrandPhoto } from '@/components/brand-photo';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
+import { ZONE_LOOK, zoneName } from '@/lib/data/club';
 import type { Zone } from '@/lib/types';
 import { cn, inrDigits } from '@/lib/utils';
 
@@ -67,18 +68,21 @@ export function ZoneCard({ zone, href, detail, className, uid }: ZoneCardProps) 
     <>
       <div className="zone__art">
         <BrandPhoto
-          src={`/images/zones/${zone.id}.webp`}
+          src={
+            ZONE_LOOK[zone.id]
+              ? `/images/club/${ZONE_LOOK[zone.id].image}.webp`
+              : `/images/zones/${zone.id}.webp`
+          }
           alt={`${zone.name} zone at GameOn`}
           width={1920}
           height={1080}
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          overlay
           fallback={<ZoneArt slug={zone.id} uid={uid ?? `zc-${zone.id}`} />}
         />
       </div>
       <div className="zone__body">
         <div className="zone__name">
-          <h3>{zone.name}</h3>
+          <h3>{zoneName(zone.id, zone.name)}</h3>
           <div className="zone__price">
             <b>₹{inrDigits(zone.price_per_hour)}</b>/hour
           </div>

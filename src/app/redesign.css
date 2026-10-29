@@ -1,0 +1,1594 @@
+/* The gaming social club. Shared tokens also restyle bookings, menus and staff UI. */
+:root,
+:root[data-theme='light'] {
+  --bg-rgb: 247 247 240;
+  --bg-elevated-rgb: 255 255 251;
+  --surface-rgb: 238 239 229;
+  --surface-2-rgb: 227 230 215;
+  --fg-rgb: 25 29 22;
+  --fg-muted-rgb: 85 93 77;
+  --fg-dim-rgb: 103 110 95;
+  --border-rgb: 214 218 201;
+  --border-strong-rgb: 175 183 155;
+  --accent-rgb: 72 95 14;
+  --violet-rgb: 109 69 191;
+  --club-lime: #d8ff3e;
+  --club-on-lime: #141809;
+  --club-panel: #fffefa;
+  --club-section: #eeefe6;
+  --club-highlight: #edf3d4;
+  --club-nav: rgb(247 247 240 / 0.94);
+  --card-shadow-hover: 0 16px 40px -24px rgb(53 69 18 / 0.3);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg-rgb: 11 12 16;
+    --bg-elevated-rgb: 19 21 27;
+    --surface-rgb: 19 21 27;
+    --surface-2-rgb: 25 28 36;
+    --fg-rgb: 244 244 241;
+    --fg-muted-rgb: 165 168 178;
+    --fg-dim-rgb: 145 149 163;
+    --border-rgb: 43 46 56;
+    --border-strong-rgb: 74 79 94;
+    --accent-rgb: 216 255 62;
+    --violet-rgb: 167 139 250;
+    --club-panel: #13151b;
+    --club-section: #111319;
+    --club-highlight: #1c2212;
+    --club-nav: rgb(11 12 16 / 0.94);
+    --card-shadow-hover: 0 16px 40px -24px rgb(216 255 62 / 0.2);
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --bg-rgb: 11 12 16;
+  --bg-elevated-rgb: 19 21 27;
+  --surface-rgb: 19 21 27;
+  --surface-2-rgb: 25 28 36;
+  --fg-rgb: 244 244 241;
+  --fg-muted-rgb: 165 168 178;
+  --fg-dim-rgb: 145 149 163;
+  --border-rgb: 43 46 56;
+  --border-strong-rgb: 74 79 94;
+  --accent-rgb: 216 255 62;
+  --violet-rgb: 167 139 250;
+  --club-panel: #13151b;
+  --club-section: #111319;
+  --club-highlight: #1c2212;
+  --club-nav: rgb(11 12 16 / 0.94);
+  --card-shadow-hover: 0 16px 40px -24px rgb(216 255 62 / 0.2);
+  color-scheme: dark;
+}
+html {
+  scroll-padding-top: 100px;
+}
+body {
+  transition:
+    background-color 0.25s,
+    color 0.25s;
+}
+.grain {
+  display: none;
+}
+h1,
+h2,
+h3,
+h4 {
+  text-transform: uppercase;
+  font-weight: 800;
+}
+.club-wrap {
+  width: min(1160px, calc(100% - 64px));
+  margin-inline: auto;
+}
+.club-home img {
+  object-fit: cover;
+  transition:
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 0.5s;
+}
+.club-home h2,
+.club-home h3,
+.club-home h1 {
+  font-family: var(--font-display), Impact, sans-serif;
+}
+.club-home em {
+  font-style: normal;
+  color: var(--accent);
+}
+.club-eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  font:
+    700 10px/1.5 var(--font-body),
+    sans-serif;
+  letter-spacing: 0.18em;
+}
+.club-btn {
+  display: inline-flex;
+  gap: 11px;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 20px;
+  min-height: 46px;
+  border-radius: 7px;
+  border: 1px solid transparent;
+  background: var(--club-lime);
+  color: var(--club-on-lime);
+  font:
+    700 11px/1.25 var(--font-body),
+    sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  transition:
+    transform 0.25s,
+    box-shadow 0.25s,
+    background 0.25s;
+  cursor: pointer;
+}
+.club-btn svg {
+  flex-shrink: 0;
+  transition: transform 0.25s;
+}
+.club-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgb(154 185 22 / 0.15);
+}
+.club-btn:hover svg {
+  transform: translate(2px, -2px);
+}
+.club-btn--outline {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border-strong);
+}
+.club-btn--outline:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: none;
+}
+.club-btn:disabled {
+  cursor: wait;
+  opacity: 0.6;
+  transform: none;
+}
+.club-logo {
+  display: inline-flex;
+  font-family: var(--font-display), Impact, sans-serif;
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  color: var(--fg);
+}
+.club-logo span {
+  color: var(--accent);
+}
+.club-logo b {
+  color: var(--fg);
+}
+.club-logo-mark {
+  font: 900 32px var(--font-display);
+  display: inline-flex;
+}
+.club-logo-mark span {
+  color: var(--accent);
+}
+.club-topline {
+  background: var(--club-lime);
+  color: var(--club-on-lime);
+  text-align: center;
+  padding: 9px 16px;
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.club-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--club-nav);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: box-shadow 0.3s;
+}
+.club-nav.is-stuck {
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.06);
+}
+.club-nav__inner {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+.club-nav__links {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+.club-nav__link {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fg-muted);
+  position: relative;
+  white-space: nowrap;
+  padding-block: 12px;
+}
+.club-nav__link::after {
+  content: '';
+  position: absolute;
+  bottom: 5px;
+  height: 1px;
+  background: var(--accent);
+  left: 0;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s;
+}
+.club-nav__link:hover,
+.club-nav__link[data-active='true'] {
+  color: var(--fg);
+}
+.club-nav__link:hover::after,
+.club-nav__link[data-active='true']::after {
+  transform: scaleX(1);
+}
+.club-nav__right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.club-nav .theme-toggle {
+  width: 36px;
+  height: 36px;
+  color: var(--fg-muted);
+}
+.club-nav .theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+.club-hero {
+  position: relative;
+  isolation: isolate;
+  min-height: 690px;
+  overflow: hidden;
+  color: #f4f4f1;
+  background: #0b0c10;
+}
+.club-hero__photo {
+  position: absolute;
+  inset: -7% 0;
+  z-index: -3;
+}
+.club-hero__photo img {
+  object-position: center;
+  filter: saturate(0.8);
+}
+.club-hero__shade {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background:
+    linear-gradient(
+      90deg,
+      #0b0c10 0%,
+      rgb(11 12 16 / 0.91) 28%,
+      rgb(11 12 16 / 0.28) 72%,
+      rgb(11 12 16 / 0.18)
+    ),
+    linear-gradient(0deg, #0b0c10, transparent 40%);
+}
+.club-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    ellipse at 80% 40%,
+    rgb(216 255 62 / 0.08),
+    transparent 42%
+  );
+}
+.club-hero__inner {
+  padding-block: 70px 50px;
+  position: relative;
+}
+.club-hero .club-eyebrow {
+  color: var(--club-lime);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.club-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--club-lime);
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgb(216 255 62 / 0.5);
+}
+.club-hero h1 {
+  font-size: clamp(88px, 9.3vw, 128px);
+  line-height: 0.89;
+  letter-spacing: -0.022em;
+  font-weight: 900;
+  margin: 25px 0 25px;
+  width: fit-content;
+}
+.club-hero h1 > span {
+  display: block;
+  transform-origin: left;
+}
+.club-lime {
+  color: var(--club-lime);
+}
+.club-hero p {
+  max-width: 470px;
+  color: #c6c7ce;
+  font-size: 13px;
+  line-height: 1.9;
+}
+.club-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.club-hero .club-btn--outline {
+  color: #f4f4f1;
+  border-color: #62656e;
+}
+.club-hero .club-btn--outline:hover {
+  color: var(--club-lime);
+  border-color: var(--club-lime);
+}
+.club-hero__metrics {
+  display: flex;
+  gap: 40px;
+  max-width: 565px;
+  border-top: 1px solid rgb(255 255 255 / 0.17);
+  padding-top: 22px;
+  margin-top: 35px;
+}
+.club-hero__metrics strong {
+  font-family: var(--font-display);
+  font-size: 25px;
+  display: block;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+.club-hero__metrics span {
+  color: #a5a8b2;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 8px;
+}
+.club-hero__live {
+  position: absolute;
+  right: 0;
+  bottom: 60px;
+}
+.club-hero .live-pill {
+  background: rgb(11 12 16 / 0.65);
+  color: #c6c7ce;
+  border-color: #414734;
+  font-size: 10px;
+  padding: 10px 14px;
+  backdrop-filter: blur(10px);
+}
+.club-hero .live-pill__dot {
+  background: var(--club-lime);
+}
+.club-scroll-cue {
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #a5a8b2;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+}
+.club-ticker {
+  overflow: hidden;
+  background: var(--club-lime);
+  color: var(--club-on-lime);
+  padding-block: 13px;
+}
+.club-ticker__track {
+  width: max-content;
+  display: flex;
+  animation: club-ticker 48s linear infinite;
+}
+.club-ticker__track > div {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding-right: 30px;
+  font-family: var(--font-display);
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.club-ticker b {
+  color: #68743d;
+  font-size: 19px;
+}
+.club-ticker:hover .club-ticker__track {
+  animation-play-state: paused;
+}
+.club-section {
+  padding-block: 96px;
+  scroll-margin-top: 80px;
+}
+.club-section--surface {
+  background: var(--club-section);
+  border-block: 1px solid var(--border);
+}
+.club-section--members {
+  background: linear-gradient(120deg, var(--club-section), var(--bg) 80%);
+  border-block: 1px solid var(--border);
+}
+.club-section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 40px;
+  margin-bottom: 38px;
+}
+.club-section-head h2 {
+  font-size: clamp(50px, 6vw, 74px);
+  line-height: 0.96;
+  letter-spacing: -0.015em;
+  margin-top: 14px;
+}
+.club-section-head > p {
+  max-width: 370px;
+  color: var(--fg-muted);
+  font-size: 12px;
+  line-height: 1.9;
+  padding-bottom: 3px;
+}
+.club-zones {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.club-zone {
+  border: 1px solid var(--border);
+  background: var(--club-panel);
+  border-radius: 18px;
+  overflow: hidden;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s,
+    transform 0.3s;
+}
+.club-zone:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--card-shadow-hover);
+  transform: translateY(-5px);
+}
+.club-zone__photo {
+  display: block;
+  position: relative;
+  height: 202px;
+  overflow: hidden;
+  background: #14151b;
+}
+.club-zone__photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent 55%, rgb(0 0 0 / 0.35));
+  pointer-events: none;
+}
+.club-zone__photo img {
+  filter: saturate(0.8);
+}
+.club-zone:hover img {
+  transform: scale(1.05);
+  filter: saturate(1.15);
+}
+.club-zone__number {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  color: white;
+  text-shadow: 0 1px 6px black;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+.club-photo-arrow {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  width: 32px;
+  height: 32px;
+  background: var(--club-lime);
+  color: var(--club-on-lime);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+.club-zone__badge {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  color: white;
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  z-index: 1;
+}
+.club-zone__body {
+  padding: 20px;
+}
+.club-zone__title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.club-zone__title h3 {
+  font-size: 27px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.club-zone__title > span {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.club-zone__title small {
+  font-weight: 400;
+  font-size: 9px;
+  margin-left: 2px;
+}
+.club-zone__body p {
+  font-size: 11px;
+  color: var(--fg-muted);
+  line-height: 1.8;
+  margin: 13px 0;
+  min-height: 40px;
+}
+.club-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.club-tags span {
+  border: 1px solid var(--border-strong);
+  color: var(--fg-muted);
+  padding: 4px 8px;
+  font-size: 9px;
+  border-radius: 30px;
+}
+.club-text-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 9px;
+  font-weight: 700;
+}
+.club-text-link:hover {
+  color: var(--accent);
+}
+.club-under-grid {
+  margin-top: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 35px;
+  justify-content: space-between;
+}
+.club-under-grid > p {
+  color: var(--fg-muted);
+  font-size: 10px;
+  line-height: 1.8;
+  max-width: 600px;
+}
+.club-under-grid > a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.club-under-grid > a svg {
+  flex-shrink: 0;
+}
+.club-experiences {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 24px;
+}
+.club-feature-main {
+  position: relative;
+  overflow: hidden;
+  min-height: 440px;
+  border-radius: 18px;
+  background: #14151b;
+}
+.club-feature-main__shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgb(8 9 13 / 0.98), rgb(8 9 13 / 0.28) 85%);
+}
+.club-feature-copy {
+  position: relative;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-height: 100%;
+  color: #f4f4f1;
+}
+.club-feature-copy .club-eyebrow {
+  color: var(--club-lime);
+}
+.club-feature-copy h3 {
+  font-size: 57px;
+  line-height: 0.94;
+  margin: 16px 0;
+}
+.club-feature-copy p {
+  font-size: 12px;
+  line-height: 1.9;
+  max-width: 390px;
+  color: #c8c8cf;
+  margin-bottom: 22px;
+}
+.club-feature-main:hover img {
+  transform: scale(1.035);
+}
+.club-feature-side {
+  display: grid;
+  gap: 16px;
+}
+.club-mini-feature {
+  position: relative;
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 18px;
+  background: var(--club-panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  transition:
+    border-color 0.25s,
+    transform 0.25s;
+}
+.club-mini-feature:hover {
+  border-color: var(--border-strong);
+  transform: translateX(4px);
+}
+.club-mini-feature__photo {
+  position: relative;
+  width: 105px;
+  height: 105px;
+  border-radius: 10px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.club-mini-feature .club-eyebrow {
+  font-size: 8px;
+}
+.club-mini-feature h3 {
+  font-size: 25px;
+  margin: 6px 0 8px;
+}
+.club-mini-feature p {
+  color: var(--fg-muted);
+  font-size: 10px;
+  line-height: 1.75;
+  max-width: 280px;
+}
+.club-mini-feature__arrow {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  color: var(--fg-dim);
+}
+.club-food-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 17px;
+}
+.club-food-card {
+  border: 1px solid var(--border);
+  background: var(--club-panel);
+  border-radius: 15px;
+  overflow: hidden;
+  transition:
+    transform 0.3s,
+    border-color 0.3s;
+}
+.club-food-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-strong);
+}
+.club-food-card__photo {
+  height: 180px;
+  position: relative;
+  overflow: hidden;
+}
+.club-food-card:hover img {
+  transform: scale(1.06);
+}
+.club-food-card__photo .club-photo-arrow {
+  width: 27px;
+  height: 27px;
+}
+.club-food-card__body {
+  padding: 18px;
+}
+.club-food-price {
+  text-transform: uppercase;
+  font-size: 8px;
+  letter-spacing: 0.09em;
+  font-weight: 700;
+  color: var(--accent);
+}
+.club-food-card h3 {
+  font: 700 11px/1.5 var(--font-body);
+  letter-spacing: 0;
+  margin: 7px 0;
+}
+.club-food-card p {
+  color: var(--fg-muted);
+  font-size: 10px;
+  line-height: 1.8;
+}
+.club-plans {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 17px;
+}
+.club-plan {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 27px 22px 22px;
+  background: var(--club-panel);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s;
+}
+.club-plan:hover {
+  transform: translateY(-5px);
+}
+.club-plan--popular {
+  border-color: var(--accent);
+  background: linear-gradient(140deg, var(--club-highlight), var(--club-panel) 70%);
+}
+.club-plan__index {
+  font-size: 8px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 8px;
+}
+.club-plan h3 {
+  font-size: 30px;
+  line-height: 1.1;
+}
+.club-ribbon {
+  position: absolute;
+  top: -11px;
+  right: 13px;
+  border-radius: 4px;
+  background: var(--club-lime);
+  color: var(--club-on-lime);
+  padding: 5px 9px;
+  font-size: 7px;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+}
+.club-plan__price {
+  font-family: var(--font-display);
+  font-size: 43px;
+  line-height: 1;
+  white-space: nowrap;
+  margin: 24px 0 12px;
+}
+.club-plan__price small {
+  font: 400 9px var(--font-body);
+  color: var(--fg-muted);
+}
+.club-plan__price--walkin {
+  font-size: 29px;
+  min-height: 43px;
+  display: flex;
+  align-items: center;
+}
+.club-plan > p {
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--fg-muted);
+  min-height: 36px;
+}
+.club-plan ul {
+  list-style: none;
+  padding: 20px 0;
+  margin: 20px 0 0;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.club-plan li {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: 10px;
+  line-height: 1.5;
+}
+.club-plan li svg {
+  color: var(--accent);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.club-plan .club-btn {
+  width: 100%;
+  margin-top: auto;
+  padding: 12px 8px;
+  min-height: 43px;
+  font-size: 10px;
+}
+.club-events {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.club-event {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 24px 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--club-panel);
+  transition: border-color 0.25s;
+}
+.club-event:hover {
+  border-color: var(--border-strong);
+}
+.club-event__date {
+  width: 58px;
+  min-width: 58px;
+  padding-right: 15px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.club-event__date b {
+  font-family: var(--font-display);
+  font-size: 38px;
+  line-height: 1;
+  color: var(--accent);
+}
+.club-event__date > svg {
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.club-event__date > span {
+  font-size: 8px;
+  color: var(--fg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-top: 5px;
+}
+.club-event__copy {
+  min-width: 0;
+  flex: 1;
+}
+.club-event__frequency {
+  font-size: 7px;
+  color: var(--accent);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.club-event h3 {
+  font-size: 25px;
+  margin: 4px 0 6px;
+}
+.club-event p {
+  font-size: 10px;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+.club-event__live {
+  font-size: 9px;
+  line-height: 1.6;
+  color: var(--fg);
+  margin-top: 8px;
+}
+.club-event .club-btn {
+  padding: 10px 12px;
+  font-size: 9px;
+  min-height: 36px;
+  white-space: nowrap;
+  border-radius: 6px;
+}
+.club-booking {
+  background: var(--club-lime);
+  color: var(--club-on-lime);
+}
+.club-booking .club-eyebrow {
+  color: #465321;
+}
+.club-booking h2 em {
+  color: #52631a;
+}
+.club-booking .club-section-head > p {
+  color: #39451c;
+}
+.club-booking-layout {
+  display: grid;
+  grid-template-columns: 1.06fr 1fr;
+  gap: 65px;
+  align-items: center;
+}
+.club-booking-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 17px 14px;
+  padding: 28px;
+  background: #f5fbdc;
+  border: 1px solid rgb(61 76 18 / 0.15);
+  border-radius: 16px;
+  box-shadow: 0 20px 50px -35px #3c4c21;
+  color: #17200d;
+}
+.club-form-top {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: 4px;
+}
+.club-form-top .club-dot {
+  background: #526c19;
+  box-shadow: none;
+}
+.club-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.club-field--full {
+  grid-column: 1/-1;
+}
+.club-field label {
+  text-transform: uppercase;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+.club-field label > span {
+  text-transform: none;
+  font-weight: 400;
+}
+.club-field input,
+.club-field select {
+  width: 100%;
+  height: 45px;
+  background: #fffef9;
+  border: 1px solid #cdd6ad;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #17200d;
+  padding: 10px 11px;
+  color-scheme: light;
+}
+.club-field select {
+  text-overflow: ellipsis;
+}
+.club-field input:focus-visible,
+.club-field select:focus-visible {
+  outline: 2px solid #526c19;
+  outline-offset: 2px;
+}
+.club-form-total {
+  grid-column: 1/-1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid #d3dfae;
+  font-size: 11px;
+}
+.club-form-total strong {
+  font-family: var(--font-display);
+  font-size: 31px;
+}
+.club-btn--ink {
+  background: #151b0b;
+  color: var(--club-lime);
+}
+.club-booking-form > .club-btn,
+.club-form-error,
+.club-form-note {
+  grid-column: 1/-1;
+}
+.club-form-error {
+  font-size: 12px;
+  color: #9c2424;
+  line-height: 1.6;
+}
+.club-form-note {
+  text-align: center;
+  font-size: 9px;
+  color: #4a5632;
+}
+.club-booking-aside h3 {
+  font-size: 43px;
+  line-height: 1;
+  margin: 15px 0 20px;
+}
+.club-booking-aside > p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: #3d4923;
+  max-width: 420px;
+}
+.club-booking-perks {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 28px 0;
+}
+.club-booking-perks > span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+}
+.club-info-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-block: 16px;
+  border-top: 1px solid rgb(40 55 6 / 0.22);
+  font-size: 10px;
+}
+.club-info-line a {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+.club-booking-full {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-top: 15px;
+}
+.club-footer {
+  padding: 50px 0 25px;
+  background: var(--bg);
+}
+.club-footer__top {
+  display: grid;
+  grid-template-columns: 1.2fr 1.3fr 0.8fr;
+  gap: 50px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--border);
+}
+.club-footer__top p {
+  max-width: 300px;
+  color: var(--fg-muted);
+  font-size: 11px;
+  line-height: 1.9;
+  margin-top: 15px;
+}
+.club-footer__links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: center;
+  gap: 17px;
+  font-size: 10px;
+  color: var(--fg-muted);
+}
+.club-footer__links a,
+.club-footer__contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.club-footer__links a:hover,
+.club-footer__contact a:hover {
+  color: var(--accent);
+}
+.club-footer__contact {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+  color: var(--fg-muted);
+  font-size: 10px;
+}
+.club-footer__bottom {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding-top: 22px;
+  color: var(--fg-dim);
+  font-size: 9px;
+}
+/* Bring the remaining live application screens into the same visual language. */
+.wrap {
+  max-width: 1160px;
+}
+.section--tight h1 {
+  font-size: clamp(54px, 7vw, 88px);
+  line-height: 0.96;
+  max-width: 900px;
+}
+.btn,
+.tier__btn,
+.event__btn {
+  text-transform: uppercase;
+  font-size: 11px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  border-radius: 7px;
+  letter-spacing: 0.025em;
+}
+.btn--primary {
+  background: var(--club-lime);
+  color: var(--club-on-lime);
+}
+.tier {
+  background: var(--club-panel);
+  border-radius: 16px;
+}
+.tier--highlight {
+  background: linear-gradient(140deg, var(--club-highlight), var(--club-panel));
+}
+.tier__name {
+  font-family: var(--font-display);
+  font-size: 28px;
+  text-transform: uppercase;
+}
+.zone {
+  background: var(--club-panel);
+  border-radius: 18px;
+}
+.zone__name h3 {
+  font-size: 28px;
+}
+.zone .brand-photo__art {
+  display: none;
+}
+.zone__art {
+  height: 205px;
+}
+.zone__art img {
+  object-fit: cover;
+}
+.section-head {
+  margin-bottom: 45px;
+}
+.menu-item {
+  background: var(--club-panel);
+  border-color: var(--border);
+}
+.menu-item h3 {
+  font-family: var(--font-body);
+  text-transform: none;
+}
+@keyframes club-ticker {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (max-width: 1100px) {
+  .club-wrap {
+    width: calc(100% - 48px);
+  }
+  .club-nav__links {
+    gap: 17px;
+  }
+  .club-nav__right {
+    gap: 10px;
+  }
+  .club-zone__title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .club-event {
+    flex-wrap: wrap;
+  }
+  .club-event .club-btn {
+    margin-left: 76px;
+  }
+  .club-plan {
+    padding: 25px 16px 18px;
+  }
+  .club-plan__price {
+    font-size: 38px;
+  }
+  .club-plan__price--walkin {
+    font-size: 25px;
+  }
+}
+@media (max-width: 999px) {
+  .club-nav__links {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  .club-section {
+    padding-block: 75px;
+  }
+  .club-zones {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .club-zone__title {
+    flex-direction: row;
+    align-items: center;
+  }
+  .club-experiences {
+    grid-template-columns: 1fr;
+  }
+  .club-feature-main {
+    min-height: 430px;
+  }
+  .club-feature-copy {
+    min-height: 430px;
+  }
+  .club-feature-side {
+    grid-template-columns: 1fr;
+  }
+  .club-mini-feature__photo {
+    width: 100px;
+    height: 90px;
+  }
+  .club-mini-feature p {
+    max-width: none;
+  }
+  .club-plans {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px 18px;
+  }
+  .club-plan {
+    padding: 28px 24px 24px;
+  }
+  .club-food-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .club-food-card__photo {
+    height: 200px;
+  }
+  .club-booking-layout {
+    gap: 30px;
+  }
+  .club-booking-form {
+    padding: 22px;
+  }
+  .club-hero__live {
+    right: 0;
+    bottom: 35px;
+  }
+  .club-hero__metrics {
+    gap: 24px;
+    max-width: 470px;
+  }
+  .club-footer__top {
+    gap: 30px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .club-footer__contact {
+    grid-column: 1/-1;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 640px) {
+  .club-wrap {
+    width: calc(100% - 36px);
+  }
+  .club-topline {
+    padding: 9px 14px;
+    font-size: 8px;
+    letter-spacing: 0.05em;
+  }
+  .club-topline span {
+    display: none;
+  }
+  .club-nav__inner {
+    height: 68px;
+    gap: 12px;
+  }
+  .club-logo {
+    font-size: 31px;
+  }
+  .club-nav__right {
+    gap: 8px;
+  }
+  .club-hero {
+    min-height: 680px;
+  }
+  .club-hero__inner {
+    padding-block: 62px 88px;
+  }
+  .club-hero__photo {
+    left: -50%;
+  }
+  .club-hero__photo img {
+    object-position: 68% center;
+  }
+  .club-hero__shade {
+    background:
+      linear-gradient(90deg, rgb(11 12 16 / 0.97), rgb(11 12 16 / 0.55)),
+      linear-gradient(0deg, #0b0c10, transparent 70%);
+  }
+  .club-hero h1 {
+    font-size: clamp(80px, 20vw, 112px);
+    margin: 25px 0;
+  }
+  .club-hero p {
+    font-size: 12px;
+    max-width: 350px;
+  }
+  .club-actions {
+    gap: 10px;
+  }
+  .club-actions .club-btn {
+    font-size: 9px;
+    padding: 13px 14px;
+    gap: 8px;
+  }
+  .club-hero__metrics {
+    gap: 22px;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  .club-hero__metrics strong {
+    font-size: 20px;
+  }
+  .club-hero__metrics span {
+    font-size: 7px;
+    letter-spacing: 0.05em;
+  }
+  .club-hero__live {
+    bottom: 24px;
+    left: 0;
+    right: auto;
+  }
+  .club-scroll-cue {
+    right: 18px;
+    bottom: 32px;
+    font-size: 7px;
+  }
+  .club-ticker {
+    padding-block: 11px;
+  }
+  .club-ticker__track > div {
+    gap: 20px;
+    padding-right: 20px;
+    font-size: 17px;
+  }
+  .club-section {
+    padding-block: 64px;
+  }
+  .club-section-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 22px;
+    margin-bottom: 28px;
+  }
+  .club-section-head h2 {
+    font-size: 55px;
+  }
+  .club-section-head > p {
+    max-width: 100%;
+    font-size: 12px;
+  }
+  .club-zones {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .club-zone__photo {
+    height: 210px;
+  }
+  .club-zone__body {
+    padding: 20px;
+  }
+  .club-zone__body p {
+    min-height: 0;
+    font-size: 12px;
+  }
+  .club-under-grid {
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 22px;
+  }
+  .club-under-grid > p {
+    font-size: 10px;
+  }
+  .club-feature-main,
+  .club-feature-copy {
+    min-height: 390px;
+  }
+  .club-feature-copy {
+    padding: 25px;
+  }
+  .club-feature-copy h3 {
+    font-size: 52px;
+  }
+  .club-mini-feature {
+    gap: 14px;
+    padding: 14px;
+  }
+  .club-mini-feature__photo {
+    width: 85px;
+    height: 95px;
+  }
+  .club-mini-feature h3 {
+    font-size: 23px;
+    padding-right: 6px;
+  }
+  .club-mini-feature .club-eyebrow {
+    font-size: 7px;
+  }
+  .club-mini-feature p {
+    font-size: 10px;
+  }
+  .club-mini-feature__arrow {
+    width: 12px;
+    top: 11px;
+    right: 10px;
+  }
+  .club-food-grid {
+    gap: 13px;
+  }
+  .club-food-card__photo {
+    height: 145px;
+  }
+  .club-food-card__body {
+    padding: 13px;
+  }
+  .club-food-card h3 {
+    font-size: 10px;
+  }
+  .club-food-price {
+    font-size: 7px;
+  }
+  .club-food-card p {
+    font-size: 10px;
+  }
+  .club-plans {
+    grid-template-columns: 1fr;
+    gap: 26px;
+  }
+  .club-plan {
+    padding: 28px 25px 25px;
+  }
+  .club-plan__price {
+    font-size: 47px;
+    margin-top: 20px;
+  }
+  .club-plan__price--walkin {
+    font-size: 34px;
+  }
+  .club-plan > p {
+    min-height: 0;
+    font-size: 12px;
+  }
+  .club-plan li {
+    font-size: 12px;
+  }
+  .club-plan ul {
+    margin-top: 18px;
+    gap: 15px;
+    padding-bottom: 25px;
+  }
+  .club-plan .club-btn {
+    min-height: 46px;
+  }
+  .club-ribbon {
+    font-size: 8px;
+  }
+  .club-events {
+    grid-template-columns: 1fr;
+  }
+  .club-event {
+    padding: 22px 16px;
+    gap: 14px;
+  }
+  .club-event__date {
+    min-width: 53px;
+    width: 53px;
+    padding-right: 12px;
+  }
+  .club-event h3 {
+    font-size: 26px;
+  }
+  .club-event p {
+    font-size: 11px;
+  }
+  .club-event .club-btn {
+    margin-left: 67px;
+  }
+  .club-booking-layout {
+    grid-template-columns: 1fr;
+    gap: 42px;
+  }
+  .club-booking-form {
+    padding: 21px 17px;
+    gap: 18px 12px;
+  }
+  .club-field label {
+    font-size: 8px;
+  }
+  .club-field input,
+  .club-field select {
+    font-size: 12px;
+    padding-inline: 8px;
+  }
+  .club-booking-aside h3 {
+    font-size: 42px;
+  }
+  .club-footer {
+    padding-top: 38px;
+  }
+  .club-footer__top {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-bottom: 28px;
+  }
+  .club-footer__links {
+    gap: 18px;
+    font-size: 11px;
+  }
+  .club-footer__contact {
+    flex-direction: column;
+    font-size: 11px;
+    gap: 12px;
+  }
+  .club-footer__bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .club-ticker__track {
+    animation: none;
+  }
+  .club-zone:hover,
+  .club-food-card:hover,
+  .club-plan:hover,
+  .club-mini-feature:hover,
+  .club-btn:hover {
+    transform: none;
+  }
+}

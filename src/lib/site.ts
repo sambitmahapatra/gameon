@@ -1,9 +1,9 @@
 /** Single source of truth for contact details and outbound links. */
 export const SITE = {
   name: 'GameOn',
-  title: 'GameOn — Enter another world.',
+  title: 'GameOn — Play Beyond Ordinary',
   description:
-    'Six gaming worlds and a café under one roof in Powai, Mumbai. VR arena, flight simulator, racing cockpits, esports stations, console lounge and streaming pods. Reserve a slot in under a minute.',
+    'A gaming social club built around play, community and great food. Console battles, racing rigs, VR worlds and a cockpit in the clouds. Find your next session at GameOn.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
   address: 'Hiranandani Gardens, Powai, Mumbai 400076',
   phone: '+912249607890',

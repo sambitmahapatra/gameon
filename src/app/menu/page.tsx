@@ -1,5 +1,6 @@
 ﻿import type { Metadata } from 'next';
 import { BrandPhoto } from '@/components/brand-photo';
+import { Suspense } from 'react';
 import { MenuBrowser } from '@/components/menu-browser';
 
 export const metadata: Metadata = {
@@ -15,10 +16,14 @@ export default function MenuPage() {
         <header className="section-head menu-hero">
           <div>
             <div className="eyebrow">Café</div>
-            <h1>Fuel between frags</h1>
+            <h1>
+              Good game.
+              <br />
+              Great food.
+            </h1>
             <p className="sub">
-              Food reaches every zone, so you do not have to pause a match to eat.
-              Everything is made to order between 10 AM and 9:30 PM.
+              Quick bites between matches. A proper sit-down with your crew. The café is
+              part of the experience—not an afterthought. Order at the counter and refuel.
             </p>
           </div>
           <BrandPhoto
@@ -30,7 +35,9 @@ export default function MenuPage() {
             priority
           />
         </header>
-        <MenuBrowser />
+        <Suspense fallback={<p className="text-fg-muted">Loading the café menu…</p>}>
+          <MenuBrowser />
+        </Suspense>
         <p className="panel panel--flat mt-14 px-6 py-5 text-meta text-fg-muted">
           Order at counter — delivered to any zone within 10 minutes.
         </p>

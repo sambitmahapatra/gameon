@@ -3,8 +3,9 @@ export type MenuItem = {
   name: string;
   slug: string;
   description: string;
-  price: number;
-  veg: boolean;
+  price: number | null;
+  image?: string;
+  veg: boolean | null;
   category: MenuCategory;
 };
 export const MENU_CATEGORIES: { id: MenuCategory; label: string; note: string }[] = [
@@ -30,6 +31,26 @@ export const MENU_CATEGORIES: { id: MenuCategory; label: string; note: string }[
   },
 ];
 export const MENU: MenuItem[] = [
+  {
+    name: 'The Post-Game Burger',
+    slug: 'post-game-burger',
+    description:
+      'A proper, satisfying refuel after a close match. Ask the café team for today’s options.',
+    price: null,
+    image: '/images/club/burger.webp',
+    veg: null,
+    category: 'mains',
+  },
+  {
+    name: 'The Co-op Combo',
+    slug: 'co-op-combo',
+    description:
+      'Pizza and crowd-pleasing bites made for multiplayer nights. Ask about the current combo.',
+    price: null,
+    image: '/images/club/pizza.webp',
+    veg: null,
+    category: 'combos',
+  },
   {
     name: 'Chilli Paneer Poppers',
     slug: 'chilli-paneer-poppers',
