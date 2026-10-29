@@ -30,6 +30,7 @@ data/*.sqlite*
 android/
 ios/
 *.apk
+*.apk.idsig
 *.aab
 *.keystore
 *.jks
@@ -48,6 +49,11 @@ coverage/
 .turbo/
 .swc/
 .cache/
+
+# Generated standalone app deliverables (source is under mobile/)
+GameON application/*.html
+GameON application/APK-*.txt
+GameON application/SHA256SUMS.txt
 
 # Editors
 .vscode/*

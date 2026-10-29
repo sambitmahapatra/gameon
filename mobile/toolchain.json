@@ -1,0 +1,28 @@
+{
+  "jdkHome": ".cache/android-tools/jdk/jdk-17.0.20.1+1",
+  "androidJar": ".cache/android-tools/platform/android-35/android.jar",
+  "buildTools": ".cache/android-tools/build-tools/android-15",
+  "downloads": [
+    {
+      "file": "platform.zip",
+      "folder": "platform",
+      "url": "https://dl.google.com/android/repository/platform-35_r02.zip",
+      "algorithm": "sha1",
+      "checksum": "0bb560a90a7a2cbd0dd8348224d518b638fe7949"
+    },
+    {
+      "file": "build-tools.zip",
+      "folder": "build-tools",
+      "url": "https://dl.google.com/android/repository/build-tools_r35_windows.zip",
+      "algorithm": "sha1",
+      "checksum": "af059bb67cf7786f45ee0db85e2d24985df1b4b6"
+    },
+    {
+      "file": "jdk.zip",
+      "folder": "jdk",
+      "url": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.20.1%2B1/OpenJDK17U-jdk_x64_windows_hotspot_17.0.20.1_1.zip",
+      "algorithm": "sha256",
+      "checksum": "e53a79c3c3d86865bd7e787903884331068e71321714ffd44f145785affc7cb0"
+    }
+  ]
+}
